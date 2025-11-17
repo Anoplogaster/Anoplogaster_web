@@ -49,7 +49,7 @@ profiles:
 - icon: brands/instagram
   url: https://www.instagram.com/whatthefishisthat_/
 pronouns: He/him
-role: Ph.D. Candidate - Ichthyology
+role: 1Ph.D. Candidate - Ichthyology
 skills:
 status:
   icon: ""
@@ -71,9 +71,9 @@ work:
   summary: |
 ---
 
-I’m a Ph.D. candidate in Ecology and Evolutionary Biology at the University of Kansas Biodiversity Institute and Natural History Museum, where I work in the Ichthyology Division. I study the evolutionary relationships and morphological diversity of fishes, currently focusing on Beryciformes and Trachichthyiformes, and have historically worked on various deep-sea groups.
+**I’m a Ph.D. candidate in Ecology and Evolutionary Biology at the University of Kansas Biodiversity Institute and Natural History Museum, where I work in the Ichthyology Division. I study the evolutionary relationships and morphological diversity of fishes, currently focusing on Beryciformes and Trachichthyiformes, and have historically worked on various deep-sea groups.**
 
-My research integrates morphology, molecular data, and ecological context to uncover how form and function evolve, particularly in deep-sea environments such as anglerfishes and their bioluminescent lures.
+**My research integrates morphology, molecular data, and ecological context to uncover how form and function evolve, particularly in deep-sea environments such as anglerfishes and their bioluminescent lures.**
 
-I welcome inquiries about collaborations and invite you to explore my CV and social media to learn more about my work.
+**I welcome inquiries about collaborations and invite you to explore my CV and social media to learn more about my work.**
 

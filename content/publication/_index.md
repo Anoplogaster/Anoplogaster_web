@@ -15,7 +15,8 @@ sections:
               <strong><a href="https://doi.org/10.1371/journal.pone.0322369" target="_blank" style="color: #fff; text-decoration: underline;">A total-evidence phylogenetic approach to understanding the evolution, depth transitions, and body-shape changes in the anglerfishes and allies (Acanthuriformes: Lophioidei)</a></strong><br>
               <strong><span style="color:#00FFFF;">AJ Maile</span></strong>, WL Smith, MP Davis<br>
               PLoS One 20 (5), e0322369 · 2025<br>
-              <em>News:</em> <a href="https://oceanbites.org/anglerfish-frogfish-batfish-and-more-oh-my/" target="_blank" style="color:#00FFFF;">Ocean Bites Blog</a>
+              <em>News:</em> <a href="https://oceanbites.org/anglerfish-frogfish-batfish-and-more-oh-my/" target="_blank" style="color:#00FFFF;">Ocean Bites Blog</a><br>
+              <strong>Supplemental Data:</strong> <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0322369#sec051" target="_blank" rel="noopener" style="color:#00FFFF;">Download</a><br>
             </div>
           </div>
 
@@ -26,7 +27,8 @@ sections:
               <strong><a href="https://doi.org/10.1002/jmor.21349" target="_blank" style="color: #d0d0d0; text-decoration: underline;">Anatomy and evolution of bioluminescent organs in the slimeheads (Teleostei: Trachichthyidae)</a></strong><br>
               <strong><span style="color:#00FFFF;">AJ Maile</span></strong>, MJ Ghedotti, HM DeKay, WL Smith, MP Davis<br>
               Journal of Morphology 282 (6), 820-832 · 2021<br>
-              <em>News:</em> None
+              <strong>PDF:</strong> <a href="/pdfs/Ghedottietal2021.pdf" target="_blank" rel="noopener" style="color:#00FFFF;">Download</a><br>
+              <strong>Supplemental Data:</strong> <a href="https://onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1002%2Fjmor.21349&file=jmor21349-sup-0001-Supinfo.zip" target="_blank" rel="noopener" style="color:#00FFFF;">Download</a><br>
             </div>
           </div>
 
@@ -37,7 +39,7 @@ sections:
               <strong><a href="https://doi.org/10.1643/CG-19-300" target="_blank" style="color: #fff; text-decoration: underline;">Marine habitat transitions and body-shape evolution in lizardfishes and their allies (Aulopiformes)</a></strong><br>
               <strong><span style="color:#00FFFF;">AJ Maile</span></strong>, ZA May, ES DeArmon, RP Martin, MP Davis<br>
               Copeia 108 (4), 820-832 · 2020<br>
-              <em>News:</em> None
+              <strong>Supplemental Data:</strong> <a href="https://www.ichthyologyandherpetology.org/cg-19-300" target="_blank" rel="noopener" style="color:#00FFFF;">Download</a><br>
             </div>
           </div>
 
