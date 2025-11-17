@@ -1,0 +1,103 @@
+/* Page background and body text */
+body {
+    background: url("/images/background.jpg") no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Palatino', serif;
+    margin: 0;
+    padding: 0;
+    color: #dcdcdc; /* subtle off-white main text */
+}
+
+/* Default section styling */
+.section {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-sizing: border-box;
+}
+
+/* Bio sections - semi-transparent black with readable text */
+.bio-opaque {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 2rem;
+    border-radius: 1rem;
+    color: #dcdcdc; /* soft off-white text */
+    line-height: 1.7;
+    box-sizing: border-box;
+    font-family: 'Palatino', serif;
+    font-size: 1.05rem;
+}
+
+/* Wide variant */
+.bio-wide {
+    max-width: 95%;
+    margin: 0 auto;
+}
+
+/* Combined bio-opaque + bio-wide */
+.bio-opaque.bio-wide,
+.bio-opaque.bio-wide > div,
+.bio-opaque.bio-wide .container,
+.bio-opaque.bio-wide .row {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: #f0f0f0; /* icy white headers */
+}
+
+/* Paragraphs */
+p {
+    color: #dcdcdc; /* soft off-white text */
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* Links */
+a {
+    color: #00bfff; /* subtle Tron blue for links only */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #80d4ff; /* lighter blue on hover */
+}
+
+/* Emphasis */
+strong, b {
+    color: #ffffff; /* bright white highlights */
+}
+
+/* Lists */
+ul li, ol li {
+    color: #dcdcdc;
+}
+
+/* Optional subtle gradient underline for headers */
+h2::after, h3::after {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(90deg, #ffffff, #505050); /* white to slate gray */
+    margin-top: 0.3rem;
+    margin-bottom: 1rem;
+}
+
+/* Small accent for author names or keywords */
+.author-name {
+    color: #ffffff; /* icy white for names */
+    font-weight: bold;
+}
