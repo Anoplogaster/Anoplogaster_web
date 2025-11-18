@@ -3,6 +3,7 @@ awards:
 education:
 - area: Ph.D. Ecology and Evolution
   date_start: "2023-01-01"
+  date_end: "Expected: 2028"
   date_end: ""  # leave blank for ongoing; HugoBlox will show "Current"
   institution: University of Kansas
   summary: |
@@ -49,7 +50,7 @@ profiles:
 - icon: brands/instagram
   url: https://www.instagram.com/whatthefishisthat_/
 pronouns: He/him
-role: 1Ph.D. Candidate - Ichthyology
+role: Ph.D. Candidate - Ichthyology
 skills:
 status:
   icon: ""
