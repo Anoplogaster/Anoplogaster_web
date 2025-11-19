@@ -1,23 +1,25 @@
 ---
 awards:
+
 education:
-- area: Ph.D. Ecology and Evolution
-  date_start: "2023-01-01"
-  date_end: "Expected: 2028"
-  date_end: ""  # leave blank for ongoing; HugoBlox will show "Current"
-  institution: University of Kansas
-  summary: |
-    Graduate Advisor: Dr. W. Leo Smith
-- area: M.S. Biological Sciences
-  date_start: "2023-01-01"
-  date_end: "2023-12-31"
-  institution: St. Cloud State University
-  summary: |
-    Graduate Advisor: Dr. Matthew P. Davis
-- area: B.S. Biodiversity, Ecology, and Evolution (Honors)
-  date_start: "2020-01-01"
-  date_end: "2020-12-31"
-  institution: St. Cloud State University
+  - area: Ph.D. Ecology and Evolution - Expected completion, 2028
+    date_start: "2023-01-01"
+    date_end: ""
+    institution: University of Kansas
+    summary: |
+      Graduate Advisor: Dr. W. Leo Smith  
+
+  - area: M.S. Biological Sciences (2023)
+    date_start: "2021-01-01"
+    date_end: "2023-12-31"
+    institution: St. Cloud State University
+    summary: |
+      Graduate Advisor: Dr. Matthew P. Davis
+
+  - area: B.S. Biodiversity, Ecology, and Evolution [Honors] (2023)
+    date_start: "2017-01-01"
+    date_end: "2020-12-31"
+    institution: St. Cloud State University
   
 first_name: Alex
 highlight_name: true
