@@ -22,7 +22,7 @@ sections:
 
         Across all projects, I integrate **comparative morphology with genomic data**, including:  
         - Expanding morphological character matrices for both extinct and extant taxa.  
-        - Sequencing additional UCEs for broader taxonomic coverage.  
+        - Sequencing and extracting molecular data for broader taxonomic coverage.  
         - Working directly with collection specimens, including **formalin-fixed specimens, cleared-and-stained material, and CT scan data**.
         - Conducting geometric morphometric analyses to examine body-shape evolution in relation to ecological and evolutionary transitions.
 
