@@ -23,6 +23,10 @@ sections:
               <a href="https://news.ku.edu/news/article/research-traces-evolution-of-anglerfishes-famed-fishing-rod-lures" target="_blank" style="color:#00FFFF;">
                 University of Kansas News
               </a><br>
+              <strong>Supplemental Data:</strong>
+              <a href="https://www.ichthyologyandherpetology.org/i2025018" target="_blank" rel="noopener" style="color:#00FFFF;">
+                Download
+              </a><br>
             </div>
           </div>
 
