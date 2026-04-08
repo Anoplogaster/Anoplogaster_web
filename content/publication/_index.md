@@ -19,16 +19,10 @@ sections:
               </strong><br>
               <strong><span style="color:#00FFFF;">AJ Maile</span></strong>, MP Davis<br>
               Ichthyology & Herpetology 114, 103–118 · 2026<br>
-
               <em>News:</em>
               <a href="https://news.ku.edu/news/article/research-traces-evolution-of-anglerfishes-famed-fishing-rod-lures" target="_blank" style="color:#00FFFF;">
                 University of Kansas News
-              </a>
-              |
-              <a href="https://www.eurekalert.org/news-releases/1123320" target="_blank" style="color:#00FFFF;">
-                EurekAlert
               </a><br>
-
               <strong>Supplemental Data:</strong>
               <a href="https://www.ichthyologyandherpetology.org/i2025018" target="_blank" rel="noopener" style="color:#00FFFF;">
                 Download
