@@ -10,7 +10,7 @@ sections:
 
           <!-- Paper 4 (Newest, 2026) -->
           <div style="display: flex; gap: 2rem; align-items: center; padding: 2rem; background-color: rgba(30,30,30,0.9); color: #d0d0d0;">
-            <img src="/images/anglerfish_placeholder.jpg" alt="Paper 4" style="width:150px; height:150px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
+            <img src="/images/Warty_Frogfish_Antennarius_maculatus_UW_020828_AJMaile.JPG" alt="Paper 4" style="width:150px; height:150px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
             <div style="flex: 1; min-width: 0;">
               <strong>
                 <a href="https://doi.org/10.1643/i2025018" target="_blank" style="color: #fff; text-decoration: underline;">
@@ -41,8 +41,12 @@ sections:
               </strong><br>
               <strong><span style="color:#00FFFF;">AJ Maile</span></strong>, WL Smith, MP Davis<br>
               PLoS One 20 (5), e0322369 · 2025<br>
-              <em>News:</em> <a href="https://oceanbites.org/anglerfish-frogfish-batfish-and-more-oh-my/" target="_blank" style="color:#00FFFF;">Ocean Bites Blog</a><br>
-              <strong>Supplemental Data:</strong> <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0322369#sec051" target="_blank" rel="noopener" style="color:#00FFFF;">Download</a><br>
+              <em>News:</em>
+              <a href="https://oceanbites.org/anglerfish-frogfish-batfish-and-more-oh-my/" target="_blank" style="color:#00FFFF;">Ocean Bites Blog</a><br>
+              <strong>Supplemental Data:</strong>
+              <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0322369#sec051" target="_blank" rel="noopener" style="color:#00FFFF;">
+                Download
+              </a><br>
             </div>
           </div>
 
@@ -57,8 +61,12 @@ sections:
               </strong><br>
               <strong><span style="color:#00FFFF;">AJ Maile</span></strong>, MJ Ghedotti, HM DeKay, WL Smith, MP Davis<br>
               Journal of Morphology 282 (6), 820-832 · 2021<br>
-              <strong>PDF:</strong> <a href="/pdfs/Ghedottietal2021.pdf" target="_blank" rel="noopener" style="color:#00FFFF;">Download</a><br>
-              <strong>Supplemental Data:</strong> <a href="https://onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1002%2Fjmor.21349&file=jmor21349-sup-0001-Supinfo.zip" target="_blank" rel="noopener" style="color:#00FFFF;">Download</a><br>
+              <strong>PDF:</strong>
+              <a href="/pdfs/Ghedottietal2021.pdf" target="_blank" rel="noopener" style="color:#00FFFF;">Download</a><br>
+              <strong>Supplemental Data:</strong>
+              <a href="https://onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1002%2Fjmor.21349&file=jmor21349-sup-0001-Supinfo.zip" target="_blank" rel="noopener" style="color:#00FFFF;">
+                Download
+              </a><br>
             </div>
           </div>
 
@@ -73,7 +81,10 @@ sections:
               </strong><br>
               <strong><span style="color:#00FFFF;">AJ Maile</span></strong>, ZA May, ES DeArmon, RP Martin, MP Davis<br>
               Copeia 108 (4), 820-832 · 2020<br>
-              <strong>Supplemental Data:</strong> <a href="https://www.ichthyologyandherpetology.org/cg-19-300" target="_blank" rel="noopener" style="color:#00FFFF;">Download</a><br>
+              <strong>Supplemental Data:</strong>
+              <a href="https://www.ichthyologyandherpetology.org/cg-19-300" target="_blank" rel="noopener" style="color:#00FFFF;">
+                Download
+              </a><br>
             </div>
           </div>
 
