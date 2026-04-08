@@ -14,7 +14,7 @@ sections:
             <div style="flex: 1; min-width: 0;">
               <strong>
                 <a href="https://doi.org/10.1643/i2025018" target="_blank" style="color: #fff; text-decoration: underline;">
-                  The Evolution of Lures in Anglerfishes (Acanthuriformes: Lophioidei): Investigating Nature's Tackle Box
+                  The evolution of lures in anglerfishes (Acanthuriformes: Lophioidei): investigating nature's tackle box
                 </a>
               </strong><br>
               <strong><span style="color:#00FFFF;">AJ Maile</span></strong>, MP Davis<br>
