@@ -12,7 +12,7 @@ sections:
           <div style="display: flex; gap: 2rem; align-items: center; padding: 2rem; background-color: rgba(30,30,30,0.9); color: #d0d0d0;">
             <img src="/images/Research_right.jpg" alt="Paper 3" style="width:150px; height:150px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
             <div style="flex: 1; min-width: 0;">
-              <strong><a href="https://doi.org/10.1371/journal.pone.0322369" target="_blank" style="color: #fff; text-decoration: underline;">A Total-evidence phylogenetic approach to understanding the evolution, depth transitions, and body-shape changes in the anglerfishes and allies (Acanthuriformes: Lophioidei)</a></strong><br>
+              <strong><a href="https://doi.org/10.1371/journal.pone.0322369" target="_blank" style="color: #fff; text-decoration: underline;">A total-evidence phylogenetic approach to understanding the evolution, depth transitions, and body-shape changes in the anglerfishes and allies (Acanthuriformes: Lophioidei)</a></strong><br>
               <strong><span style="color:#00FFFF;">AJ Maile</span></strong>, WL Smith, MP Davis<br>
               PLoS One 20 (5), e0322369 · 2025<br>
               <em>News:</em> <a href="https://oceanbites.org/anglerfish-frogfish-batfish-and-more-oh-my/" target="_blank" style="color:#00FFFF;">Ocean Bites Blog</a><br>
