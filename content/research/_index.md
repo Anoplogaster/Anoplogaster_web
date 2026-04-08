@@ -20,7 +20,7 @@ sections:
 
         ### Methodological Approach
 
-        Across all projects, I integrate **comparative morphology with genomic data**, including:  
+        Across most projects, I integrate **comparative morphology with genomic data**, including:  
         - Expanding morphological character matrices for both extinct and extant taxa.  
         - Sequencing and extracting molecular data for broader taxonomic coverage.  
         - Working directly with collection specimens, including **formalin-fixed specimens, cleared-and-stained material, and CT scan data**.
