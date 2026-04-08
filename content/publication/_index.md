@@ -6,7 +6,7 @@ sections:
   - block: markdown
     content:
       text: |
-        <div style="position: relative; width: 100vw; margin-left: calc(-50vw + 50%); overflow: hidden;" class="bio-opaque">
+        <div style="position: relative; width: 100vw; margin-left: calc(-50vw + 50%); overflow: hidden; display: flex; flex-direction: column;" class="bio-opaque">
 
           <!-- Paper 4 (Newest, 2026) -->
           <div style="display: flex; gap: 2rem; align-items: center; padding: 2rem; background-color: rgba(30,30,30,0.9); color: #d0d0d0;">
@@ -19,9 +19,12 @@ sections:
               </strong><br>
               <strong><span style="color:#00FFFF;">AJ Maile</span></strong>, MP Davis<br>
               Ichthyology & Herpetology 114, 103–118 · 2026<br>
-              <em>News:</em>
+              <em>News:</em><br>
               <a href="https://news.ku.edu/news/article/research-traces-evolution-of-anglerfishes-famed-fishing-rod-lures" target="_blank" style="color:#00FFFF;">
                 University of Kansas News
+              </a><br>
+              <a href="https://www.eurekalert.org/news-releases/1123320" target="_blank" style="color:#00FFFF;">
+                EurekAlert
               </a><br>
               <strong>Supplemental Data:</strong>
               <a href="https://www.ichthyologyandherpetology.org/i2025018" target="_blank" rel="noopener" style="color:#00FFFF;">
@@ -30,7 +33,7 @@ sections:
             </div>
           </div>
 
-          <!-- Paper 3 (Newest, 2025) -->
+          <!-- Paper 3 (2025) -->
           <div style="display: flex; gap: 2rem; align-items: center; padding: 2rem; background-color: rgba(30,30,30,0.9); color: #d0d0d0;">
             <img src="/images/Research_right.jpg" alt="Paper 3" style="width:150px; height:150px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
             <div style="flex: 1; min-width: 0;">
