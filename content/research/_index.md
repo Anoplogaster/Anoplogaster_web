@@ -23,7 +23,7 @@ sections:
         Across most projects, I integrate **comparative morphology with genomic data**, including:  
         - Expanding morphological character matrices for both extinct and extant taxa.  
         - Sequencing and extracting molecular data for broader taxonomic coverage.  
-        - Working directly with collection specimens, including **formalin-fixed specimens, cleared-and-stained material, and CT scan data**.
+        - Working directly with collection specimens, including **alcohol-preserved specimens, cleared-and-stained material, histology, fossils, and CT scan data**, alongside **genomic/molecular data** and **morphometric analyses**.
         - Conducting geometric morphometric analyses to examine body-shape evolution in relation to ecological and evolutionary transitions.
 
         This integrative approach allows me to link **form, function, and evolutionary history**, providing new insights into the diversification of deep-sea and reef-associated fishes, the origins of extreme morphological adaptations, and the tempo of evolutionary change following major environmental shifts.
