@@ -7,33 +7,45 @@ sections:
       text: |
         <div style="position: relative; width: 100vw; margin-left: calc(-50vw + 50%); overflow: hidden;">
           <div class="masonry-gallery">
-            <img src="/images/gallery/IMG_5141.JPG" alt="IMG 5141">
-            <img src="/images/gallery/IMG_0030.JPG" alt="IMG 0030">
-            <img src="/images/gallery/Anomalops_katoptron_YMP_ICH_020676.jpeg" alt="Anomalops katoptron">
-            <img src="/images/gallery/IMG_0015.jpg" alt="IMG 0015">
-            <img src="/images/gallery/TotalBody.jpg" alt="Total Body">
-            <img src="/images/gallery/IMG_2053.jpg" alt="IMG 2053">
-            <img src="/images/gallery/IMG_0017background.jpeg" alt="IMG 0017 background">
-            <img src="/images/gallery/IMG_0009_touchup.jpg" alt="IMG 0009 touchup">
-            <img src="/images/gallery/Bellator_militaris_TCWC_6818.17.png" alt="Bellator militaris">
-            <img src="/images/gallery/TouchedupBioluminescent.jpg" alt="Touchedup Bioluminescent">
-            <img src="/images/gallery/IMG_8363.PNG" alt="IMG 8363">
-            <img src="/images/gallery/IMG_0035.jpg" alt="IMG 0035">
-            <img src="/images/gallery/IMG_8872.JPG" alt="IMG 8872">
-            <img src="/images/gallery/IMG_8364.PNG" alt="IMG 8364">
-            <img src="/images/gallery/IMG_0017_touchup1.jpg" alt="IMG 0017 touchup1">
-            <img src="/images/gallery/IMG_7224.jpeg" alt="IMG 7224">
-            <img src="/images/gallery/IMG_2166.jpg" alt="IMG 2166">
-            <img src="/images/gallery/IMG_3979.JPG" alt="IMG 3979">
-            <img src="/images/gallery/IMG_8391.JPG" alt="IMG 8391">
-            <img src="/images/gallery/IMG_8867.JPG" alt="IMG 8867">
-            <img src="/images/gallery/IMG_0003.JPG" alt="IMG 0003">
+            <img src="/images/gallery/Double_anglerfish_Diceratias_pileatus_UW_150017_AJMaile.jpg" alt="">
+            <img src="/images/gallery/IMG_2053.jpg" alt="">
+            <img src="/images/gallery/Frogfish_Antennarius_commerson_Personal_AJMaile.jpg" alt="">
+            <img src="/images/gallery/Anomalops_katoptron_YMP_ICH_020676.jpg" alt="">
+            <img src="/images/gallery/IMG_0015.jpg" alt="">
+            <img src="/images/gallery/Southern_seadevil_Ceratias_tentaculatus_LACM_11025-7_AJMaile.jpg" alt="">
+            <img src="/images/gallery/IMG_8872.jpg" alt="">
+            <img src="/images/gallery/Ancylopsetta_ommata_KUI_22951_Blue.jpg" alt="">
+            <img src="/images/gallery/IMG_0003.jpg" alt="">
+            <img src="/images/gallery/IMG_0030.jpg" alt="">
+            <img src="/images/gallery/IMG_8391.jpg" alt="">
+            <img src="/images/gallery/Netdevil_Borophryne_apogon_LACM_30053-10_AJMaile.jpg" alt="">
+            <img src="/images/gallery/IMG_2166.jpg" alt="">
+            <img src="/images/gallery/Bellator_militaris_TCWC_6818.17.jpg" alt="">
+            <img src="/images/gallery/IMG_0017background.jpg" alt="">
+            <img src="/images/gallery/Ghostly_seadevil_Haplophryne_mollis_UW_157518_AJMaile.jpg" alt="">
+            <img src="/images/gallery/IMG_3979.jpg" alt="">
+            <img src="/images/gallery/Circular_seabat_Halieutaea_fitzsimonsi_LACM_44745-6_AJMaile.jpg" alt="">
+            <img src="/images/gallery/IMG_0035.jpg" alt="">
+            <img src="/images/gallery/Pacific_footballfish_Himantolophus_sagamius_LACM_60082-1_MT-GGGG1_AJMaile.jpg" alt="">
+            <img src="/images/gallery/IMG_7224.jpg" alt="">
+            <img src="/images/gallery/Frogfish_Antennarius_commerson_Personal_AJMaile_2.jpg" alt="">
+            <img src="/images/gallery/IMG_8363.jpg" alt="">
+            <img src="/images/gallery/Warty_Frogfish_Antennarius_maculatus_UW_020828_AJMaile.jpg" alt="">
+            <img src="/images/gallery/IMG_0009_touchup.jpg" alt="">
+            <img src="/images/gallery/IMG_0017_touchup1.jpg" alt="">
+            <img src="/images/gallery/IMG_8364.jpg" alt="">
+            <img src="/images/gallery/IMG_2073.jpg" alt="">
+            <img src="/images/gallery/Ancylopsetta_ommata_KUI_22951_White.jpg" alt="">
+            <img src="/images/gallery/IMG_8867.jpg" alt="">
+            <img src="/images/gallery/IMG_5141.jpg" alt="">
+            <img src="/images/gallery/TouchedupBioluminescent.jpg" alt="">
+            <img src="/images/gallery/TotalBody.jpg" alt="">
           </div>
         </div>
 
         <style>
         .masonry-gallery {
-          column-count: 3; /* 3 columns for desktop */
+          column-count: 3;
           column-gap: 0;
           width: 100vw;
         }
@@ -46,15 +58,27 @@ sections:
         }
 
         @media(max-width:1024px){
-          .masonry-gallery {
-            column-count: 2; /* 2 columns on tablets */
-          }
+          .masonry-gallery { column-count: 2; }
         }
 
         @media(max-width:768px){
-          .masonry-gallery {
-            column-count: 1; /* stack on mobile */
-          }
+          .masonry-gallery { column-count: 1; }
         }
         </style>
+
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const gallery = document.querySelector(".masonry-gallery");
+          if (!gallery) return;
+
+          const images = Array.from(gallery.querySelectorAll("img"));
+
+          for (let i = images.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [images[i], images[j]] = [images[j], images[i]];
+          }
+
+          images.forEach(img => gallery.appendChild(img));
+        });
+        </script>
 ---

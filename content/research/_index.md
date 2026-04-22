@@ -6,91 +6,63 @@ sections:
     content:
       text: |
         <div style="position: relative; width: 100vw; margin-left: calc(-50vw + 50%); overflow: hidden;" class="bio-opaque">
-        #### My research integrates **genomic and morphological data** from both extinct and extant taxa to reconstruct phylogenetic relationships and to examine morphological evolution across deep-sea and reef-associated fishes. By combining large-scale genomic data and morphology, I aim to clarify the evolutionary origins and infraordinal relationships of several enigmatic groups through a holistic phylogenetic lens. Incorporating extinct taxa into total-evidence frameworks allows me to better understand evolutionary patterns and morphological innovation through deep-time. 
-
-        ### Beryciformes and Trachichthyiformes
-
-        These early-diverging acanthopterygians exhibit remarkable diversity in form, ecology, and habitat preference. For my dissertation, I am currently working on incorporating both fossil and extant representatives to investigate **habitat shifts, bioluminescence, sensory adaptations, and sexual dimorphism** across these lineages, resolving phylogenetic relationships and uncovering patterns of morphological evolution.
-
-        ### Anglerfishes (Lophioidei)
-
-        My research on anglerfishes investigates their extraordinary adaptations for predation, including the origins and diversification of their remarkable luring strategies. Using a total-evidence framework combining ultraconserved elements, mitochondrial data, and morphology, I reconstructed the most **comprehensive phylogeny of Lophioidei to date**, revealing that mechanical lures evolved early in the common ancestor of the clade during the Late Cretaceous, while bioluminescent lures arose once within a derived deep-sea ceratioid lineage during the Oligocene — coinciding with major ecological transitions into pelagic deep-sea environments and elevated diversification rates. Chemical luring evolved independently twice: once in batfishes (Ogcocephalidae) during the Eocene, and again in the frogfish *Antennarius striatus*. These findings reveal how habitat shifts — especially into pelagic deep-sea environments — shape lure morphology, body form, and diversification.
-
-        ### Methodological Approach
-
-        Across most projects, I integrate **comparative morphology with genomic data**, including:
-
-          - Constructing morphological character matrices for both extinct and extant taxa.
-          - Sequencing and extracting molecular data for broader taxonomic coverage.
-          - Working directly with collection specimens, including **alcohol-preserved specimens, cleared-and-stained material, histology, fossils, and CT scan data**, alongside **genomic/molecular data** and **morphometric analyses**.
-          - Conducting geometric morphometric analyses to examine body-shape evolution in relation to ecological and evolutionary transitions.
-
-        This integrative approach allows me to link **form, function, and evolutionary history**, providing new insights into the diversification of deep-sea and reef-associated fishes, the origins of extreme morphological adaptations, and the tempo of evolutionary change following major environmental shifts.
-
-        <!-- Photo Grid -->
-        <div class="research-photo-grid-wrapper">
-          <div class="research-photo-grid">
-            <div class="left-column">
-              <img src="/images/Research_left.jpg" alt="Left Photo 1">
-              <img src="/images/Research_left2.jpg" alt="Left Photo 2">
-            </div>
-            <div class="right-column">
-              <img src="/images/Research_right.jpg" alt="Right Photo">
-            </div>
+        <p style="max-width: 860px; margin: 0 auto 2.5rem auto; font-size: 1.4rem; line-height: 1.7;">
+        I reconstruct evolutionary relationships of fishes to understand morphological evolution. My work focuses on deep-sea and reef-associated fishes, combining morphological and genomic data from extant and fossil taxa to investigate how these groups diversified and adapted over time.
+        </p>
+        <div class="research-columns">
+          <div class="research-col">
+            <img src="/images/AnglerPhylogeny.tiff" alt="Phylogenetics">
+            <h3>Phylogenetics</h3>
+            <p><strong>Understanding the evolutionary relationships of fishes is central to everything else I do.</strong> I use total-evidence approaches that combine morphological character data scored from museum specimens with genomic data to reconstruct well-supported phylogenies of poorly understood groups. My phylogenetic work has focused on anglerfishes (Lophioidei) and early-diverging acanthopterygians including Beryciformes and Trachichthyiformes, groups whose relationships have historically been difficult to resolve. Incorporating fossil taxa into these frameworks allows me to better place evolutionary events in time and understand patterns of diversification across deep-sea lineages.</p>
+          </div>
+          <div class="research-col">
+            <img src="/images/Double_anglerfish_Diceratias_pileatus_UW_150017_AJMaile.jpg" alt="Bioluminescence and Morphological Evolution">
+            <h3>Bioluminescence and Morphology</h3>
+            <p><strong>Several of the fish groups I work on have independently evolved bioluminescence, and understanding how and when these systems originated is a major focus of my research.</strong> In anglerfishes, I showed that bioluminescent lures evolved once within the deep-sea ceratioids during the Oligocene, coinciding after their transition into pelagic environments and an uptick in diversification. I have also worked on the anatomy and evolution of bioluminescent organs in slimeheads (Trachichthyidae). Across these projects I am interested in how novel morphological structures originate and what role ecological transitions play in driving their evolution.</p>
+          </div>
+          <div class="research-col">
+            <img src="/images/DSC_7132.jpg" alt="Museum Collections">
+            <h3>Museum Collections</h3>
+            <p><strong>Natural history collections are essential to my research.</strong> Working directly with alcohol-preserved specimens, cleared-and-stained material, histological sections, fossils, and computed tomography scan data gives me access to morphological diversity across hundreds of species that would otherwise be impossible to sample. Many deep-sea fishes are so rarely collected that museum specimens are the only means of studying their anatomy at all. Collections are also where my questions tend to start — variation that is obvious when you are looking at a tray of specimens is often variation worth explaining.</p>
           </div>
         </div>
         <style>
-        .research-photo-grid-wrapper {
-          width: 100%;
-          max-width: 1200px;
-          margin: 2rem auto;
+        .research-columns {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 2rem;
+          max-width: 1400px;
+          margin: 0 auto 3rem auto;
+          align-items: start;
         }
-        .research-photo-grid {
-          display: flex;
-          gap: 1rem;
-        }
-        .research-photo-grid .left-column {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          width: 33.333%;
-        }
-        .research-photo-grid .left-column img {
-          width: 100%;
-          height: auto;
-          border-radius: 0.5rem;
-          object-fit: cover;
-          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .research-photo-grid .left-column img:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        }
-        .research-photo-grid .right-column {
-          width: 66.666%;
+        .research-col {
           display: flex;
           flex-direction: column;
         }
-        .research-photo-grid .right-column img {
+        .research-col img {
           width: 100%;
-          height: 100%;
-          border-radius: 0.5rem;
+          aspect-ratio: 1 / 1;
           object-fit: cover;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          border-radius: 0.5rem;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+          margin-bottom: 1rem;
           transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .research-photo-grid .right-column img:hover {
+        .research-col img:hover {
           transform: translateY(-4px);
-          box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+          box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        }
+        .research-col h3 {
+          margin-top: 0;
+          margin-bottom: 0.5rem;
+        }
+        .research-col p {
+          margin: 0;
+          line-height: 1.7;
         }
         @media (max-width: 768px) {
-          .research-photo-grid {
-            flex-direction: column;
-          }
-          .research-photo-grid .left-column,
-          .research-photo-grid .right-column {
-            width: 100%;
+          .research-columns {
+            grid-template-columns: 1fr;
           }
         }
         </style>

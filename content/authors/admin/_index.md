@@ -1,6 +1,5 @@
 ---
 awards:
-
 education:
   - area: Ph.D. Ecology and Evolution - Expected completion, 2028
     date_start: "2023-01-01"
@@ -8,14 +7,12 @@ education:
     institution: University of Kansas
     summary: |
       Graduate Advisor: Dr. W. Leo Smith  
-
   - area: M.S. Biological Sciences (2023)
     date_start: "2021-01-01"
     date_end: "2023-12-31"
     institution: St. Cloud State University
     summary: |
       Graduate Advisor: Dr. Matthew P. Davis
-
   - area: B.S. Biodiversity, Ecology, and Evolution [Honors] (2023)
     date_start: "2017-01-01"
     date_end: "2020-12-31"
@@ -27,7 +24,7 @@ interests:
 - Phylogenetics and Systematics
 - Morphological and Molecular Evolution
 - Macroevolutionary Processes
-- 3D Modeling and Printing
+- 3D Visualization and Printing
 - Deep-Sea Biodiversity
 languages:
 - name:
@@ -73,10 +70,8 @@ work:
   position: 
   summary: |
 ---
+**I am a Ph.D. candidate in Ecology and Evolutionary Biology at the University of Kansas, working in the Ichthyology Division of the Biodiversity Institute and Natural History Museum. My research centers on the evolutionary relationships and morphological diversity of fishes, with a current focus on Beryciformes and Trachichthyiformes and a broader history with deep-sea groups.**
 
-**I’m a Ph.D. candidate in Ecology and Evolutionary Biology at the University of Kansas Biodiversity Institute and Natural History Museum, where I work in the Ichthyology Division. I study the evolutionary relationships and morphological diversity of fishes, currently focusing on Beryciformes and Trachichthyiformes, and have historically worked on various deep-sea groups.**
+**My work integrates morphology, molecular data, and ecological context to investigate how form and function evolve, with particular interest in anglerfishes and their bioluminescent lures, lizardfish body shape diversification, and the perianal bioluminescent organs of roughies.**
 
-**My research integrates morphology, molecular data, and ecological context to uncover how form and function evolve, particularly in deep-sea environments such as anglerfishes and their bioluminescent lures.**
-
-**I welcome inquiries about collaborations and invite you to explore my CV and social media to learn more about my work.**
-
+**I welcome inquiries about collaborations and am always glad to connect with others working at the intersection of systematics, morphology, and deep-sea biology.**
