@@ -63,6 +63,7 @@ sections:
               <span class="pub-author">A.J. Maile</span>, M.P. Davis<br>
               Ichthyology & Herpetology 114, 103–118 · 2026<br>
               <em>Featured in:</em><br>
+              <a href="https://www.nationalgeographic.com/animals/article/anglerfish-bioluminescent-lure-sex" target="_blank" rel="noopener noreferrer" class="pub-link">National Geographic</a><br>
               <a href="https://www.nytimes.com/2026/04/17/science/anglerfish-lure-evolution.html" target="_blank" class="pub-link">New York Times</a><br>
               <a href="https://www.science.org/content/article/why-do-anglerfish-have-glowing-lures-it-might-be-sex" target="_blank" class="pub-link">Science</a><br>
               <a href="https://news.ku.edu/news/article/research-traces-evolution-of-anglerfishes-famed-fishing-rod-lures" target="_blank" class="pub-link">University of Kansas News</a><br>
@@ -98,7 +99,7 @@ sections:
                   Anatomy and evolution of bioluminescent organs in slimeheads (Trachichthyidae)
                 </a>
               </strong><br>
-              <span class="pub-author">A.J. Maile</span>, M.J. Ghedotti, H.M. DeKay, W.L. Smith, M.P. Davis<br>
+              M.J. Ghedotti, H.M. DeKay, <span class="pub-author">A.J. Maile</span>, W.L. Smith, M.P. Davis<br>
               Journal of Morphology 282 (6), 820-832 · 2021<br>
               <strong>PDF:</strong>
               <a href="/pdfs/Ghedottietal2021.pdf" target="_blank" class="pub-link">Download</a><br>

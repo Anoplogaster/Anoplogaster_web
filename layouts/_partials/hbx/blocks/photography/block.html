@@ -1,0 +1,51 @@
+{{- $images := site.Data.photography.images -}}
+
+<script>document.documentElement.classList.add("photography-js");</script>
+
+<div class="photography-portfolio" data-photography-portfolio>
+  <header class="photography-heading">
+    <h1>Photography</h1>
+  </header>
+
+  <div class="photography-stream" data-photo-stream aria-label="Photography collection"></div>
+
+  <template data-photo-source>
+    {{- range $index, $image := $images -}}
+      {{ partial "photography/image" (dict "image" $image "index" $index) }}
+    {{- end -}}
+  </template>
+
+  <noscript>
+    <div class="photography-noscript-grid" aria-label="Photography collection">
+      {{- range $index, $image := $images -}}
+        {{ partial "photography/image" (dict "image" $image "index" $index) }}
+      {{- end -}}
+    </div>
+  </noscript>
+
+  <aside class="photography-recognition" aria-label="Photography media recognition">
+    <p>Selected photography featured in</p>
+    <p class="photography-recognition-links">
+      <a href="https://www.nationalgeographic.com/animals/article/anglerfish-bioluminescent-lure-sex" target="_blank" rel="noopener noreferrer">National Geographic</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://www.nytimes.com/2026/04/17/science/anglerfish-lure-evolution.html" target="_blank" rel="noopener noreferrer">The New York Times</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://www.science.org/content/article/why-do-anglerfish-have-glowing-lures-it-might-be-sex" target="_blank" rel="noopener noreferrer">Science</a>
+    </p>
+  </aside>
+
+  <dialog class="photography-lightbox" data-lightbox aria-label="Expanded photograph">
+    <div class="photography-lightbox-inner">
+      <button type="button" class="photography-lightbox-close" data-lightbox-close aria-label="Close fullscreen photograph">×</button>
+      <button type="button" class="photography-lightbox-nav photography-lightbox-prev" data-lightbox-prev aria-label="Previous photograph">‹</button>
+      <figure>
+        <img data-lightbox-image alt="">
+        <figcaption data-lightbox-caption aria-live="polite"></figcaption>
+      </figure>
+      <button type="button" class="photography-lightbox-nav photography-lightbox-next" data-lightbox-next aria-label="Next photograph">›</button>
+    </div>
+  </dialog>
+</div>
+
+{{- $script := resources.Get "js/photography.js" | minify | fingerprint -}}
+<script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" defer></script>

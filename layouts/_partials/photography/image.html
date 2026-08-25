@@ -1,0 +1,62 @@
+{{- $image := .image -}}
+{{- $resource := resources.Get (printf "media/photography/%s" $image.file) -}}
+{{- if not $resource -}}
+  {{- errorf "Photography image not found: %s" $image.file -}}
+{{- end -}}
+{{- $smallTarget := cond (lt $resource.Width 480) $resource.Width 480 -}}
+{{- $largeTarget := cond (lt $resource.Width 800) $resource.Width 800 -}}
+{{- $small := $resource.Resize (printf "%dx webp q82" $smallTarget) -}}
+{{- $large := $resource.Resize (printf "%dx webp q86" $largeTarget) -}}
+{{- $full := $resource.Process "webp q90" -}}
+{{- $orientation := "square" -}}
+{{- if gt (mul $resource.Width 100) (mul $resource.Height 120) -}}
+  {{- $orientation = "landscape" -}}
+{{- else if gt (mul $resource.Height 100) (mul $resource.Width 120) -}}
+  {{- $orientation = "portrait" -}}
+{{- end -}}
+{{- $label := $image.common | default $image.scientific | default "photograph" -}}
+{{- $srcset := slice (printf "%s %dw" $small.RelPermalink $small.Width) -}}
+{{- if gt $large.Width $small.Width -}}
+  {{- $srcset = $srcset | append (printf "%s %dw" $large.RelPermalink $large.Width) -}}
+{{- end -}}
+{{- if gt $full.Width $large.Width -}}
+  {{- $srcset = $srcset | append (printf "%s %dw" $full.RelPermalink $full.Width) -}}
+{{- end -}}
+
+<figure
+  class="photography-card"
+  data-photo-card
+  data-file="{{ $image.file }}"
+  data-orientation="{{ $orientation }}"
+  data-feature-candidate="{{ if $image.feature_candidate }}true{{ else }}false{{ end }}">
+  <button
+    type="button"
+    class="photography-image-button"
+    data-photo
+    data-full="{{ $full.RelPermalink }}"
+    data-alt="{{ $image.alt }}"
+    {{ with $image.common }}data-common="{{ . }}"{{ end }}
+    {{ with $image.scientific }}data-scientific="{{ . }}"{{ end }}
+    {{ with $image.detail }}data-detail="{{ . }}"{{ end }}
+    aria-label="View {{ $label }} fullscreen">
+    <img
+      src="{{ $small.RelPermalink }}"
+      srcset="{{ delimit $srcset ", " }}"
+      sizes="(max-width: 720px) 94vw, (max-width: 1200px) 46vw, 520px"
+      width="{{ $large.Width }}"
+      height="{{ $large.Height }}"
+      alt="{{ $image.alt }}"
+      decoding="async"
+      loading="lazy">
+  </button>
+  {{- if or $image.common $image.scientific $image.detail -}}
+    <figcaption>
+      <span>
+        {{- with $image.common }}{{ . }}{{ end -}}
+        {{- if and $image.common $image.scientific }} <span aria-hidden="true">·</span> {{ end -}}
+        {{- with $image.scientific }}<em>{{ . }}</em>{{ end -}}
+      </span>
+      {{- with $image.detail }}<small>{{ . }}</small>{{ end -}}
+    </figcaption>
+  {{- end -}}
+</figure>

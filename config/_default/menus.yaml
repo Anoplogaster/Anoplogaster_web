@@ -7,7 +7,7 @@ main:
   - name: Home
     url: /
     weight: 10
-  - name: Research Interests
+  - name: Research
     url: /research/
     weight: 11
   - name: Publications
@@ -16,6 +16,6 @@ main:
   - name: Education and Outreach
     url: /education/
     weight: 20
-  - name: Gallery
-    url: /gallery/
+  - name: Photography
+    url: /photography/
     weight: 40

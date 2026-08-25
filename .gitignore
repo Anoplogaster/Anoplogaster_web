@@ -21,6 +21,12 @@ hugo_stats.json
 # Auto-generated JS config
 **/assets/jsconfig.json
 
+# R session state and local project files
+.RData
+.Rhistory
+.Rproj.user/
+*.Rproj.user
+
 # ============================================================================
 # Node.js & Package Managers
 # ============================================================================
@@ -75,3 +81,4 @@ Desktop.ini
 
 *.log
 npm-debug.log*
+*.bak

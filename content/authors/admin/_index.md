@@ -13,7 +13,7 @@ education:
     institution: St. Cloud State University
     summary: |
       Graduate Advisor: Dr. Matthew P. Davis
-  - area: B.S. Biodiversity, Ecology, and Evolution [Honors] (2023)
+  - area: "B.S. Biology: Biodiversity, Ecology, and Evolution (Honors), 2020"
     date_start: "2017-01-01"
     date_end: "2020-12-31"
     institution: St. Cloud State University
@@ -35,21 +35,25 @@ organizations:
   url: https://eeb.ku.edu/people/maile-alex
 profiles:
 - icon: envelope
-  label: E-mail Me
+  label: Email Alex Maile
   url: mailto:alexmaile@ku.edu
 - icon: academicons/cv
-  label: CV
+  label: Download curriculum vitae
   url: /files/Maile_CV.pdf
 - icon: academicons/google-scholar
+  label: Google Scholar profile
   url: https://scholar.google.com/citations?user=zzIq7FEAAAAJ&hl=en&authuser=2
 - icon: brands/x
+  label: X profile
   url: https://x.com/Anoplogaster_
 - icon: brands/bluesky
+  label: Bluesky profile
   url: https://bsky.app/profile/anoplogaster.bsky.social
 - icon: brands/instagram
+  label: Scientific photography on Instagram
   url: https://www.instagram.com/whatthefishisthat_/
 pronouns: He/him
-role: Ph.D. Candidate - Ichthyology
+role: Ph.D. Candidate · Collections-Based Ichthyology & Systematics
 skills:
 status:
   icon: ""
@@ -70,8 +74,6 @@ work:
   position: 
   summary: |
 ---
-**I am a Ph.D. candidate in Ecology and Evolutionary Biology at the University of Kansas, working in the Ichthyology Division of the Biodiversity Institute and Natural History Museum. My research centers on the evolutionary relationships and morphological diversity of fishes, with a current focus on Beryciformes and Trachichthyiformes and a broader history with deep-sea groups.**
+I study the evolutionary relationships and morphological diversity of fishes through natural history collections. My research combines comparative anatomy, CT imaging, fossils, and genomic data to examine how fish lineages diversified and how novel structures evolved.
 
-**My work integrates morphology, molecular data, and ecological context to investigate how form and function evolve, with particular interest in anglerfishes and their bioluminescent lures, lizardfish body shape diversification, and the perianal bioluminescent organs of roughies.**
-
-**I welcome inquiries about collaborations and am always glad to connect with others working at the intersection of systematics, morphology, and deep-sea biology.**
+I am a Ph.D. candidate in Ecology and Evolutionary Biology at the University of Kansas, based in the Ichthyology Division of the Biodiversity Institute and Natural History Museum. Collections are both the foundation of my current work and the setting in which I am developing an independent research program in fish systematics and evolution.

@@ -1,0 +1,150 @@
+images:
+  - file: Double_anglerfish_Diceratias_pileatus_UW_150017_AJMaile.jpg
+    feature_candidate: true
+    common: Double anglerfish
+    scientific: Diceratias pileatus
+    detail: UW 150017
+    alt: Double anglerfish specimen photographed against a black background
+
+  - file: Pacific_footballfish_Himantolophus_sagamius_LACM_60082-1_MT-GGGG1_AJMaile.jpg
+    feature_candidate: true
+    common: Pacific footballfish
+    scientific: Himantolophus sagamius
+    detail: LACM 60082-1
+    alt: Pacific footballfish specimen photographed against a black background
+
+  - file: Ghostly_seadevil_Haplophryne_mollis_UW_157518_AJMaile.jpg
+    feature_candidate: true
+    common: Ghostly seadevil
+    scientific: Haplophryne mollis
+    detail: UW 157518
+    alt: Ghostly seadevil specimen photographed against a black background
+
+  - file: Frogfish_Antennarius_commerson_Personal_AJMaile.jpg
+    feature_candidate: true
+    common: Frogfish
+    scientific: Antennarius commerson
+    alt: Orange frogfish photographed against a black background
+
+  - file: Warty_Frogfish_Antennarius_maculatus_UW_020828_AJMaile.jpg
+    feature_candidate: true
+    common: Warty frogfish
+    scientific: Antennarius maculatus
+    detail: UW 020828
+    alt: Warty frogfish skeleton photographed against a black background
+
+  - file: Ancylopsetta_ommata_KUI_22951_Blue.jpg
+    feature_candidate: true
+    scientific: Ancylopsetta ommata
+    detail: KUI 22951
+    alt: Blue-lit flatfish skeleton photographed against a black background
+
+  - file: Lure_Pacific_footballfish_Himantolophus_sagamius_LACM_60082-1_MT-GGGG1_AJMaile.jpg
+    feature_candidate: true
+    common: Pacific footballfish lure
+    scientific: Himantolophus sagamius
+    detail: LACM 60082-1
+    alt: Bioluminescent Pacific footballfish lure against a black background
+
+  - file: Anomalops_katoptron_YMP_ICH_020676.jpg
+    feature_candidate: true
+    scientific: Anomalops katoptron
+    detail: YMP ICH 020676
+    alt: Fish skeleton and anatomical views against a black background
+
+  - file: Ancylopsetta_ommata_KUI_22951_White.jpg
+    scientific: Ancylopsetta ommata
+    detail: KUI 22951
+    alt: Flatfish skeleton photographed against a black background
+
+  - file: Bellator_militaris_TCWC_6818.17.jpg
+    feature_candidate: true
+    scientific: Bellator militaris
+    detail: TCWC 6818.17
+    alt: Fish skeleton shown from several anatomical views
+
+  - file: Circular_seabat_Halieutaea_fitzsimonsi_LACM_44745-6_AJMaile.jpg
+    common: Circular seabat
+    scientific: Halieutaea fitzsimonsi
+    detail: LACM 44745-6
+    alt: Circular seabat specimen photographed against a black background
+
+  - file: Frogfish_Antennarius_commerson_Personal_AJMaile_2.jpg
+    common: Frogfish
+    scientific: Antennarius commerson
+    alt: Orange frogfish photographed against a black background
+
+  - file: IMG_0003.jpg
+    alt: Two fluorescent fish photographed against a black background
+
+  - file: IMG_0009_touchup.jpg
+    alt: Fish specimen photographed against a black background
+
+  - file: IMG_0015.jpg
+    feature_candidate: true
+    alt: Three fluorescent fish specimens photographed against a black background
+
+  - file: IMG_0017_touchup1.jpg
+    alt: Preserved fish specimen photographed against a black background
+
+  - file: IMG_0017background.jpg
+    alt: Cleared and stained fish specimen on a white background
+
+  - file: IMG_0030.jpg
+    alt: Fluorescent fish skeleton photographed against a black background
+
+  - file: IMG_0035.jpg
+    alt: Fish lure photographed in profile against a black background
+
+  - file: IMG_2053.jpg
+    alt: Small fish photographed underwater on a reef
+
+  - file: IMG_2073.jpg
+    alt: Eel photographed underwater among reef growth
+
+  - file: IMG_2166.jpg
+    alt: Small fish photographed against a black background
+
+  - file: IMG_3979.jpg
+    alt: Fish specimen photographed against a black background
+
+  - file: IMG_5141.jpg
+    alt: Close view of a fish head and teeth against a black background
+
+  - file: IMG_7224.jpg
+    alt: Fish specimen viewed from above against a black background
+
+  - file: IMG_8363.jpg
+    alt: Anatomical fish drawings on a white background
+
+  - file: IMG_8364.jpg
+    alt: Fish skeleton and anatomical drawing on a white background
+
+  - file: IMG_8391.jpg
+    alt: Red fish specimen photographed against a black background
+
+  - file: IMG_8867.jpg
+    alt: Fluorescent fish specimen photographed against a black background
+
+  - file: IMG_8872.jpg
+    alt: Fluorescent fish specimen photographed against a black background
+
+  - file: Netdevil_Borophryne_apogon_LACM_30053-10_AJMaile.jpg
+    common: Netdevil
+    scientific: Borophryne apogon
+    detail: LACM 30053-10
+    alt: Netdevil specimen photographed against a black background
+
+  - file: Southern_seadevil_Ceratias_tentaculatus_LACM_11025-7_AJMaile.jpg
+    feature_candidate: true
+    common: Southern seadevil
+    scientific: Ceratias tentaculatus
+    detail: LACM 11025-7
+    alt: Southern seadevil specimen photographed against a black background
+
+  - file: TotalBody.jpg
+    alt: Cleared and stained fish specimen on a white background
+
+  - file: TouchedupBioluminescent.jpg
+    feature_candidate: true
+    alt: Bioluminescent fish photographed in dark water

@@ -1,0 +1,7 @@
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".homepage-hero a[title]").forEach(function (link) {
+      link.setAttribute("aria-label", link.getAttribute("title"));
+    });
+  });
+</script>
