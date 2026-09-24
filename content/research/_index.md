@@ -7,11 +7,11 @@ sections:
       text: |
         <div style="position: relative; width: 100vw; margin-left: calc(-50vw + 50%); overflow: hidden;" class="bio-opaque">
         <p style="max-width: 860px; margin: 0 auto 2.5rem auto; font-size: 1.4rem; line-height: 1.7;">
-        I reconstruct evolutionary relationships of fishes to understand morphological evolution. My work focuses on deep-sea and reef-associated fishes, combining morphological and genomic data from extant and fossil taxa to investigate how these groups diversified and adapted over time.
+        I reconstruct evolutionary relationships of fishes to understand morphological evolution. Drawing on natural history collections, my work focuses on deep-sea and reef-associated fishes, combining morphological and genomic data from extant and fossil taxa to investigate how these groups diversified and adapted over time.
         </p>
         <div class="research-columns">
           <div class="research-col">
-            <img src="/images/AnglerPhylogeny.tiff" alt="Phylogenetics">
+            <img src="/images/AnglerPhylogeny.webp" alt="Phylogenetics">
             <h3>Phylogenetics</h3>
             <p><strong>Understanding the evolutionary relationships of fishes is central to everything else I do.</strong> I use total-evidence approaches that combine morphological character data scored from museum specimens with genomic data to reconstruct well-supported phylogenies of poorly understood groups. My phylogenetic work has focused on anglerfishes (Lophioidei) and early-diverging acanthopterygians including Beryciformes and Trachichthyiformes, groups whose relationships have historically been difficult to resolve. Incorporating fossil taxa into these frameworks allows me to better place evolutionary events in time and understand patterns of diversification across deep-sea lineages.</p>
           </div>
@@ -71,4 +71,8 @@ sections:
       columns: 2
       view: full
       css_class: "bio-opaque bio-wide"
+  - block: journal-covers
+    id: journal-covers
+    design:
+      css_class: "journal-covers-section"
 ---

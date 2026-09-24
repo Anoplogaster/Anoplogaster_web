@@ -52,7 +52,7 @@ sections:
         <div style="position: relative; width: 100vw; margin-left: calc(-50vw + 50%); overflow: hidden; display: flex; flex-direction: column;" class="bio-opaque">
 
           <!-- Paper 4 -->
-          <div class="pub-card">
+          <div class="pub-card" id="maile-davis-2026">
             <img src="/images/Warty_Frogfish_Antennarius_maculatus_UW_020828_AJMaile.JPG">
             <div>
               <strong>
@@ -67,6 +67,8 @@ sections:
               <a href="https://www.nytimes.com/2026/04/17/science/anglerfish-lure-evolution.html" target="_blank" class="pub-link">New York Times</a><br>
               <a href="https://www.science.org/content/article/why-do-anglerfish-have-glowing-lures-it-might-be-sex" target="_blank" class="pub-link">Science</a><br>
               <a href="https://news.ku.edu/news/article/research-traces-evolution-of-anglerfishes-famed-fishing-rod-lures" target="_blank" class="pub-link">University of Kansas News</a><br>
+              <strong>Journal Cover:</strong>
+              <a href="/research/#journal-covers" class="pub-link">View on Research</a><br>
               <strong>Supplemental Data:</strong>
               <a href="https://www.ichthyologyandherpetology.org/i2025018" target="_blank" class="pub-link">Download</a>
             </div>

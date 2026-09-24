@@ -27,8 +27,10 @@
   class="photography-card"
   data-photo-card
   data-file="{{ $image.file }}"
+  data-image-index="{{ printf "%02d" (add .index 1) }}"
   data-orientation="{{ $orientation }}"
   data-feature-candidate="{{ if $image.feature_candidate }}true{{ else }}false{{ end }}">
+  <span class="photography-index" aria-hidden="true">IMG {{ printf "%02d" (add .index 1) }}</span>
   <button
     type="button"
     class="photography-image-button"

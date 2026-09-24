@@ -90,6 +90,18 @@ main,
   color: var(--text-primary);
 }
 
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
@@ -372,26 +384,27 @@ figcaption {
 }
 
 .homepage-hero .avatar-wrapper {
-  width: 240px !important;
-  height: 280px !important;
-  margin-bottom: 0 !important;
+  position: relative;
+  width: min(100%, 300px) !important;
+  height: auto !important;
+  margin-bottom: 0.35rem !important;
   overflow: hidden;
-  border: 3px solid rgba(238, 243, 247, 0.92);
-  border-radius: 1.1rem;
+  border: 1px solid rgba(57, 189, 229, 0.38);
+  border-radius: 0.7rem;
   background: var(--surface-elevated);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
   box-sizing: border-box;
 }
 
 .homepage-hero .avatar {
+  display: block;
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   border: 0 !important;
   border-radius: inherit !important;
-  object-fit: cover;
-  object-position: 50% 23%;
-  transform: scale(1.34);
-  transform-origin: 50% 24%;
+  object-fit: contain !important;
+  object-position: center;
+  transform: none;
   box-shadow: none !important;
 }
 
@@ -401,7 +414,17 @@ figcaption {
 }
 
 .homepage-hero .md\:col-span-4 {
-  gap: 1rem;
+  gap: 1.15rem;
+}
+
+.homepage-hero .flex.flex-wrap.justify-center.gap-4 {
+  gap: 0.65rem;
+  margin-top: 0.35rem;
+}
+
+.homepage-hero .w-12.h-12 {
+  width: 2.65rem;
+  height: 2.65rem;
 }
 
 .homepage-hero .md\:col-span-8 > .mb-12 {
@@ -447,9 +470,9 @@ figcaption {
   }
 
   .homepage-hero .avatar-wrapper {
-    width: 190px !important;
-    height: 222px !important;
-    border-radius: 0.95rem;
+    width: min(100%, 280px) !important;
+    height: auto !important;
+    border-radius: 0.65rem;
   }
 
   .homepage-hero .flex.flex-wrap.justify-center.gap-4 {
@@ -459,6 +482,144 @@ figcaption {
   .homepage-hero .w-12.h-12 {
     width: 2.6rem;
     height: 2.6rem;
+  }
+}
+
+/* Journal covers are research objects first: complete, uncropped, and quiet. */
+.journal-covers-section {
+  background: transparent;
+}
+
+.journal-covers {
+  width: min(1120px, calc(100% - 2rem));
+  margin: clamp(2.5rem, 7vw, 6rem) auto 0;
+}
+
+.journal-covers-heading {
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.journal-covers-kicker,
+.journal-cover-index {
+  margin: 0 0 0.4rem;
+  color: var(--accent) !important;
+  font-family: var(--font-display);
+  font-size: 0.7rem !important;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.journal-covers-heading h2 {
+  margin: 0;
+}
+
+.journal-covers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.journal-cover {
+  position: relative;
+  display: grid;
+  gap: 1.35rem;
+  min-width: 0;
+  padding: clamp(1rem, 2.5vw, 1.6rem);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: rgba(10, 15, 21, 0.82);
+  box-shadow: var(--shadow-surface);
+  -webkit-backdrop-filter: blur(6px) saturate(108%);
+  backdrop-filter: blur(6px) saturate(108%);
+}
+
+.journal-cover::before,
+.journal-cover::after {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  content: "";
+  pointer-events: none;
+}
+
+.journal-cover::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid var(--accent);
+  border-left: 1px solid var(--accent);
+}
+
+.journal-cover::after {
+  right: -1px;
+  bottom: -1px;
+  border-right: 1px solid var(--accent);
+  border-bottom: 1px solid var(--accent);
+}
+
+.journal-cover:only-child {
+  grid-template-columns: minmax(16rem, 27rem) minmax(0, 1fr);
+  align-items: center;
+  width: min(900px, 100%);
+  margin-inline: auto;
+}
+
+.journal-cover-object {
+  margin: 0;
+}
+
+.journal-cover-object img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.2rem;
+  object-fit: contain;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+}
+
+.journal-cover-details h3 {
+  margin: 0 0 0.5rem;
+}
+
+.journal-cover-issue,
+.journal-cover-description,
+.journal-cover-publication {
+  margin: 0.55rem 0 0;
+}
+
+.journal-cover-issue {
+  color: var(--text-muted) !important;
+  font-size: 0.9rem !important;
+}
+
+.journal-cover-publication span {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.journal-cover-publication a {
+  color: var(--text-secondary);
+}
+
+.journal-cover-publication a:hover {
+  color: var(--accent-hover);
+}
+
+@media (max-width: 720px) {
+  .journal-covers {
+    width: calc(100% - 1rem);
+    margin-top: 2.5rem;
+  }
+
+  .journal-cover:only-child {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -472,7 +633,6 @@ figcaption {
   margin-inline: auto;
 }
 
-.photography-heading,
 .photography-stream,
 .photography-noscript-grid,
 .photography-recognition {
@@ -480,17 +640,8 @@ figcaption {
   margin-inline: auto;
 }
 
-.photography-heading {
-  margin-bottom: clamp(1.5rem, 4vw, 3rem);
-}
-
-.photography-heading h1 {
-  margin: 0;
-  font-size: clamp(2.25rem, 5vw, 4rem);
-  font-weight: 600;
-}
-
 .photography-card {
+  position: relative;
   break-inside: avoid;
   margin: 0;
   overflow: hidden;
@@ -498,6 +649,38 @@ figcaption {
   border-radius: var(--radius-md);
   background: rgba(7, 10, 14, 0.88);
   box-shadow: var(--shadow-surface);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.photography-card::before,
+.photography-card::after {
+  position: absolute;
+  z-index: 2;
+  width: 0.8rem;
+  height: 0.8rem;
+  content: "";
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.photography-card::before {
+  top: 0.42rem;
+  left: 0.42rem;
+  border-top: 1px solid var(--accent);
+  border-left: 1px solid var(--accent);
+}
+
+.photography-card::after {
+  right: 0.42rem;
+  bottom: 0.42rem;
+  border-right: 1px solid var(--accent);
+  border-bottom: 1px solid var(--accent);
+}
+
+.photography-card:hover,
+.photography-card:focus-within {
+  border-color: var(--border-strong);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.28);
 }
 
 .photography-card-feature {
@@ -513,13 +696,38 @@ figcaption {
   display: flex;
   flex-direction: column;
   gap: clamp(3.5rem, 8vw, 7rem);
+  padding-top: clamp(0.75rem, 2vw, 1.5rem);
 }
 
 .photography-group {
+  position: relative;
   display: grid;
   align-items: start;
   gap: clamp(1rem, 3vw, 2.4rem);
   width: 100%;
+  padding-top: 1.35rem;
+}
+
+.photography-group::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: "FRAME " attr(data-sequence) " / " attr(data-layout);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
+.photography-group::after {
+  position: absolute;
+  top: 0.38rem;
+  right: 0;
+  width: clamp(2rem, 7vw, 4.5rem);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(57, 189, 229, 0.48));
+  content: "";
 }
 
 .photography-group-hero,
@@ -577,12 +785,24 @@ figcaption {
   margin: 0;
   border: 0;
   border-radius: 0;
-  transition: opacity 180ms ease, transform 240ms ease;
 }
 
-.photography-image-button:hover img {
-  opacity: 0.94;
-  transform: scale(1.008);
+.photography-index {
+  position: absolute;
+  z-index: 3;
+  top: 0.65rem;
+  right: 0.7rem;
+  padding: 0.2rem 0.34rem;
+  border: 1px solid rgba(57, 189, 229, 0.2);
+  border-radius: 0.2rem;
+  background: rgba(5, 8, 12, 0.72);
+  color: rgba(238, 243, 247, 0.72);
+  font-family: var(--font-display);
+  font-size: 0.56rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  pointer-events: none;
 }
 
 .photography-card figcaption {
@@ -736,10 +956,6 @@ body:has(.photography-lightbox[open]) {
 @media (max-width: 720px) {
   .photography-portfolio {
     width: calc(100% - 1rem);
-  }
-
-  .photography-heading {
-    padding-inline: 0.5rem;
   }
 
   .photography-group,

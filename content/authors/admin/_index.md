@@ -74,6 +74,6 @@ work:
   position: 
   summary: |
 ---
-I study the evolutionary relationships and morphological diversity of fishes through natural history collections. My research combines comparative anatomy, CT imaging, fossils, and genomic data to examine how fish lineages diversified and how novel structures evolved.
+I study the evolution of fishes and the anatomical structures behind some of their most unusual behaviors. Much of my work focuses on deep-sea fishes, including animals I may never have the opportunity to see alive. Natural history collections allow me to study these organisms through comparative anatomy, CT imaging, fossils, and genomic data, and to ask how fish lineages diversified and how novel structures evolved.
 
-I am a Ph.D. candidate in Ecology and Evolutionary Biology at the University of Kansas, based in the Ichthyology Division of the Biodiversity Institute and Natural History Museum. Collections are both the foundation of my current work and the setting in which I am developing an independent research program in fish systematics and evolution.
+I am a Ph.D. candidate in Ecology and Evolutionary Biology at the University of Kansas, based in the Ichthyology Division of the Biodiversity Institute and Natural History Museum. My goal is to build a career in a natural history museum where I can care for and grow collections, develop an independent research program in fish systematics and evolution, and mentor the next generation of scientists.

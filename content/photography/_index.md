@@ -9,5 +9,5 @@ sections:
     design:
       css_class: photography-section
       spacing:
-        padding: ["5rem", "0", "3rem", "0"]
+        padding: ["0.75rem", "0", "3rem", "0"]
 ---

@@ -3,11 +3,9 @@
 <script>document.documentElement.classList.add("photography-js");</script>
 
 <div class="photography-portfolio" data-photography-portfolio>
-  <header class="photography-heading">
-    <h1>Photography</h1>
-  </header>
+  <h1 class="visually-hidden" id="photography-title">Photography</h1>
 
-  <div class="photography-stream" data-photo-stream aria-label="Photography collection"></div>
+  <div class="photography-stream" data-photo-stream aria-labelledby="photography-title"></div>
 
   <template data-photo-source>
     {{- range $index, $image := $images -}}

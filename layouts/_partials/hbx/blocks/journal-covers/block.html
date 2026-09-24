@@ -1,0 +1,46 @@
+{{- $covers := site.Data.journal_covers.covers -}}
+
+<section class="journal-covers" aria-labelledby="journal-covers-title">
+  <header class="journal-covers-heading">
+    <p class="journal-covers-kicker">Research archive</p>
+    <h2 id="journal-covers-title">Journal Covers</h2>
+  </header>
+
+  <div class="journal-covers-grid">
+    {{- range $index, $cover := $covers -}}
+      {{- $resource := resources.Get (printf "media/%s" $cover.image) -}}
+      {{- if not $resource -}}
+        {{- errorf "Journal cover image not found: %s" $cover.image -}}
+      {{- end -}}
+      {{- $displayWidth := cond (lt $resource.Width 640) $resource.Width 640 -}}
+      {{- $largeWidth := cond (lt $resource.Width 1100) $resource.Width 1100 -}}
+      {{- $display := $resource.Resize (printf "%dx webp q88" $displayWidth) -}}
+      {{- $large := $resource.Resize (printf "%dx webp q92" $largeWidth) -}}
+
+      <article class="journal-cover" data-cover-id="{{ $cover.id }}">
+        <figure class="journal-cover-object">
+          <img
+            src="{{ $display.RelPermalink }}"
+            srcset="{{ $display.RelPermalink }} {{ $display.Width }}w{{ if gt $large.Width $display.Width }}, {{ $large.RelPermalink }} {{ $large.Width }}w{{ end }}"
+            sizes="(max-width: 720px) 88vw, (max-width: 1100px) 42vw, 440px"
+            width="{{ $large.Width }}"
+            height="{{ $large.Height }}"
+            alt="{{ $cover.alt }}"
+            loading="lazy"
+            decoding="async">
+        </figure>
+
+        <div class="journal-cover-details">
+          <p class="journal-cover-index">Cover {{ printf "%02d" (add $index 1) }}</p>
+          <h3>{{ $cover.journal }}</h3>
+          <p class="journal-cover-issue">{{ $cover.volume_issue }} <span aria-hidden="true">·</span> {{ $cover.date }}</p>
+          <p class="journal-cover-description">{{ $cover.description }}</p>
+          <p class="journal-cover-publication">
+            <span>Associated publication</span>
+            <a href="{{ $cover.publication_url }}">{{ $cover.publication_title }}</a>
+          </p>
+        </div>
+      </article>
+    {{- end -}}
+  </div>
+</section>

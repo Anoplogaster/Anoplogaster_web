@@ -49,6 +49,8 @@
   const createGroup = (type, cards, groupIndex) => {
     const group = document.createElement('div');
     group.className = `photography-group photography-group-${type}`;
+    group.dataset.sequence = String(groupIndex + 1).padStart(2, '0');
+    group.dataset.layout = type.toUpperCase();
     if (type === 'large') {
       group.classList.add(groupIndex % 8 === 4 ? 'photography-align-start' : 'photography-align-end');
     }
