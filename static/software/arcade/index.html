@@ -8,11 +8,15 @@
   <title>Angry Anglerfish</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305080D'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23FF2748'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="cabinet.css">
+  <link rel="stylesheet" href="learning.css">
   <script src="engine.js" defer></script>
   <script src="assets/audio/arcade-assault-approved-v1.js" defer></script>
   <script src="audio.js" defer></script>
   <script src="scores.js" defer></script>
   <script src="vessels.js" defer></script>
+  <script src="learning-content.js" defer></script>
+  <script src="learning.js" defer></script>
+  <script src="learning-ui.js" defer></script>
   <script src="game.js" defer></script>
 </head>
 <body data-state="loading">
@@ -101,6 +105,10 @@
         <span class="instrument-label">LOCAL BEST</span>
         <output id="best-value" class="instrument-value">000000</output>
       </div>
+      <button id="discovery-counter" class="instrument learning-discovery-counter" type="button" aria-label="Review Discovery Collection" hidden>
+        <span class="instrument-label">DISCOVERIES</span>
+        <span id="discovery-count-value" class="instrument-value">00/16</span>
+      </button>
     </section>
 
     <section class="screen-housing" aria-label="Game display">
@@ -130,6 +138,12 @@
     </section>
 
     <section class="control-deck" aria-label="Game controls">
+      <div class="learning-control-row">
+        <button id="learning-toggle" class="cabinet-button learning-toggle" type="button" aria-pressed="true" aria-describedby="learning-support">Learning Mode: ON</button>
+        <p id="learning-support" class="learning-support">Discover the science behind deep-sea life as you play.</p>
+        <button id="discovery-review" class="cabinet-button learning-collection-button" type="button" aria-haspopup="dialog" aria-controls="learning-review-dialog">DISCOVERY COLLECTION</button>
+        <p id="learning-storage-note" class="learning-storage-note" role="status" hidden>Browser storage is unavailable. Discoveries and Learning Mode preferences are kept for this arcade session only.</p>
+      </div>
       <div class="controls-main">
         <button id="start-button" class="cabinet-button start-button" type="button" disabled><span class="button-indicator" aria-hidden="true"></span>INITIALIZING…</button>
         <button id="pause-button" class="cabinet-button secondary-button" type="button" disabled>PAUSE</button>
@@ -152,9 +166,57 @@
       </div>
       <div class="deck-bottomline" aria-hidden="true"><span class="warning-plate">KEEP YOUR LIGHT ALIVE</span><div class="deck-vent"></div><span class="deck-badge">A.I. / 07</span></div>
     </section>
+    <section id="learning-summary" class="learning-postgame" aria-labelledby="learning-summary-title" hidden>
+      <h2 id="learning-summary-title">DISCOVERY SUMMARY</h2>
+      <p id="learning-summary-copy"></p>
+      <button id="learning-summary-review" class="learning-button" type="button" aria-haspopup="dialog" aria-controls="learning-review-dialog">REVIEW DISCOVERIES & REFERENCES</button>
+    </section>
+    <section id="learning-prompt" class="learning-postgame learning-prompt" aria-labelledby="learning-prompt-title" hidden>
+      <h2 id="learning-prompt-title">READY FOR ANOTHER DIVE?</h2>
+      <p>You've discovered some of the extraordinary biology of the deep sea! Would you like to keep learning as you play, or try an uninterrupted arcade experience?</p>
+      <div class="learning-choice-grid">
+        <button class="learning-button learning-choice" data-learning-choice="true" type="button"><span>KEEP LEARNING</span><small>Continue discovering deep-sea science.</small></button>
+        <button class="learning-button learning-choice" data-learning-choice="false" type="button"><span>ARCADE MODE</span><small>Play without educational interruptions.</small></button>
+      </div>
+      <p class="learning-support">Your choice will not restart the game. Select Play Again when you are ready.</p>
+    </section>
     <p id="arcade-note" class="arcade-note">Arcade exaggeration: five attached males is not a documented condition for <i>Diceratias pileatus</i>.</p>
     <footer class="cabinet-footer"><span class="footer-status"><i aria-hidden="true"></i> RESEARCH & RECREATION DIVISION</span><span>One dive. Make it count.</span></footer>
   </main>
+  <dialog id="learning-lesson-dialog" class="learning-dialog" aria-labelledby="learning-lesson-title" aria-describedby="learning-lesson-body">
+    <header class="learning-dialog-header">
+      <p class="learning-kicker">SCIENTIFIC DISCOVERY <span id="learning-lesson-number"></span></p>
+      <h2 id="learning-lesson-title"></h2>
+    </header>
+    <div class="learning-dialog-scroll">
+      <div id="learning-lesson-body" class="learning-prose"></div>
+      <div id="learning-lesson-citation" class="learning-citation"></div>
+      <p class="learning-paused-note">Your dive is paused. Take as much time as you need.</p>
+    </div>
+    <footer class="learning-dialog-actions">
+      <div class="learning-action-pair">
+        <button id="learning-continue" class="learning-button" type="button">CONTINUE</button>
+        <button id="learning-skip" class="learning-button" type="button">SKIP LESSON</button>
+      </div>
+      <button id="learning-lesson-off" class="learning-button learning-quiet-button" type="button">TURN LEARNING MODE OFF</button>
+    </footer>
+  </dialog>
+  <dialog id="learning-review-dialog" class="learning-dialog learning-review-dialog" aria-labelledby="learning-review-title">
+    <header class="learning-dialog-header learning-review-header">
+      <div><p class="learning-kicker">NATURAL HISTORY LOG</p><h2 id="learning-review-title">Discovery Collection</h2></div>
+      <button id="learning-review-close" class="learning-button learning-close-button" type="button" aria-label="Close Discovery Collection">CLOSE</button>
+    </header>
+    <div class="learning-dialog-scroll">
+      <p id="learning-review-summary" class="learning-review-summary"></p>
+      <p id="learning-review-storage-note" class="learning-storage-note" hidden>Browser storage is unavailable. This collection is kept for this arcade session only.</p>
+      <div id="learning-review-body"></div>
+    </div>
+    <footer class="learning-dialog-actions learning-review-actions">
+      <button id="learning-review-toggle" class="learning-button learning-quiet-button" type="button" aria-pressed="true">Learning Mode: ON</button>
+      <button id="learning-review-done" class="learning-button" type="button">DONE</button>
+    </footer>
+  </dialog>
+  <p id="learning-live-status" class="visually-hidden" role="status" aria-live="polite"></p>
   <p id="live-status" class="visually-hidden" role="status" aria-live="polite">Preparing the game.</p>
 </body>
 </html>

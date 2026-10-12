@@ -1,0 +1,82 @@
+/* Educational interface only; no organism pixels or game-field geometry change. */
+.learning-control-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px 18px;margin:0 0 16px;padding-bottom:14px;border-bottom:1px solid #70445266}
+.learning-control-row .cabinet-button{min-height:44px}
+.learning-toggle{white-space:nowrap;text-transform:uppercase}
+.learning-support{margin:0;color:#c6cbd2;font:400 13px/1.55 var(--cab-reading,Inter,sans-serif)}
+.learning-storage-note{grid-column:1/-1;margin:0;color:#e0c2cb;font:400 13px/1.55 var(--cab-reading,Inter,sans-serif)}
+.learning-hud-visible .instrument-panel{grid-template-columns:1.2fr 1fr 1fr 1fr 1fr 1.2fr 1.15fr}
+.learning-discovery-counter{min-height:44px;padding:4px 8px;border:0;border-left:1px solid var(--cab-line,#553744);border-radius:0;background:transparent;cursor:pointer}
+.learning-discovery-counter .instrument-label{color:#d1bbc2}
+.learning-discovery-counter:hover .instrument-value{text-decoration:underline;text-underline-offset:4px}
+.learning-discovery-counter:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.learning-postgame{margin:18px 3px 0;padding:20px;border:1px solid #754550;border-radius:8px;background:#0d1017;color:#eef3f7}
+.learning-postgame h2{margin:0 0 10px;font:600 20px/1.25 var(--cab-display,"Exo 2",sans-serif);letter-spacing:.04em}
+.learning-postgame>p{margin:0 0 16px;font:400 16px/1.6 var(--cab-reading,Inter,sans-serif);max-width:76ch}
+.learning-postgame>.learning-support{margin:14px 0 0;font-size:13px}
+.learning-choice-grid,.learning-action-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.learning-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;min-width:44px;max-width:100%;padding:12px 18px;border:1px solid #9b6070;border-radius:5px;background:#26151e;color:#f7f9fb;font:600 13px/1.35 var(--cab-display,"Exo 2",sans-serif);letter-spacing:.025em;cursor:pointer}
+.learning-button:hover{background:#38202b;border-color:#ff8ca0}
+.learning-button:focus-visible,.learning-dialog a:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.learning-choice{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:16px 18px;min-height:88px}
+.learning-choice span{font-size:15px}
+.learning-choice small{font:400 14px/1.5 var(--cab-reading,Inter,sans-serif);letter-spacing:0;color:#d7dfe7}
+.learning-dialog{box-sizing:border-box;width:min(660px,calc(100% - 32px));max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);padding:0;border:1px solid #b56b80;border-radius:10px;background:#10151e;color:#eef3f7;box-shadow:0 20px 80px #000c;font-family:var(--cab-reading,Inter,sans-serif);overflow:hidden}
+.learning-dialog[open]{display:flex;flex-direction:column}
+.learning-dialog::backdrop{background:rgba(0,3,9,.82)}
+.learning-dialog-header{flex-shrink:0;padding:24px 26px 18px;border-bottom:1px solid #50303e;background:linear-gradient(110deg,#25141d,#111620 72%)}
+.learning-kicker{margin:0 0 10px;color:#ffadbd;font:600 11px/1.5 var(--cab-display,"Exo 2",sans-serif);letter-spacing:.1em}
+.learning-kicker span{margin-left:8px;color:#d2dce7;letter-spacing:.04em}
+.learning-dialog h2{margin:0;font:600 clamp(24px,4vw,30px)/1.2 var(--cab-display,"Exo 2",sans-serif);letter-spacing:0}
+.learning-dialog-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:22px 26px;scrollbar-color:#8c5164 #111620}
+.learning-prose,.learning-prose p{font:400 17px/1.65 var(--cab-reading,Inter,sans-serif);color:#eef3f7}
+.learning-prose p{margin:0 0 14px}
+.learning-prose p:last-child{margin-bottom:0}
+.learning-prose i,.learning-prose em,.learning-citation i,.learning-full-references i{font-style:italic}
+.learning-citation{margin-top:18px;color:#c3d0dc;font-size:14px;line-height:1.6}
+.learning-dialog a{display:inline-flex;align-items:center;min-height:44px;color:#a4e3ff;text-underline-offset:4px;overflow-wrap:anywhere}
+.learning-dialog a:hover{color:#fff}
+.learning-paused-note{margin:20px 0 0;padding-top:14px;border-top:1px solid #3c3543;color:#b6c4d1;font-size:13px;line-height:1.6}
+.learning-dialog-actions{flex-shrink:0;padding:18px 26px 22px;border-top:1px solid #50303e;background:#10131b}
+.learning-action-pair .learning-button{min-height:48px}
+.learning-quiet-button{background:transparent;border-color:#6a5260;font-size:12px}
+#learning-lesson-off{width:100%;margin-top:12px}
+.learning-review-dialog{width:min(820px,calc(100% - 32px))}
+.learning-review-header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.learning-close-button{flex-shrink:0;padding-inline:14px}
+.learning-review-summary{margin:0 0 20px;color:#d8e3ed;font-size:15px;line-height:1.6}
+.learning-review-article{padding:22px 0;border-top:1px solid #3b4655}
+.learning-review-article:first-child{padding-top:0;border-top:0}
+.learning-review-article h3{margin:0 0 12px;font:600 22px/1.3 var(--cab-display,"Exo 2",sans-serif)}
+.learning-review-tags{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.learning-review-tags span{padding:4px 8px;border:1px solid #656675;border-radius:4px;color:#d2dde9;font-size:11px;line-height:1.4}
+.learning-full-references{margin-top:16px;color:#c7d4e1;font-size:14px;line-height:1.6}
+.learning-full-references h4{margin:0 0 8px;font:600 13px/1.5 var(--cab-display,"Exo 2",sans-serif);letter-spacing:.03em}
+.learning-full-references p{margin:0 0 12px;overflow-wrap:anywhere}
+.learning-reference-link{margin-left:6px}
+.learning-review-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.learning-modal-open{overflow:hidden}
+[hidden]{display:none!important}
+@media(max-width:680px){
+  .learning-control-row{grid-template-columns:1fr 1fr;gap:10px 8px;margin-bottom:14px}
+  .learning-control-row .learning-support{grid-column:1/-1;grid-row:2;font-size:13px}
+  .learning-control-row .cabinet-button{font-size:10px;padding-inline:7px}
+  .learning-hud-visible .instrument-panel{grid-template-columns:1fr 1fr 1fr}
+  .learning-discovery-counter{grid-column:1/-1;flex-direction:row;gap:10px;justify-content:center;border-left:0;border-top:1px solid #70445266;margin-top:4px;padding-top:8px}
+  .learning-discovery-counter .instrument-value{font-size:18px}
+  .learning-postgame{padding:16px 14px;margin-top:14px}
+  .learning-postgame h2{font-size:18px}
+  .learning-choice-grid{grid-template-columns:1fr}
+  .learning-dialog,.learning-review-dialog{width:calc(100% - 20px);max-height:calc(100dvh - 20px);border-radius:8px}
+  .learning-dialog-header{padding:18px 18px 14px}
+  .learning-dialog h2{font-size:24px}
+  .learning-dialog-scroll{padding:18px}
+  .learning-prose,.learning-prose p{font-size:16px;line-height:1.65}
+  .learning-dialog-actions{padding:14px 18px 18px}
+  .learning-action-pair{gap:8px}
+  .learning-action-pair .learning-button{padding-inline:10px;font-size:12px}
+  .learning-review-header{align-items:flex-start;gap:10px}
+  .learning-close-button{font-size:11px;padding-inline:10px}
+  .learning-review-article h3{font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){.learning-dialog,.learning-button{animation:none!important;transition:none!important}}
+@media(forced-colors:active){.learning-dialog,.learning-button,.learning-postgame,.learning-review-tags span{border:1px solid CanvasText}.learning-dialog::backdrop{background:Canvas}.learning-dialog a{color:LinkText}}

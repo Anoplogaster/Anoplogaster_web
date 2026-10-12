@@ -16,6 +16,7 @@
   const vessels = new ArcadeVessels({ reducedMotion });
   const listeners = new AbortController();
   const listen = (target, type, callback, options = {}) => target.addEventListener(type, callback, { ...options, signal: listeners.signal });
+  let learning = null, learningUi = null, lessonResume = false, reviewResume = false;
   const engine = new ArcadeEngine({ darterEnabled: true, onEvent: event => {
     if (event.type === 'start') vessels.reset();
     sounds.setState(engine.state);
@@ -32,10 +33,48 @@
       releaseInputs();
       $('live-status').textContent = `Game over. Score ${engine.score}.${newPersonalBest ? ' New local personal best.' : ''}`;
     }
+    // Record discoveries now; open a panel only after the simulation step has
+    // finished, so pausing cannot leave half of a damage/spawn update running.
+    learning?.handleEvent(event);
   }});
   engine.reducedMotion = reducedMotion;
+  learning = new ArcadeLearning({ curriculum: ArcadeCurriculum,
+    onChange: () => learningUi?.sync(learning, engine.state),
+    onLesson: lesson => {
+      lessonResume = engine.state === 'playing';
+      pause(true);
+      learningUi.showLesson(lesson);
+      $('live-status').textContent = `Discovery: ${lesson.title}. Dive and music paused. No reading time limit.`;
+    },
+    onCloseLesson: () => {
+      learningUi.closeLesson();
+      const shouldResume = lessonResume; lessonResume = false;
+      if (shouldResume && !exited && !document.hidden) resume();
+      else renderHud();
+    }
+  });
+  function openDiscoveryReview() {
+    if (!learning.openReview()) return;
+    reviewResume = engine.state === 'playing';
+    if (reviewResume) pause(true);
+    learningUi.showReview({ ids: [...learning.collectionIds], gameIds: [...learning.gameDiscoveries],
+      queuedIds: [...learning.queuedIds], state: engine.state });
+  }
+  learningUi = new ArcadeLearningUI({ curriculum: ArcadeCurriculum,
+    onToggle: enabled => learning.setEnabled(enabled),
+    onCloseLesson: reason => learning.closeLesson(reason),
+    onReview: openDiscoveryReview,
+    onCloseReview: () => {
+      learning.closeReview();
+      const shouldResume = reviewResume; reviewResume = false;
+      if (shouldResume && !exited && !document.hidden) resume();
+      else renderHud();
+    },
+    onChoice: enabled => learning.chooseExperience(enabled)
+  });
+  learningUi.sync(learning, engine.state);
   // Development access for repeatable local acceptance checks, not a second game.
-  window.anglerfishArcade = { engine, assets: images, sounds, scores, vessels, exit: exitGame,
+  window.anglerfishArcade = { engine, assets: images, sounds, scores, vessels, learning, learningUi, exit: exitGame,
     get ready() { return ready; }, get exited() { return exited; }, get frameId() { return frameId; } };
 
   const keyMap = { w:'up', W:'up', ArrowUp:'up', s:'down', S:'down', ArrowDown:'down',
@@ -70,17 +109,18 @@
     else engine.lure = false;
   }
   function start() {
-    if (!ready || exited || engine.state === 'dying') return;
+    if (!ready || exited || engine.state === 'dying' || learning.blocked) return;
     sounds.unlock(); newPersonalBest = false;
     releaseInputs(); engine.start(); accumulator = 0; previous = performance.now();
     canvas.focus({ preventScroll: true }); renderHud();
+    learning.tick(engine);
   }
-  function pause() {
-    if (engine.state !== 'playing') return;
+  function pause(educational = false) {
+    if (engine.state !== 'playing' || (learning.blocked && !educational)) return;
     engine.pause(); releaseInputs(); accumulator = 0; renderHud();
   }
   function resume() {
-    if (engine.state !== 'paused' || exited) return;
+    if (engine.state !== 'paused' || exited || learning.blocked) return;
     sounds.unlock();
     releaseInputs(); engine.resume(); previous = performance.now(); accumulator = 0;
     canvas.focus({ preventScroll: true }); renderHud();
@@ -110,6 +150,7 @@
   });
   listen($('exit-button'), 'click', exitGame);
   listen(window, 'keydown', event => {
+    if (learning.blocked) return; // Native educational dialogs own keyboard input.
     // Do not swallow normal keyboard activation on buttons or other controls.
     if (event.key === 'Escape') { event.preventDefault(); if (!event.repeat) engine.state === 'paused' ? resume() : pause(); return; }
     const control = keyMap[event.key];
@@ -171,6 +212,7 @@
     if (frameId !== null) cancelAnimationFrame(frameId);
     frameId = null; accumulator = 0; previous = 0;
     sounds.destroy(); vessels.clear(); resizeObserver.disconnect(); listeners.abort();
+    learning.destroy(); learningUi.destroy();
     document.body.dataset.state = 'exited';
     $('live-status').textContent = 'Game closed. Gameplay and audio stopped.';
     return true;
@@ -335,6 +377,7 @@
     $('best-value').previousElementSibling.textContent=scores.available ? 'LOCAL BEST' : 'TAB BEST';
     document.querySelectorAll('[data-heart]').forEach((heart,i)=>heart.classList.toggle('lost',i>=engine.hearts));
     $('hearts').setAttribute('aria-label',`${engine.hearts} of 3 hearts remaining`);
+    learningUi.sync(learning, engine.state);
     if(lastState===engine.state)return;
     lastState=engine.state;document.body.dataset.state=ready?engine.state:'loading';
     const dying=engine.state==='dying';
@@ -364,6 +407,8 @@
           engine.update(1/120);
           if(engine.state==='playing')vessels.update(1/120,engine.time);
           accumulator-=1/120;
+          learning.tick(engine);
+          if (!['playing','dying'].includes(engine.state)) { accumulator = 0; break; }
         }
       } else accumulator=0;
       render();renderHud();
