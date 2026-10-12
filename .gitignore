@@ -47,6 +47,10 @@ node_modules/
 # Development Tools
 # ============================================================================
 
+# Local artwork/prototype/review material. Publish only the bounded runtime
+# copies in static/software/, never source masters, experiments or QA records.
+/dev/software-pixel-art/
+
 # IDE & Editors
 .vscode/
 .idea/

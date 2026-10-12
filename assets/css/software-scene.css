@@ -1,0 +1,53 @@
+/* Software-only composition: original organism pixels remain unfiltered. */
+.software-scene{width:min(1120px,calc(100% - 2rem));margin:12px auto 50px;color:var(--text-primary,#eef3f7);font-family:var(--font-reading,Inter,sans-serif)}
+.software-scene-title{font-family:var(--font-display,"Exo 2",sans-serif);font-size:clamp(2rem,4vw,3rem);margin:0 0 24px;line-height:1.15}
+.software-scene-panel{padding:clamp(1.2rem,2.8vw,2rem);background:rgba(15,21,29,.88);border:1px solid var(--border,#2a3542);border-radius:var(--radius-md,.75rem);box-shadow:var(--shadow-surface,0 12px 32px rgba(0,0,0,.22));-webkit-backdrop-filter:blur(7px) saturate(110%);backdrop-filter:blur(7px) saturate(110%)}
+
+/* The inner box clips deliberate exits, not idle anatomy or the expanded jaw. */
+.software-stage{--software-icon-size:108px;position:relative;display:grid;grid-template-columns:minmax(0,.95fr) 234px minmax(0,1.13fr);align-items:center;gap:18px;min-height:360px;padding:24px 12px 48px;box-sizing:border-box;overflow:hidden;isolation:isolate}
+.software-region{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.software-fish-control{display:block;position:relative;width:100%;min-width:44px;min-height:44px;padding:0!important;border:0!important;border-radius:0;background:transparent!important;box-shadow:none!important;cursor:pointer;appearance:none;line-height:0;color:inherit}
+.software-fish-control:focus-visible{outline:2px solid var(--accent,#39bde5);outline-offset:5px;border-radius:5px}
+.software-fish-control img,.software-whale-male{display:block;width:100%;max-width:none;height:auto;object-fit:contain;filter:none!important;user-select:none;pointer-events:none;-webkit-user-drag:none}
+.software-diceratias{max-width:420px;aspect-ratio:1536/1024;animation:software-hover 7.6s ease-in-out infinite}
+.software-diceratias .software-diceratias-male{position:absolute;width:25.4952314535585%;left:23.3817413047849%;top:67.4476025331725%}
+
+/* Center the resting illustration; retain a registered common frame below it. */
+.software-whale-home{display:block;width:min(100%,480px);min-height:0;aspect-ratio:2172/724}
+.software-whalefish{aspect-ratio:2172/1026;animation:software-hover 9.2s ease-in-out infinite}
+.software-whalefish img{position:absolute;left:0;top:0;width:100%;height:auto}
+.software-whalefish.is-swimming{position:absolute;z-index:4;animation:none;transform:none}
+.software-whalefish:disabled{opacity:1;cursor:default}
+.software-whale-male{position:absolute;left:0;top:0;z-index:5;width:120px;visibility:hidden;animation:software-male-hover 6.2s ease-in-out infinite}
+.software-whale-male.is-following{animation:none;transform:none}
+
+/* Fixed anchors stay put while each empty position enters the mouth. */
+.software-region-apps{flex-direction:row;gap:18px;align-self:center;position:static}
+.software-app-slot{display:flex;align-items:center;justify-content:center;min-height:152px;width:var(--software-icon-size);flex:0 0 var(--software-icon-size)}
+.software-app{position:relative;display:block;width:var(--software-icon-size);height:var(--software-icon-size)}
+.software-stage.is-consuming .software-app{z-index:6}
+.software-app-icon-anchor{display:block;width:var(--software-icon-size);height:var(--software-icon-size)}
+.software-app [data-software-icon]{display:block;box-sizing:border-box;width:var(--software-icon-size);height:var(--software-icon-size);background:rgba(10,21,30,.58);border:1px solid rgba(57,189,229,.24);border-radius:12px;transform-origin:center;transition:translate 180ms ease;max-width:none}
+.software-stage.is-consuming .software-app [data-software-icon]{translate:0 0!important;transition:none}
+
+/* Localized atmospheric feedback; no filters or recoloring on the fish PNGs. */
+.software-fish-control::after{content:"";position:absolute;pointer-events:none;opacity:0;transform:translate(-50%,-50%);transition:opacity 180ms ease}
+.software-diceratias::after{left:87.3%;top:8%;width:52px;height:52px;background:radial-gradient(circle,rgba(57,189,229,.20),rgba(57,189,229,.08) 35%,transparent 68%)}
+.software-whalefish::after{left:14%;top:34%;width:24%;height:45%;background:radial-gradient(ellipse,rgba(206,59,65,.13),transparent 68%)}
+.software-fish-control:focus-visible::after{opacity:1}
+.software-whalefish.is-swimming::after{opacity:0!important}
+.software-stage.is-paused .software-diceratias,.software-stage.is-paused .software-whalefish,.software-stage.is-paused .software-whale-male{animation-play-state:paused}
+.software-consumed{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font:600 13px/1.5 var(--font-display,"Exo 2",sans-serif);letter-spacing:.06em;white-space:nowrap;color:var(--accent,#39bde5);margin:0}
+.software-consumed span{display:block;color:var(--text-secondary,#a5b1bd);font-size:10px;margin-top:7px;letter-spacing:.05em}
+.software-touch-hint{display:none;text-align:center;font-size:11px;line-height:1.4;color:var(--text-muted,#7f8b98);margin:4px 0 0}
+.software-scene [hidden]{display:none!important}
+
+/* Restrained release message, outside the primary translucent panel. */
+.software-scene .software-updates{margin:clamp(2rem,5vw,3.25rem) 0 0;text-align:center;color:var(--text-secondary,#a5b1bd);font:400 14px/1.65 var(--font-reading,Inter,sans-serif)}
+
+@keyframes software-hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes software-male-hover{0%,100%{transform:translate(0,0)}50%{transform:translate(3px,-2px)}}
+@media(hover:hover) and (pointer:fine){.software-fish-control:hover:not(:disabled)::after{opacity:1}.software-app:hover [data-software-icon]{translate:0 -3px}}
+@media(hover:none){.software-touch-hint{display:block}}
+@media(max-width:850px){.software-scene{margin:8px auto 36px}.software-scene-title{margin-bottom:20px}.software-scene-panel{padding:18px 10px 22px}.software-stage{--software-icon-size:96px;grid-template-columns:1fr;gap:28px;min-height:0;padding:20px 8px 44px}.software-diceratias{width:min(100%,370px)}.software-region-apps{width:100%;gap:32px}.software-app-slot{min-height:148px}.software-whale-home{width:min(100%,470px)}.software-region-whalefish{min-height:175px;justify-content:flex-start}.software-consumed{top:48%;font-size:12px}.software-scene .software-updates{margin-top:2rem}}
+@media(prefers-reduced-motion:reduce){.software-diceratias,.software-whalefish,.software-whale-male{animation:none!important}.software-app [data-software-icon],.software-fish-control::after{transition:none}.software-app:hover [data-software-icon]{translate:0 0}}

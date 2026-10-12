@@ -1,0 +1,4 @@
+# Internal interaction keys only. Public positions intentionally remain empty.
+apps:
+  - id: metrics
+  - id: sequences

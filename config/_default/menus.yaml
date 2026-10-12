@@ -19,3 +19,6 @@ main:
   - name: Photography
     url: /photography/
     weight: 40
+  - name: Software
+    url: /software/
+    weight: 50

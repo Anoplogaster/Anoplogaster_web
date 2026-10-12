@@ -1,0 +1,76 @@
+/* Angry Anglerfish — user-selected neon-red/white cabinet lighting theme. */
+@import url("cabinet-system.css");
+@font-face {
+  font-family: "Inter";
+  src: url("assets/Inter.var.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("assets/Inter-Italic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Exo 2";
+  src: url("assets/Exo2-SemiBold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+:root {
+  --cab-black: #05080D;
+  --cab-charcoal: #0D1117;
+  --cab-blue: #34131B; /* Legacy token name: current dark-red panel tone. */
+  --cab-accent: #FF2748;
+  --cab-electric: #FF2748;
+  --cab-white: #EEF3F7;
+  --cab-core: #FFFFFF;
+  --cab-display: "Exo 2", "Arial Narrow", Arial, sans-serif;
+  --cab-reading: Inter, Arial, sans-serif;
+  --cab-mono: "Courier New", Courier, monospace;
+  --cab-screen-ratio: 2 / 1;
+  --cab-title-characters: 15;
+}
+
+/* Physical hardware only. Preserve the underwater canvas, biological sources
+ * and cyan esca unchanged; no filter or color overlay is applied to them. */
+body {
+  background: radial-gradient(ellipse at 50% 5%, #25141b 0, #151117 42%, transparent 75%),
+    repeating-linear-gradient(90deg, transparent 0 89px, #ffffff02 90px, transparent 91px), var(--cab-black);
+}
+.arcade { background: linear-gradient(135deg, var(--cab-blue), transparent 28%), repeating-linear-gradient(96deg, #ffffff03 0 1px, transparent 1px 4px), linear-gradient(105deg, var(--cab-charcoal), #100b10 46%, var(--cab-charcoal)); }
+.maker-symbol { border-color: #69515a; color: #c3a7ae; }
+.marquee { background: linear-gradient(115deg, #29161e, var(--cab-charcoal) 22% 76%, #29161e); }
+.screw { border-color: #1b171a; background: radial-gradient(circle at 35% 30%, #a08e93, #54454b 65%, #282027); }
+.screw::after { background: #251d23; box-shadow: 0 1px #d2b3bd2e; }
+.marquee-vent { border-color: #261c23; background: repeating-linear-gradient(0deg, #19131a 0 4px, #493941 4px 6px, #99808a55 6px 7px); }
+.marquee-glass { border-color: #281d25; background: repeating-linear-gradient(90deg, var(--cab-line) 0 1px, transparent 1px 46px), repeating-linear-gradient(0deg, #ffffff04 0 1px, transparent 1px 20px), radial-gradient(ellipse at 50% 45%, #291018, #0b070d 75%); box-shadow: inset 0 4px 9px #000b, 0 1px #c9a9b465; }
+.marquee-glass::before { background: linear-gradient(112deg, #ffffff08, transparent 43%, #ffffff03 44%, transparent 60%); }
+.nixie-tube { border-color: #633541; border-top-color: #c7a0ad68; background: radial-gradient(ellipse at 50% 60%, var(--cab-glow), transparent 66%), linear-gradient(105deg, #f6e8ea1c, transparent 24%, #0008 81%, #f0dfe518), #10080c; box-shadow: inset 1px 0 #f5dce815, inset -2px 0 4px #0008, 0 1px 2px #000c; }
+.nixie-tube::before { border-color: #bb839416; background: repeating-linear-gradient(0deg, #a46f7b15 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, #b5788713 0 1px, transparent 1px 4px); }
+.nixie-tube::after { border-top-color: #b47a8950; background: repeating-linear-gradient(90deg, #271e24 0 3px, #8759634f 3px 4px), linear-gradient(#69444f, #35212a); }
+.nixie-cathode { stroke: #c4a3af42; }
+.marquee-rule { color: #a87988; }
+.marquee-rule i { background: linear-gradient(90deg, transparent, #8c5767); }
+.instrument-panel { background: linear-gradient(#25141d, #100c12); }
+.instrument-value, .hearts { background: repeating-linear-gradient(90deg, #f0ced707 0 1px, transparent 1px 14px), linear-gradient(110deg, #ffffff08, transparent 35%), #0a080d; }
+.screen-housing { background: #1c131b; border-color: #63414f55; }
+.signal-light { background: var(--cab-accent); box-shadow: 0 0 5px var(--cab-glow); }
+.screen-bezel { border-color: #75515f; background: linear-gradient(125deg, #44323b, #79616c 3%, #44323b 7%, #261c24 35%, #674f5a 91%, #806572 97%, #403039); box-shadow: inset 0 1px #d5b6c460, 0 2px 3px #0009; }
+.screen-glass { border-color: #0b090c; box-shadow: inset 0 0 25px #0008, 0 1px #bc8c9f50, 0 -1px #000; }
+.control-deck { background: linear-gradient(120deg, #ffffff05 1px, transparent 1px) right 12px top 6px / 22px 22px, repeating-linear-gradient(2deg, #ffffff03 0 1px, transparent 1px 5px), linear-gradient(104deg, #291720, var(--cab-charcoal) 28% 74%, #291720); }
+.cabinet-button, .overlay-action { background: linear-gradient(#301823, #120b12); }
+.sound-indicator { border-color: #85566b; background: #20131d; }
+.sound-button[aria-pressed="true"] .sound-indicator { border-color: var(--cab-accent); box-shadow: 0 0 5px var(--cab-glow); }
+.touch-joystick { background: radial-gradient(circle, var(--cab-blue) 0 29%, #10090e 30% 63%, var(--cab-edge) 64% 66%, #201018 67%); }
+.joystick-knob { background: radial-gradient(circle at 35% 25%, #864956, var(--cab-blue) 60%, #160910); box-shadow: 0 4px 7px #0009, inset 0 1px #f4dce666; }
+.touch-joystick.held .joystick-knob { background: radial-gradient(circle at 35% 25%, var(--cab-accent), var(--cab-blue) 60%, #230c15); }
+.touch-button { background: linear-gradient(var(--cab-blue), #180b13); }
+kbd { border-color: #a9788b4f; border-bottom-color: #21121a; background: #39212b; box-shadow: inset 0 1px #d4a3b513; }
+.key-pair b { color: #b88c9c; }
+.warning-plate { border-color: #ae8a9750; background: #38232ba8; }
+.deck-vent { background: repeating-linear-gradient(90deg, #21141b 0 3px, #96677855 3px 5px); border-color: #27171f; }

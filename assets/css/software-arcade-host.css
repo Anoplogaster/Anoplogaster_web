@@ -1,0 +1,68 @@
+/* Isolated lazy arcade overlay; no site palette or biological-art overrides. */
+.software-arcade-host {
+  box-sizing: border-box;
+  width: min(1440px, calc(100vw - 24px));
+  max-width: none;
+  height: calc(100vh - 24px);
+  height: calc(100dvh - 24px);
+  max-height: none;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #ff274899;
+  border-radius: 7px;
+  color: #eef3f7;
+  background: #05080d;
+  box-shadow: 0 24px 90px #000c;
+  overflow: hidden;
+}
+.software-arcade-host:not([open]) { display: none; }
+.software-arcade-host[open] { display: flex; flex-direction: column; }
+.software-arcade-host::backdrop { background: #03070ee6; }
+.software-arcade-host__bar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 62px;
+  padding: 8px 14px;
+  border-bottom: 1px solid #ff274840;
+  background: #111117;
+}
+.software-arcade-host__bar h2 { margin: 0; font: 600 18px/1.2 "Exo 2", Arial, sans-serif; color: #eef3f7; }
+.software-arcade-host__exit {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 10px 17px;
+  border: 1px solid #ff2748;
+  border-radius: 3px;
+  background: #29151a;
+  color: #fff;
+  font: 600 13px/1.2 "Exo 2", Arial, sans-serif;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.software-arcade-host__exit:hover { background: #42202a; }
+.software-arcade-host__exit:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.software-arcade-host__status {
+  position: absolute;
+  top: 78px;
+  left: 16px;
+  right: 16px;
+  margin: 0;
+  color: #cad3dc;
+  font: 14px/1.5 Inter, Arial, sans-serif;
+  pointer-events: none;
+}
+.software-arcade-host__status[hidden] { display: none; }
+.software-arcade-host__frame-slot { flex: 1 1 auto; min-height: 0; width: 100%; }
+.software-arcade-host__frame-slot iframe { display: block; width: 100%; height: 100%; border: 0; background: #05080d; }
+@media (max-width: 740px) {
+  .software-arcade-host { width: 100%; height: 100vh; height: 100dvh; border: 0; border-radius: 0; }
+  .software-arcade-host__bar { min-height: 60px; padding: 7px 10px; }
+  .software-arcade-host__bar h2 { font-size: 17px; }
+}
+@media (forced-colors: active) {
+  .software-arcade-host, .software-arcade-host__bar { border: 1px solid CanvasText; }
+  .software-arcade-host__exit { border-color: ButtonText; }
+}

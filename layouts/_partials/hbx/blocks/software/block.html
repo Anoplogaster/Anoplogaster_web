@@ -1,0 +1,51 @@
+{{- $apps := site.Data.software.apps | default (slice (dict "id" "metrics") (dict "id" "sequences")) -}}
+{{- $style := resources.Get "css/software-scene.css" | minify | fingerprint -}}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+
+<div class="software-scene" data-software-scene>
+  <h1 class="software-scene-title">Software</h1>
+  <div class="software-scene-panel">
+  <div class="software-stage" data-software-stage data-state="idle">
+    <div class="software-region software-region-diceratias">
+      <button id="software-anglerfish" class="software-fish-control software-diceratias" type="button" aria-label="Play Angry Anglerfish" aria-describedby="software-anglerfish-description" aria-haspopup="dialog" aria-controls="software-arcade-dialog">
+        <img class="software-diceratias-female" src="{{ "/software/fish/diceratias-female-rest-v1.png" | relURL }}" width="768" height="512" alt="Approved Enhanced female Diceratias pileatus">
+        <img class="software-diceratias-male" src="{{ "/software/fish/diceratias-male-v1.png" | relURL }}" width="532" height="266" alt="Inferred Diceratias male attached beneath the female pectoral fin">
+      </button>
+    </div>
+
+    <div class="software-region software-region-apps" role="group" aria-label="Future software positions">
+      {{- range $apps -}}
+      <div class="software-app-slot" data-software-app-slot="{{ .id }}">
+        <div class="software-app" data-software-app="{{ .id }}">
+          <span class="software-app-icon-anchor" data-software-icon-anchor><span class="software-app-placeholder" data-software-icon aria-hidden="true"></span></span>
+        </div>
+      </div>
+      {{- end -}}
+      <p id="software-consumed" class="software-consumed" role="status" hidden>SOFTWARE CONSUMED<span>REFRESH PAGE TO RESTORE</span></p>
+    </div>
+
+    <div class="software-region software-region-whalefish">
+      <div class="software-whale-home" data-software-whale-home>
+        <button id="software-whalefish" class="software-fish-control software-whalefish" type="button" aria-label="Activate whalefish software-consumption animation" aria-describedby="software-whalefish-description" disabled data-opening-src="{{ "/software/fish/rhamphocetichthys-female-opening-v1.png" | relURL }}" data-maximum-src="{{ "/software/fish/rhamphocetichthys-female-maximum-v1.png" | relURL }}">
+          <img data-software-whale-female src="{{ "/software/fish/rhamphocetichthys-female-rest-v1.png" | relURL }}" width="1086" height="362" alt="Approved Enhanced female Rhamphocetichthys savagei, facing left">
+        </button>
+      </div>
+    </div>
+    <img class="software-whale-male" data-software-whale-male src="{{ "/software/fish/rhamphocetichthys-male-v1.png" | relURL }}" width="626" height="226" alt="Approved hypothetical male Rhamphocetichthys savagei swimming independently; not attached">
+  </div>
+  <p class="software-touch-hint" aria-hidden="true">Tap a fish to interact.</p>
+  </div>
+  <p id="software-anglerfish-description" class="visually-hidden">Female Diceratias pileatus with an inferred male attached beneath her pectoral fin.</p>
+  <p id="software-whalefish-description" class="visually-hidden">Female Rhamphocetichthys savagei with a hypothetical male swimming independently. Activating the female consumes the right empty software position, then the left; refresh the page to restore them.</p>
+  <p class="visually-hidden" data-software-scene-status aria-live="polite"></p>
+  <noscript><p>Interactive illustrations require JavaScript.</p></noscript>
+  {{ partial "software/citations.html" . }}
+</div>
+
+{{ partial "software/arcade-host.html" . }}
+{{- $hostStyle := resources.Get "css/software-arcade-host.css" | minify | fingerprint -}}
+<link rel="stylesheet" href="{{ $hostStyle.RelPermalink }}" integrity="{{ $hostStyle.Data.Integrity }}">
+{{- $script := resources.Get "js/software-scene.js" | minify | fingerprint -}}
+<script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" defer></script>
+{{- $hostScript := resources.Get "js/software-arcade-host.js" | minify | fingerprint -}}
+<script src="{{ $hostScript.RelPermalink }}" integrity="{{ $hostScript.Data.Integrity }}" defer></script>
