@@ -64,6 +64,18 @@ body {
 .screen-glass { border-color: #0b090c; box-shadow: inset 0 0 25px #0008, 0 1px #bc8c9f50, 0 -1px #000; }
 .control-deck { background: linear-gradient(120deg, #ffffff05 1px, transparent 1px) right 12px top 6px / 22px 22px, repeating-linear-gradient(2deg, #ffffff03 0 1px, transparent 1px 5px), linear-gradient(104deg, #291720, var(--cab-charcoal) 28% 74%, #291720); }
 .cabinet-button, .overlay-action { background: linear-gradient(#301823, #120b12); }
+
+/* Keep the complete start instructions and heart explanation readable in the
+ * short mobile screen. Only ready-state spacing changes; gameplay stays 2:1.
+ * Smaller phones may scroll the introduction instead of shrinking its text. */
+@media (max-width: 680px) {
+  body[data-state="ready"] .game-overlay { padding:4px 12px;justify-content:flex-start;overflow-y:auto; }
+  body[data-state="ready"] .game-overlay>* { flex-shrink:0; }
+  body[data-state="ready"] .overlay-kicker { display:none; }
+  body[data-state="ready"] .game-overlay h2 { font-size:18px;margin:2px 0 4px; }
+  body[data-state="ready"] .survival-copy { display:block;margin-top:4px;font-size:8px;line-height:1.35; }
+  body[data-state="ready"] .overlay-action { margin-top:4px; }
+}
 .sound-indicator { border-color: #85566b; background: #20131d; }
 .sound-button[aria-pressed="true"] .sound-indicator { border-color: var(--cab-accent); box-shadow: 0 0 5px var(--cab-glow); }
 .touch-joystick { background: radial-gradient(circle, var(--cab-blue) 0 29%, #10090e 30% 63%, var(--cab-edge) 64% 66%, #201018 67%); }

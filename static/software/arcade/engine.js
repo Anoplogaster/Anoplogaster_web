@@ -5,7 +5,6 @@
   const HEIGHT = 600;
   const SOURCE_WIDTH = 1536;
   const SOURCE_HEIGHT = 1024;
-  const HOVER_MARGIN = 10;
   const STEP = 1 / 120;
   const MAX_DELTA = 0.25;
   const REACTION_MARGIN = 0.25;
@@ -64,6 +63,11 @@
     { x: 1268, y: 665, rx: 100, ry: 95 },
     { x: 1244, y: 825, rx: 110, ry: 180 }
   ];
+  // Forgiving arcade contact zones, independent of the registered oral
+  // landmarks used to draw meals and steer attracted swimmers. The head
+  // band spans the anterior skull/gape/chin, not the tail or posterior body.
+  const FEEDING_REGION = { x: 1250, y: 620, rx: 265, ry: 350 };
+  const MALE_COLLECTION_REGION = { x: 1180, y: 630, rx: 350, ry: 355 };
   // Alpha > 8 bounds measured with Sharp from the unchanged 1774 x 887
   // Enhanced male PNG. Bounds are pixel-cell edges, not transparent padding.
   const MALE_ANATOMY = {
@@ -110,12 +114,13 @@
     esca: { x: 1340, y: 82 },
     mouth: { x: 1306, y: 600, rx: 130, ry: 93 },
     body: { x: 985, y: 609, rx: 325, ry: 286 },
-    // Union of the approved rest/opening/maximum alpha > 8 anatomy. All
-    // poses retain original source registration and 280/1536 scale. Reserve
-    // the entire lowered jaw at ALL times, so opening never clamps/snaps the
-    // player or clips the jaw. Exclusive maxima include the last visible pixel.
-    // Only the faint alpha <= 8 halo and transparent canvas are excluded.
-    bounds: { minX: 33, minY: 58, maxX: 1503, maxY: 1375 }
+    // Measured alpha > 8 rest-body/tail/fin envelope, exclusive pixel-cell
+    // maxima. Inspecting the unchanged 1536x1024 PNG excludes the upper
+    // illicium/esca region (y<200 and x>1300,y<420); the body starts at213.
+    // Movement never reserves transparent padding, a future lowered jaw,
+    // or male sprites. Those extensions may cross an edge; the main resting
+    // anatomy stays visible. Fixed bounds prevent feeding/attachment snaps.
+    bounds: { minX: 33, minY: 213, maxX: 1503, maxY: 991 }
   };
 
   function clamp(value, min, max) {
@@ -184,6 +189,12 @@
     const dy = (a.y - b.y) / ry;
     // Sum-of-radii ellipse is a compact, deliberately forgiving approximation
     // of two silhouettes. The spawn safety calculation is more conservative.
+    return dx * dx + dy * dy <= 1;
+  }
+
+  function insideEllipse(point, ellipse) {
+    const dx = (point.x - ellipse.x) / ellipse.rx;
+    const dy = (point.y - ellipse.y) / ellipse.ry;
     return dx * dx + dy * dy <= 1;
   }
 
@@ -304,14 +315,27 @@
 
     pose() {
       const hover = this.reducedMotion ? 0 : Math.round(Math.sin(this.time * 2) * 1.5);
-      return { x: Math.round(this.player.x), y: Math.round(this.player.y) + hover };
+      const bounds = this.movementBounds();
+      // Clamp only the rendered integer hover at an edge. The fixed player
+      // limits need no extra margin and do not depend on the current jaw pose.
+      return { x: Math.round(this.player.x),
+        y: clamp(Math.round(this.player.y) + hover, bounds.minY, bounds.maxY) };
+    }
+
+    movementBounds() {
+      const visible = this._visibleBounds(this.player.width / SOURCE_WIDTH);
+      // Integer origin limits keep the actual pixel-cell envelope inside
+      // 0..1200/0..600 even after the renderer rounds position and adds hover.
+      return {
+        minX: Math.ceil(-visible.minX), maxX: Math.floor(WIDTH - visible.maxX),
+        minY: Math.ceil(-visible.minY), maxY: Math.floor(HEIGHT - visible.maxY)
+      };
     }
 
     geometry() {
       const player = this.player;
       const pose = this.pose();
       const scale = player.width / SOURCE_WIDTH;
-      const visible = this._visibleBounds(scale);
       const oral = ORAL_POSES[this.feedingPose().index];
       return {
         mouth: {
@@ -330,15 +354,17 @@
           rx: ANATOMY.body.rx * scale,
           ry: ANATOMY.body.ry * scale
         },
-        // Origin limits use the measured female + attached-male anatomical
-        // union. The 10px vertical margin includes 2px hover clearance; the
-        // empty PNG padding does not consume usable movement space.
-        bounds: {
-          minX: HOVER_MARGIN - visible.minX,
-          maxX: WIDTH - HOVER_MARGIN - visible.maxX,
-          minY: HOVER_MARGIN - visible.minY,
-          maxY: HEIGHT - HOVER_MARGIN - visible.maxY
-        }
+        feeding: {
+          x: pose.x + FEEDING_REGION.x * scale,
+          y: pose.y + FEEDING_REGION.y * scale,
+          rx: FEEDING_REGION.rx * scale, ry: FEEDING_REGION.ry * scale
+        },
+        maleCollection: {
+          x: pose.x + MALE_COLLECTION_REGION.x * scale,
+          y: pose.y + MALE_COLLECTION_REGION.y * scale,
+          rx: MALE_COLLECTION_REGION.rx * scale, ry: MALE_COLLECTION_REGION.ry * scale
+        },
+        bounds: this.movementBounds()
       };
     }
 
@@ -356,36 +382,12 @@
     }
 
     _visibleBounds(scale) {
-      const result = {
+      return {
         minX: ANATOMY.bounds.minX * scale,
         minY: ANATOMY.bounds.minY * scale,
         maxX: ANATOMY.bounds.maxX * scale,
         maxY: ANATOMY.bounds.maxY * scale
       };
-      const maleScale = MALE_WIDTH / MALE_ANATOMY.width;
-      const male = MALE_ANATOMY.bounds;
-      for (const attachment of this.attachments) {
-        const slot = ATTACHMENT_SLOTS[attachment.slot];
-        if (!slot) continue;
-        const cosine = Math.cos(slot.rotation);
-        const sine = Math.sin(slot.rotation);
-        for (const x of [male.minX, male.maxX]) {
-          for (const y of [male.minY, male.maxY]) {
-            const dx = (x - MALE_ANATOMY.width / 2) * maleScale;
-            const dy = (y - MALE_ANATOMY.height / 2) * maleScale;
-            const px = slot.x * scale + dx * cosine - dy * sine;
-            const py = slot.y * scale + dx * sine + dy * cosine;
-            result.minX = Math.min(result.minX, px);
-            result.minY = Math.min(result.minY, py);
-            result.maxX = Math.max(result.maxX, px);
-            result.maxY = Math.max(result.maxY, py);
-          }
-        }
-      }
-      // All five approved slots currently fit inside the female's measured
-      // envelope. Including them explicitly prevents future clipping without
-      // adding the males' transparent image margins to the movement limits.
-      return result;
     }
 
     get attachedMaleCount() {
@@ -1064,19 +1066,22 @@
         prey.x += prey.vx * dt;
         const edge = Math.min(HEIGHT / 2, prey.h / 2 + 8);
         prey.y = clamp(prey.y + prey.vy * dt, edge, HEIGHT - edge);
-        // Capture requires the actor center INSIDE the conservative oral
-        // cavity. A sprite's fins/tail merely touching a fish/body/lure/male
-        // cannot expand the mouth collider or produce points.
-        const oralX = (prey.x - geometry.mouth.x) / geometry.mouth.rx;
-        const oralY = (prey.y - geometry.mouth.y) / geometry.mouth.ry;
-        if (oralX * oralX + oralY * oralY <= 1) this._capturePrey(prey, geometry);
+        // Broad anterior-head contact is intentionally forgiving. Retain the
+        // original oral ellipse as well, including the maximum-gape cavity;
+        // the tail/posterior body and separate esca still cannot eat prey.
+        if (insideEllipse(prey, geometry.feeding) || insideEllipse(prey, geometry.mouth)) {
+          this._capturePrey(prey, geometry);
+        }
         if (prey.pending || prey.x + prey.w / 2 >= -40) survivors.push(prey);
       }
       this.prey = survivors;
 
       const attachmentRegion = this.maleAttachmentRegion(geometry);
       const remainingMales = [];
+      const visitedMales = new Set();
       for (const male of this.males) {
+        if (visitedMales.has(male)) continue;
+        visitedMales.add(male);
         male.phase += dt * 1.5;
         const cruiseVx = Number.isFinite(male._cruiseVx) ? male._cruiseVx : male.vx;
         const cruiseVy = Number.isFinite(male._cruiseVy) ? male._cruiseVy : 0;
@@ -1101,7 +1106,9 @@
         male.vy += (targetVy - male.vy) * steering;
         male.x += male.vx * dt;
         male.y = clamp(male.y + male.vy * dt, male.h / 2 + 8, HEIGHT - male.h / 2 - 8);
-        if (attracted && ellipsesOverlap(attachmentRegion, {
+        // The lure steers toward its unchanged attachment target, but actual
+        // head/anterior-body contact can collect a male with the light OFF.
+        if (this.attachedMaleCount < MAX_MALES && ellipsesOverlap(geometry.maleCollection, {
           x: male.x, y: male.y, rx: male.w * 0.12, ry: male.h * 0.25
         })) {
           const slot = this.attachedMaleCount;
@@ -1169,6 +1176,8 @@
   ArcadeEngine.PREY_INTERVAL = PREY_INTERVAL;
   ArcadeEngine.PREY_VISIBLE_LIMIT = PREY_VISIBLE_LIMIT;
   ArcadeEngine.ORAL_POSES = ORAL_POSES;
+  ArcadeEngine.FEEDING_REGION = FEEDING_REGION;
+  ArcadeEngine.MALE_COLLECTION_REGION = MALE_COLLECTION_REGION;
   ArcadeEngine.DARTER_WINDOW = DARTER_WINDOW;
   ArcadeEngine.DARTER_LIMIT = DARTER_LIMIT;
   ArcadeEngine.DARTER_WIDTH = DARTER_WIDTH;

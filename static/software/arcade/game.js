@@ -346,7 +346,7 @@
     $('pause-button').textContent=engine.state==='paused'?'RESUME':'PAUSE';
     $('start-button').textContent=dying?'DIVE ENDING…':engine.state==='playing'?'PAUSE GAME':engine.state==='paused'?'RESUME GAME':engine.state==='over'?'PLAY AGAIN':'START GAME';
     const states={
-      ready:['DIVE WHEN READY','ANGRY ANGLERFISH','Eat prey. Evade hazards. Light your lure to attract food and uncommon males.','','START GAME'],
+      ready:['DIVE WHEN READY','ANGRY ANGLERFISH','Avoid the lancetfish and crown jellyfish while eating as much prey as possible. Use your bioluminescent lure to attract prey toward your mouth!','','START GAME'],
       paused:['INSTRUMENTS ON HOLD','PAUSED','Your dive is safe. Resume when you’re ready.','WASD / arrows swim · hold SPACE for the lure','RESUME DIVE'],
       over:['ANGRY ANGLERFISH / SIGNAL LOST','GAME OVER',newPersonalBest ? (scores.available ? 'NEW LOCAL PERSONAL BEST' : 'NEW TAB BEST · browser storage unavailable') : 'Three hearts. One life. Another dive?',`FINAL SCORE ${String(engine.score).padStart(6,'0')} · SURVIVED ${timeText(engine.time)}`,'PLAY AGAIN']
     };
