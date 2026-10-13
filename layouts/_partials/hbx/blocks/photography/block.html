@@ -1,25 +1,14 @@
 {{- $images := site.Data.photography.images -}}
 
-<script>document.documentElement.classList.add("photography-js");</script>
-
 <div class="photography-portfolio" data-photography-portfolio>
   <h1 class="visually-hidden" id="photography-title">Photography</h1>
 
-  <div class="photography-stream" data-photo-stream aria-labelledby="photography-title"></div>
-
-  <template data-photo-source>
+  {{/* Source order is the existing data-list order, with native image links. */}}
+  <div class="photography-stream photography-masonry" data-photo-stream data-ready aria-labelledby="photography-title">
     {{- range $index, $image := $images -}}
       {{ partial "photography/image" (dict "image" $image "index" $index) }}
     {{- end -}}
-  </template>
-
-  <noscript>
-    <div class="photography-noscript-grid" aria-label="Photography collection">
-      {{- range $index, $image := $images -}}
-        {{ partial "photography/image" (dict "image" $image "index" $index) }}
-      {{- end -}}
-    </div>
-  </noscript>
+  </div>
 
   <aside class="photography-recognition" aria-label="Photography media recognition">
     <p>Selected photography featured in</p>
@@ -32,15 +21,24 @@
     </p>
   </aside>
 
-  <dialog class="photography-lightbox" data-lightbox aria-label="Expanded photograph">
+  <dialog class="photography-lightbox" id="photography-lightbox" data-lightbox aria-label="Expanded photograph">
     <div class="photography-lightbox-inner">
-      <button type="button" class="photography-lightbox-close" data-lightbox-close aria-label="Close fullscreen photograph">×</button>
-      <button type="button" class="photography-lightbox-nav photography-lightbox-prev" data-lightbox-prev aria-label="Previous photograph">‹</button>
+      <div class="photography-lightbox-toolbar">
+        <button type="button" class="photography-lightbox-nav photography-lightbox-prev" data-lightbox-prev aria-label="Previous photograph">‹</button>
+        <p class="photography-lightbox-counter" data-lightbox-counter role="status" aria-live="polite"></p>
+        <button type="button" class="photography-lightbox-nav photography-lightbox-next" data-lightbox-next aria-label="Next photograph">›</button>
+        <div class="photography-lightbox-utilities">
+          <button type="button" class="photography-lightbox-play" data-lightbox-play aria-pressed="false">Play</button>
+          <a class="photography-lightbox-original" data-lightbox-original target="_blank" rel="noopener noreferrer">View original</a>
+        </div>
+        <button type="button" class="photography-lightbox-close" data-lightbox-close aria-label="Close fullscreen photograph">×</button>
+      </div>
       <figure>
-        <img data-lightbox-image alt="">
+        <div class="photography-lightbox-image-area" data-lightbox-stage>
+          <img data-lightbox-image alt="" decoding="async" draggable="false">
+        </div>
         <figcaption data-lightbox-caption aria-live="polite"></figcaption>
       </figure>
-      <button type="button" class="photography-lightbox-nav photography-lightbox-next" data-lightbox-next aria-label="Next photograph">›</button>
     </div>
   </dialog>
 </div>

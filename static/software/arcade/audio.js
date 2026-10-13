@@ -22,7 +22,9 @@
     lureOn: [[420, 0, .06], [740, .05, .09]],
     lureOff: [[420, 0, .06], [250, .05, .07]],
     over: [[330, 0, .14], [220, .15, .14], [110, .3, .3]],
-    attach: [[523.25, 0, .065], [622.25, .06, .065], [783.99, .12, .12]]
+    attach: [[523.25, 0, .065], [622.25, .06, .065], [783.99, .12, .12]],
+    // Original synthesized sonar-style ping and quieter returning echo.
+    'whale-warning': [[784, 0, .26], [587.33, .34, .22]]
   });
 
   function disconnect(node) { try { node?.disconnect(); } catch (_) {} }
@@ -198,6 +200,7 @@
 
     play(type) {
       if (this.destroyed || !this.enabled || !this.context || this.state === 'paused' || this.state === 'ready') return;
+      if (type === 'whale-warning' && this.state !== 'playing') return;
       if (this.context.state !== 'running') {
         // Resume is gesture-initiated, but can settle after the engine's Start
         // event. Keep that effect; cancellation always clears this small queue.
@@ -219,10 +222,11 @@
       for (const [hz, offset, duration] of EFFECTS[type] || []) {
         const oscillator = this.context.createOscillator(), gain = this.context.createGain();
         const at = this.context.currentTime + offset;
-        oscillator.type = type === 'damage' ? 'sawtooth' : 'triangle';
+        oscillator.type = type === 'damage' ? 'sawtooth' : type === 'whale-warning' ? 'sine' : 'triangle';
         oscillator.frequency.setValueAtTime(hz, at);
+        if (type === 'whale-warning') oscillator.frequency.exponentialRampToValueAtTime(hz * .74, at + duration);
         gain.gain.setValueAtTime(0, at);
-        gain.gain.linearRampToValueAtTime(.045, at + .006);
+        gain.gain.linearRampToValueAtTime(type === 'whale-warning' ? (offset ? .020 : .032) : .045, at + .006);
         gain.gain.exponentialRampToValueAtTime(.001, at + duration);
         oscillator.connect(gain).connect(this.effectsGain);
         this.activeVoices.add(oscillator);

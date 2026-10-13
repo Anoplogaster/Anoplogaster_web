@@ -12,17 +12,26 @@ sections:
         </p>
         <div class="research-columns">
           <div class="research-col">
-            <img src="/images/AnglerPhylogeny.webp" alt="Anglerfish phylogeny showing lure types and lure-component lengths alongside a time scale." decoding="async">
+            <a class="tron-figure-link" data-tron-complete="true" href="/images/AnglerPhylogeny.webp" target="_blank" rel="noopener noreferrer">
+              <img src="/images/AnglerPhylogeny.webp" alt="Anglerfish phylogeny showing lure types and lure-component lengths alongside a time scale." decoding="async">
+              <span class="tron-figure-action">View full image <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
             <h2>Phylogenetics</h2>
             <p><strong>Understanding the evolutionary relationships of fishes is central to everything else I do.</strong> I use total-evidence approaches that combine morphological character data scored from museum specimens with genomic data to reconstruct well-supported phylogenies of poorly understood groups. My phylogenetic work has focused on anglerfishes (Lophioidei) and early-diverging acanthopterygians including Beryciformes and Trachichthyiformes, groups whose relationships have historically been difficult to resolve. Incorporating fossil taxa into these frameworks allows me to better place evolutionary events in time and understand patterns of diversification across deep-sea lineages.</p>
           </div>
           <div class="research-col">
-            <img src="/images/Double_anglerfish_Diceratias_pileatus_UW_150017_AJMaile.jpg" alt="Double anglerfish (Diceratias pileatus) specimen against a black background, showing the head, open jaws, and upright lure." decoding="async">
+            <a class="tron-figure-link" data-tron-complete="true" href="/images/Double_anglerfish_Diceratias_pileatus_UW_150017_AJMaile.jpg" target="_blank" rel="noopener noreferrer">
+              <img src="/images/Double_anglerfish_Diceratias_pileatus_UW_150017_AJMaile.jpg" alt="Double anglerfish (Diceratias pileatus) specimen against a black background, showing the head, open jaws, and upright lure." decoding="async">
+              <span class="tron-figure-action">View full image <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
             <h2>Bioluminescence and Morphology</h2>
             <p><strong>Several of the fish groups I work on have independently evolved bioluminescence, and understanding how and when these systems originated is a major focus of my research.</strong> In anglerfishes, I showed that bioluminescent lures evolved once within the deep-sea ceratioids during the Oligocene, coinciding after their transition into pelagic environments and an uptick in diversification. I have also worked on the anatomy and evolution of bioluminescent organs in slimeheads (Trachichthyidae). Across these projects I am interested in how novel morphological structures originate and what role ecological transitions play in driving their evolution.</p>
           </div>
           <div class="research-col">
-            <img src="/images/DSC_7132.jpg" alt="Four preserved fish specimens in differently sized jars." decoding="async">
+            <a class="tron-figure-link" data-tron-complete="true" href="/images/DSC_7132.jpg" target="_blank" rel="noopener noreferrer">
+              <img src="/images/DSC_7132.jpg" alt="Four preserved fish specimens in differently sized jars." decoding="async">
+              <span class="tron-figure-action">View full image <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
             <h2>Museum Collections</h2>
             <p><strong>Natural history collections are essential to my research.</strong> Working directly with alcohol-preserved specimens, cleared-and-stained material, histological sections, fossils, and computed tomography scan data gives me access to morphological diversity across hundreds of species that would otherwise be impossible to sample. Many deep-sea fishes are so rarely collected that museum specimens are the only means of studying their anatomy at all. Collections are also where my questions tend to start — variation that is obvious when you are looking at a tray of specimens is often variation worth explaining.</p>
           </div>

@@ -65,7 +65,10 @@ sections:
 
           <!-- Paper 4 -->
           <div class="pub-card" id="maile-davis-2026">
-            <img src="/images/Warty_Frogfish_Antennarius_maculatus_UW_020828_AJMaile.JPG" alt="Skeletal visualization of a warty frogfish, with side and head views and selected structures highlighted in blue." decoding="async">
+            <a class="tron-figure-link" data-tron-complete="true" href="/images/Warty_Frogfish_Antennarius_maculatus_UW_020828_AJMaile.JPG" target="_blank" rel="noopener noreferrer">
+              <img src="/images/Warty_Frogfish_Antennarius_maculatus_UW_020828_AJMaile.JPG" alt="Skeletal visualization of a warty frogfish, with side and head views and selected structures highlighted in blue." decoding="async">
+              <span class="tron-figure-action">View full image <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
             <div>
               <h2 class="pub-record-title">
                 <a href="https://doi.org/10.1643/i2025018" target="_blank" class="pub-title">
@@ -88,7 +91,10 @@ sections:
 
           <!-- Paper 3 -->
           <div class="pub-card">
-            <img src="/images/Research_right.jpg" alt="Phylogenetic tree of anglerfishes and allies, with colored family groups and representative fish images." loading="lazy" decoding="async">
+            <a class="tron-figure-link" data-tron-complete="true" href="/images/Research_right.jpg" target="_blank" rel="noopener noreferrer">
+              <img src="/images/Research_right.jpg" alt="Phylogenetic tree of anglerfishes and allies, with colored family groups and representative fish images." loading="lazy" decoding="async">
+              <span class="tron-figure-action">View full image <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
             <div>
               <h2 class="pub-record-title">
                 <a href="https://doi.org/10.1371/journal.pone.0322369" target="_blank" class="pub-title">
@@ -106,7 +112,10 @@ sections:
 
           <!-- Paper 2 -->
           <div class="pub-card">
-            <img src="/images/Ghedotti2021.jpg" alt="Anatomical diagram of a slimehead and stained tissue sections illustrating its bioluminescent organ." loading="lazy" decoding="async">
+            <a class="tron-figure-link" data-tron-complete="true" href="/images/Ghedotti2021.jpg" target="_blank" rel="noopener noreferrer">
+              <img src="/images/Ghedotti2021.jpg" alt="Anatomical diagram of a slimehead and stained tissue sections illustrating its bioluminescent organ." loading="lazy" decoding="async">
+              <span class="tron-figure-action">View full image <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
             <div>
               <h2 class="pub-record-title">
                 <a href="https://doi.org/10.1002/jmor.21349" target="_blank" class="pub-title">
@@ -124,7 +133,10 @@ sections:
 
           <!-- Paper 1 -->
           <div class="pub-card">
-            <img src="/images/Research_left.jpg" alt="Body-shape plots for lizardfishes and allies, with colored family groups, fish silhouettes, and landmark diagrams." loading="lazy" decoding="async">
+            <a class="tron-figure-link" data-tron-complete="true" href="/images/Research_left.jpg" target="_blank" rel="noopener noreferrer">
+              <img src="/images/Research_left.jpg" alt="Body-shape plots for lizardfishes and allies, with colored family groups, fish silhouettes, and landmark diagrams." loading="lazy" decoding="async">
+              <span class="tron-figure-action">View full image <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
             <div>
               <h2 class="pub-record-title">
                 <a href="https://doi.org/10.1643/CG-19-300" target="_blank" class="pub-title">

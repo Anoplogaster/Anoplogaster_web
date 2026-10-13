@@ -28,6 +28,7 @@
     sounds.play(event.type);
     if (event.type === 'eat' && event.label === 'FARTER') $('live-status').textContent = `FARTER +${event.value}`;
     if (event.type === 'damage') $('live-status').textContent = `${engine.hearts} ${engine.hearts === 1 ? 'heart' : 'hearts'} remaining.`;
+    if (event.type === 'whale-warning') $('live-status').textContent = `LARGE PREDATOR APPROACHING. ${event.approach === 'dive' ? 'From above.' : event.approach === 'upper' ? 'From the upper-right.' : 'From the lower-right.'} Two-second warning. Swim clear.`;
     if (event.type === 'attach') $('live-status').textContent = `Male attached. ${event.count} of ${ArcadeEngine.MAX_MALES}. Future prey multiplier ${event.multiplier.toFixed(2)}.`;
     if (event.type === 'death') {
       releaseInputs();
@@ -403,6 +404,62 @@
     const image = fish.kind === 'atolla' ? images.atolla : images.lancetfish;
     ctx.drawImage(image, Math.round(fish.x-fish.w/2), Math.round(fish.y-fish.h/2), fish.w, fish.h);
   }
+  function whale() {
+    const actor = engine.whale;
+    if (!actor || actor.phase === 'warning') return;
+    const image = actor.orientation === 'dive' ? images.whaleDive : images.whaleHorizontal;
+    if (!image) return;
+    // Two independently illustrated views, complete PNGs, one uniform scale.
+    // The dive is never a rotated/stretched version of the horizontal art.
+    ctx.drawImage(image, Math.round(actor.x - actor.w / 2), Math.round(actor.y - actor.h / 2), actor.w, actor.h);
+  }
+  function whaleWarning() {
+    const actor = engine.whale;
+    if (!actor || actor.phase !== 'warning' || !['playing','paused'].includes(engine.state)) return;
+    const body = engine.geometry().body;
+    const canvasRect = canvas.getBoundingClientRect();
+    const displayScale = W / Math.max(1,canvasRect.width);
+    const radius = Math.max(18,18*displayScale);
+    const labelSize = Math.max(15,12*displayScale);
+    const edge = radius + 12;
+    let bottom = mobileMode === 'landscape' ? H - 170 : H - edge;
+    if (mobileMode === 'landscape') {
+      const control = document.querySelector('[data-control="lure"]').getBoundingClientRect();
+      if (control.width > 0 && control.height > 0) {
+        // Reserve the actual visible control boundary, including the entire
+        // warning ring, rather than relying on a fixed logical-height guess.
+        const controlTop = (control.top - canvasRect.top) * displayScale;
+        bottom = Math.min(bottom, controlTop - radius - 12);
+      }
+    }
+    const x = actor.approach === 'dive' ? Math.max(edge, Math.min(W - edge, actor.x)) : W - edge;
+    let y = actor.approach === 'dive' ? edge : Math.max(edge, Math.min(bottom, actor.y));
+    if (Math.abs(x - body.x) < body.rx + 24 && Math.abs(y - body.y) < body.ry + 24) {
+      y = Math.max(edge, Math.min(bottom, body.y + (body.y < H / 2 ? 1 : -1) * (body.ry + radius + 14)));
+    }
+    const pulse = reducedMotion ? 1 : 0.83 + Math.sin(actor.age * Math.PI * 3) * 0.17;
+    ctx.save(); ctx.globalAlpha = pulse; ctx.strokeStyle = '#f5c57c'; ctx.fillStyle = '#f5c57c';
+    ctx.lineWidth = Math.max(2,1.5*displayScale); ctx.beginPath(); ctx.arc(x,y,radius,0,Math.PI*2); ctx.stroke();
+    ctx.font = `600 ${Math.max(25,24*displayScale)}px "Exo 2", monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('!',x,y);
+    ctx.font = `600 ${labelSize}px "Exo 2", monospace`;
+    if (actor.approach === 'dive') {
+      const textWidth = ctx.measureText('LARGE PREDATOR APPROACHING').width;
+      const textY = mobileMode === 'landscape' && y+radius+labelSize > bottom
+        ? Math.max(labelSize,y-radius-labelSize) : y+radius+labelSize;
+      ctx.fillText('LARGE PREDATOR APPROACHING',Math.max(textWidth/2+12,Math.min(W-textWidth/2-12,x)),textY);
+    } else {
+      ctx.textAlign = 'right';
+      let textY = y - radius - labelSize;
+      if (textY < labelSize) textY = y + radius + labelSize;
+      if (Math.abs(textY - body.y) < body.ry + 16) textY = Math.max(20,Math.min(H-20,body.y + (body.y < H/2 ? 1 : -1)*(body.ry+28)));
+      if (mobileMode === 'landscape') textY = Math.min(bottom,textY);
+      // Keep the text clear of the indicator even when player avoidance
+      // places both at the same height.
+      ctx.fillText('LARGE PREDATOR APPROACHING',x-radius-12,textY);
+    }
+    ctx.restore();
+  }
   function maleImage(x, y, rotation = 0, mirror = false) {
     ctx.save(); ctx.translate(Math.round(x), Math.round(y)); ctx.rotate(rotation);
     if (mirror) ctx.scale(-1, 1);
@@ -432,13 +489,12 @@
     }
     ctx.save();
     if (dying) {
-      const ease = t => t*t*(3-2*t);
-      const turn=ease(Math.min(1,death.elapsed/1.05))*Math.PI;
-      const rise=ease(Math.max(0,Math.min(1,(death.elapsed-.35)/(death.duration-.35))));
+      const ending = engine.deathPose();
       // Rotate the entire unchanged image and attached males around the body.
-      // Final pivot is above even the farthest full-image corner, not stretched.
-      ctx.translate(death.pivot.x,death.pivot.y-rise*(death.pivot.y+p.width+40));
-      ctx.rotate(turn);ctx.translate(-death.pivot.x,-death.pivot.y);
+      // A restrained downward drift ends beneath the full playfield. Reduced
+      // motion shows one brief static upside-down state before results.
+      ctx.translate(ending.pivot.x,ending.pivot.y+ending.translateY);
+      ctx.rotate(ending.rotation);ctx.translate(-ending.pivot.x,-ending.pivot.y);
     }
     // Flash by visibility only, never tinting/recoloring the source image.
     if (!dying && p.invulnerable>0 && Math.floor(p.invulnerable*12)%2 === 0) ctx.globalAlpha=.32;
@@ -457,7 +513,7 @@
       maleImage(attachment.fromX + (slot.x-attachment.fromX)*blend,
         attachment.fromY + (slot.y-attachment.fromY)*blend, slot.rotation*blend);
     }
-    if (dying && death.elapsed >= .12) {
+    if (dying && (reducedMotion || death.elapsed >= .12)) {
       // Profile-view Enhanced female has one visible eye, source(1065,388).
       // This temporary X shares exactly the same whole-body transform.
       const s=p.width/1536, eye={x:pose.x+1065*s,y:pose.y+388*s};
@@ -470,12 +526,14 @@
   }
   function render() {
     environment();
+    whale();
     engine.prey.filter(fish => !fish.pending).forEach(prey); engine.males.forEach(male);
     if(engine.state==='dying') { engine.enemies.forEach(enemy); player(); }
     else { player(); engine.prey.filter(fish => fish.pending).forEach(prey); engine.enemies.forEach(enemy); }
     ctx.font='500 19px monospace';ctx.textAlign='center';
     if(!['dying','over'].includes(engine.state)) for(const popup of engine.popups) { ctx.globalAlpha=Math.max(0,1-popup.age/1.1);ctx.fillStyle='#caead5';ctx.fillText(`${popup.label ? popup.label+' ' : ''}+${popup.value}`,popup.x,popup.y-popup.age*30); }
     ctx.globalAlpha=1;
+    whaleWarning();
   }
   function timeText(seconds) { const n=Math.floor(seconds);return `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`; }
   function renderHud() {
@@ -503,7 +561,7 @@
     $('pause-button').textContent=engine.state==='paused'?'RESUME':'PAUSE';
     $('start-button').textContent=dying?'DIVE ENDING…':engine.state==='playing'?'PAUSE GAME':engine.state==='paused'?'RESUME GAME':engine.state==='over'?'PLAY AGAIN':'START GAME';
     const states={
-      ready:['DIVE WHEN READY','ANGRY ANGLERFISH','Avoid the lancetfish and crown jellyfish while eating as much prey as possible. Use your bioluminescent lure to attract prey toward your mouth!','','START GAME'],
+      ready:['DIVE WHEN READY','ANGRY ANGLERFISH','Avoid the lancetfish, crown jellyfish and rare sperm whale while eating as much prey as possible. Use your bioluminescent lure to attract prey toward your mouth!','','START GAME'],
       paused:['INSTRUMENTS ON HOLD','PAUSED','Your dive is safe. Resume when you’re ready.','WASD / arrows swim · hold SPACE for the lure','RESUME DIVE'],
       over:['ANGRY ANGLERFISH / SIGNAL LOST','GAME OVER',newPersonalBest ? (scores.available ? 'NEW LOCAL PERSONAL BEST' : 'NEW TAB BEST · browser storage unavailable') : 'Three hearts. One life. Another dive?',`FINAL SCORE ${String(engine.score).padStart(6,'0')} · ${scores.available?'LOCAL BEST':'TAB BEST'} ${String(scores.best).padStart(6,'0')} · SURVIVED ${timeText(engine.time)}`,'PLAY AGAIN']
     };
@@ -535,6 +593,7 @@
     amphipod:'assets/prey/amphipod-v1.png',squid:'assets/prey/squid-v1.png',bristlemouth:'assets/prey/bristlemouth-v1.png',
     hatchetfish:'assets/prey/hatchetfish-v1.png',darter:'assets/prey-darter-approved-v1.png',
     male:'assets/diceratias-male-enhanced.png',atolla:'assets/atolla-wyvillei.png',lancetfish:'assets/alepisaurus-ferox-approved.png',
+    whaleHorizontal:'assets/hazards/sperm-whale-horizontal-v1.png',whaleDive:'assets/hazards/sperm-whale-dive-v1.png',
     bathysphere:'assets/vessels/bathysphere-candidate-v1.png',trieste:'assets/vessels/trieste-candidate-v1.png',challenger:'assets/vessels/deepsea-challenger-candidate-v1.png'}).map(([key,path])=>new Promise((resolve,reject)=>{
     const image=new Image();image.onload=()=>{images[key]=image;resolve();};image.onerror=()=>reject(new Error(`Missing asset: ${path}`));image.src=path;
   }))).then(()=>{
@@ -544,6 +603,8 @@
     for (const kind of Object.keys(ArcadeEngine.PREY_TYPES)) {
       engine.configurePreyArt(kind, images[kind].naturalWidth, images[kind].naturalHeight);
     }
+    engine.configureWhaleArt('horizontal',images.whaleHorizontal.naturalWidth,images.whaleHorizontal.naturalHeight);
+    engine.configureWhaleArt('dive',images.whaleDive.naturalWidth,images.whaleDive.naturalHeight);
     ready=true;document.querySelectorAll('button').forEach(button=>button.disabled=false);
     lastState='';resize();renderHud();frameId=requestAnimationFrame(frame);
     $('live-status').textContent=scores.available ? 'Ready. Start your dive.' : 'Ready. Browser storage unavailable; personal best is retained only in this tab.';

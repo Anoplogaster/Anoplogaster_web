@@ -55,7 +55,7 @@
 
     sync(model, engineState) {
       model = model || {};
-      const total = this.curriculum.lessons.length || 16;
+      const total = this.curriculum.lessons.length;
       const count = Number.isFinite(model.count) ? model.count : ids(model.collectionIds).length;
       this.enabled = model.enabled !== false;
       const label = 'Learning Mode: ' + (this.enabled ? 'ON' : 'OFF');
@@ -144,7 +144,7 @@
       if (!lesson || this.reviewDialog.open) return false;
       if (this.lessonDialog.open && this._lessonId === lesson.id) return true;
       this._lessonId = lesson.id;
-      text(this._get('learning-lesson-number'), String(lesson.order || '').padStart(2, '0') + '/' + (this.curriculum.lessons.length || 16));
+      text(this._get('learning-lesson-number'), String(lesson.order || '').padStart(2, '0') + '/' + this.curriculum.lessons.length);
       text(this._get('learning-lesson-title'), lesson.title);
       // Content is vetted, local curriculum HTML, never visitor input or a
       // remotely fetched document. Preserve its scientific-name italics.
@@ -173,7 +173,7 @@
       const lessons = this.curriculum.lessons.filter(lesson => selected.has(lesson.id)).slice().sort((a, b) => a.order - b.order);
       const body = this._get('learning-review-body');
       const fragment = document.createDocumentFragment();
-      text(this._get('learning-review-summary'), collection.size + '/' + (this.curriculum.lessons.length || 16) + ' collected · ' + game.size + ' discovered this dive');
+      text(this._get('learning-review-summary'), collection.size + '/' + this.curriculum.lessons.length + ' collected · ' + game.size + ' discovered this dive');
       if (!lessons.length) {
         const paragraph = document.createElement('p');
         paragraph.className = 'learning-prose';

@@ -13,6 +13,8 @@
       const height = header.getBoundingClientRect().height;
       document.documentElement.style.scrollPaddingTop = height + 'px';
       document.documentElement.style.setProperty('--navbar-height', height + 'px');
+      // Actual client width avoids Safari scrollbar-gutter overflow in existing full-width panels.
+      document.documentElement.style.setProperty('--tron-viewport-width', document.documentElement.clientWidth + 'px');
     };
     const setOpen = (open, restoreFocus = false) => {
       checkbox.checked = Boolean(open && narrow.matches);

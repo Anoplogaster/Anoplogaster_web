@@ -157,6 +157,15 @@ window.ArcadeCurriculum = {
       "referenceIds": [
         "swann-2020"
       ]
+    },
+    {
+      "id": "spermwhale",
+      "order": 17,
+      "title": "GIANTS OF THE DEEP",
+      "html": "Sperm whales (<i>Physeter macrocephalus</i>) are deep-diving toothed whales. They use echolocation to navigate and locate prey in deep oceanic habitats, where squid are important food. This encounter is stylized arcade fiction, not documented predation on <i>Diceratias</i>.",
+      "referenceIds": [
+        "watwood2006"
+      ]
     }
   ],
   "references": {
@@ -254,6 +263,11 @@ window.ArcadeCurriculum = {
       "authorYear": "Higgs et al. (2014)",
       "full": "Higgs, N. D., Gates, A. R., & Jones, D. O. B. (2014). Fish Food in the Deep Sea: Revisiting the Role of Large Food-Falls. PLOS ONE, 9(5), e96016. https://doi.org/10.1371/journal.pone.0096016",
       "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0096016"
+    },
+    "watwood2006": {
+      "authorYear": "Watwood et al. (2006)",
+      "full": "Watwood, S. L., Miller, P. J. O., Johnson, M., Madsen, P. T., & Tyack, P. L. (2006). Deep-diving foraging behaviour of sperm whales (Physeter macrocephalus). Journal of Animal Ecology, 75(3), 814–825. https://doi.org/10.1111/j.1365-2656.2006.01101.x",
+      "url": "https://doi.org/10.1111/j.1365-2656.2006.01101.x"
     }
   }
 };

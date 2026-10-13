@@ -86,7 +86,7 @@
       else if (event.type === 'lureOn') this.discover('lure');
       else if (event.type === 'eat' && FOOD.has(event.kind)) this.discover(event.kind);
       else if (event.type === 'attach' && MALES[event.count]) this.discover(MALES[event.count]);
-      else if (event.type === 'damage' && (event.kind === 'lancetfish' || event.kind === 'atolla')) this.discover(event.kind);
+      else if (event.type === 'damage' && (event.kind === 'lancetfish' || event.kind === 'atolla' || event.kind === 'spermwhale')) this.discover(event.kind);
     }
     tick(engine) {
       const candidate = this.pendingLesson;

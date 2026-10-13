@@ -2,7 +2,7 @@
 {{ "<!-- This site was created with Hugo Blox. https://hugoblox.com -->" | safeHTML }}
 {{ printf "<!-- Last Published: %s -->" (now | time.Format ":date_long") | safeHTML }}
 {{- $language_code := site.LanguageCode | default "en-us" -}}
-<html lang="{{$language_code}}" {{ if in site.Data.i18n.rtl.rtl $language_code }}dir="rtl"{{else}}dir="ltr"{{end}}
+<html data-design="scientific-tron-minimal" data-site-page="{{ .RelPermalink }}" lang="{{$language_code}}" {{ if in site.Data.i18n.rtl.rtl $language_code }}dir="rtl"{{else}}dir="ltr"{{end}}
       data-wc-theme-default="{{ (lower site.Params.appearance.mode) | default "system" }}">
   {{ partial "site_head" . }}
   <body class="dark:bg-hb-dark dark:text-white page-wrapper" id="top">

@@ -24,6 +24,33 @@
   const MALE_ATTRACTION_RADIUS = 300;
   const ATTACHMENT_DURATION = 0.55;
   const DEATH_DURATION = 2.6;
+  const REDUCED_DEATH_DURATION = 0.55;
+  const WHALE_WARNING_DURATION = 2;
+  const WHALE_WINDOW = 300;
+  const WHALE_LIMIT = 2;
+  const WHALE_APPROACHES = Object.freeze(['dive', 'upper', 'lower']);
+  const WHALE_SCHEDULE = Object.freeze({ first: Object.freeze([60, 68]),
+    subsequent: Object.freeze([90, 150]), window: WHALE_WINDOW, limit: WHALE_LIMIT,
+    warning: WHALE_WARNING_DURATION });
+  // Anatomical ellipses are normalized to the complete transparent canvases,
+  // never their padded rectangles. configureWhaleArt registers native aspect.
+  const WHALE_ART = {
+    horizontal: { sourceWidth: 1536, sourceHeight: 517, parts: [
+      { x: 0.175, y: 0.43, rx: 0.16, ry: 0.20 },
+      { x: 0.48, y: 0.51, rx: 0.22, ry: 0.235 },
+      { x: 0.76, y: 0.52, rx: 0.13, ry: 0.075 },
+      { x: 0.90, y: 0.365, rx: 0.055, ry: 0.12 },
+      { x: 0.90, y: 0.585, rx: 0.055, ry: 0.12 }
+    ] },
+    dive: { sourceWidth: 1024, sourceHeight: 1536, parts: [
+      { x: 0.445, y: 0.775, rx: 0.135, ry: 0.18 },
+      { x: 0.525, y: 0.52, rx: 0.15, ry: 0.20 },
+      { x: 0.61, y: 0.29, rx: 0.055, ry: 0.12 },
+      { x: 0.71, y: 0.09, rx: 0.19, ry: 0.055 },
+      { x: 0.75, y: 0.66, rx: 0.07, ry: 0.035 },
+      { x: 0.27, y: 0.59, rx: 0.04, ry: 0.025 }
+    ] }
+  };
   const FEEDING_DURATION = 0.48;
   const FEEDING_PHASE = FEEDING_DURATION / 5;
   const FEEDING_SEQUENCE = [0, 1, 2, 1, 0];
@@ -265,6 +292,22 @@
         value ^= value + Math.imul(value ^ value >>> 7, value | 61);
         return ((value ^ value >>> 14) >>> 0) / 4294967296;
       };
+      this.whaleEnabled = options.whaleEnabled !== false;
+      let whaleSeed = Number.isFinite(options.whaleSeed)
+        ? options.whaleSeed >>> 0 : (Date.now() ^ 0x85ebca6b) >>> 0;
+      this.whaleRandom = typeof options.whaleRandom === 'function' ? options.whaleRandom : function () {
+        whaleSeed += 0x6d2b79f5;
+        let value = whaleSeed;
+        value = Math.imul(value ^ value >>> 15, value | 1);
+        value ^= value + Math.imul(value ^ value >>> 7, value | 61);
+        return ((value ^ value >>> 14) >>> 0) / 4294967296;
+      };
+      this._whaleArt = {};
+      for (const orientation of Object.keys(WHALE_ART)) {
+        const art = WHALE_ART[orientation];
+        this._whaleArt[orientation] = { sourceWidth: art.sourceWidth,
+          sourceHeight: art.sourceHeight, parts: art.parts.map(part => Object.assign({}, part)) };
+      }
       this.onEvent = typeof options.onEvent === 'function' ? options.onEvent : function () {};
       this.width = WIDTH;
       this.height = HEIGHT;
@@ -319,6 +362,10 @@
       // vessels. Later due times are 60–90s apart, but the hard inclusive
       // 3/300s rolling cap can defer them until the oldest spawn expires.
       this._darterTimer = this.darterEnabled ? 20 + this.darterRandom() * 20 : Infinity;
+      this.whale = null;
+      this._whaleSpawnTimes = [];
+      this._lastWhaleApproach = null;
+      this._whaleTimer = this.whaleEnabled ? 60 + this.whaleRandom() * 8 : Infinity;
     }
 
     _emit(type, detail) {
@@ -335,6 +382,8 @@
       const previousBody = this.geometry().body;
       const existingContact = new Set(this.enemies.filter(enemy => enemyOverlaps(previousBody, enemy)));
       const hadSafeRoute = this._hasSafeEnemyRoute();
+      const previousWhaleContact = this.whale && enemyOverlaps(previousBody, this.whale);
+      const hadWhaleRoute = this.whale && this.canSpawnWhale(this.whale);
       this.width = width;
       this.height = height;
       // Only world coordinates change with the viewport. Native actor sizes,
@@ -389,6 +438,22 @@
       // captured meal in the same approved cavity throughout a resize.
       this._positionPendingPrey(this.geometry());
       const geometry = this.geometry();
+      if (this.whale) {
+        // Preserve encounter age, warning/clock, approach, velocity and RNG.
+        // Only uniform artwork size and normalized world position follow the
+        // new field. An orientation-only contact never awards damage.
+        const whale = this.whale;
+        mapPoint(whale);
+        this._sizeWhale(whale);
+        if (whale.phase === 'warning') {
+          if (whale.approach === 'dive') whale.y = -whale.h / 2 - 12;
+          else whale.x = this.width + whale.w / 2 + 12;
+        }
+        if (!previousWhaleContact && enemyOverlaps(geometry.body, whale)) whale.resizeContact = true;
+        const fair = this.canSpawnWhale(whale);
+        if (hadWhaleRoute && !fair) whale.resizeSafe = false;
+        else if (fair && !enemyOverlaps(geometry.body, whale)) whale.resizeSafe = true;
+      }
       this.viewportAdjustments = [];
       for (const enemy of this.enemies) {
         // A contraction must not award damage solely because unscaled anatomy
@@ -675,6 +740,9 @@
       this._maleTimer = Infinity;
       this._darterTimer = Infinity;
       this._darterSpawnTimes = [];
+      this.whale = null;
+      this._whaleTimer = Infinity;
+      this._whaleSpawnTimes = [];
       this._emit('exit', { score: this.score, time: this.time });
       return true;
     }
@@ -709,6 +777,196 @@
       if (!Object.prototype.hasOwnProperty.call(this._preyDimensions, kind)) return null;
       const dimensions = this._preyDimensions[kind];
       return Object.freeze(Object.assign({}, dimensions));
+    }
+
+    configureWhaleArt(orientation, naturalWidth, naturalHeight, parts) {
+      if (!Object.prototype.hasOwnProperty.call(this._whaleArt, orientation)
+          || !Number.isFinite(naturalWidth) || !Number.isFinite(naturalHeight)
+          || naturalWidth <= 0 || naturalHeight <= 0) return false;
+      if (parts && (!Array.isArray(parts) || !parts.length || parts.some(part =>
+        ![part.x, part.y, part.rx, part.ry].every(Number.isFinite)
+          || part.rx <= 0 || part.ry <= 0))) return false;
+      const art = this._whaleArt[orientation];
+      art.sourceWidth = naturalWidth;
+      art.sourceHeight = naturalHeight;
+      if (parts) art.parts = parts.map(part => Object.assign({}, part));
+      if (this.whale && this.whale.orientation === orientation) this._sizeWhale(this.whale);
+      return true;
+    }
+
+    _sizeWhale(whale) {
+      const art = this._whaleArt[whale.orientation];
+      const aspect = art.sourceWidth / art.sourceHeight;
+      if (whale.orientation === 'dive') {
+        whale.h = Math.min(660, this.height * 0.68, this.width * 0.72 / aspect);
+        whale.w = whale.h * aspect;
+      } else {
+        whale.w = Math.min(660, this.width * 0.78, this.height * 0.74 * aspect);
+        whale.h = whale.w / aspect;
+      }
+      whale.hitParts = art.parts.map(part => ({ x: (part.x - 0.5) * whale.w,
+        y: (part.y - 0.5) * whale.h, rx: part.rx * whale.w, ry: part.ry * whale.h }));
+    }
+
+    whaleRemainingTime(whale = this.whale) {
+      if (!whale) return 0;
+      const crossing = whale.approach === 'dive'
+        ? (this.height + whale.h / 2 + 40 - whale.y) / whale.vy
+        : (whale.x + whale.w / 2 + 40) / -whale.vx;
+      return Math.max(0, whale.warningRemaining) + Math.max(0, crossing);
+    }
+
+    canSpawnWhale(candidate, extraEnemies) {
+      if (!candidate || candidate.kind !== 'spermwhale'
+          || !WHALE_APPROACHES.includes(candidate.approach)
+          || ![candidate.x, candidate.y, candidate.w, candidate.h].every(Number.isFinite)) return false;
+      const geometry = this.geometry();
+      const enemies = this.enemies.concat(extraEnemies || []);
+      if (candidate.hasDamaged) return true;
+      if (candidate.approach !== 'dive') {
+        const safe = this.canSpawnEnemy(candidate, { extraEnemies: extraEnemies || [] });
+        if (safe) {
+          const window = this._encounterWindow(candidate, geometry);
+          const lanes = window ? this._safeIntervals([window], geometry.bounds) : [];
+          const targets = lanes.map(lane => clamp(this.player.y, lane[0], lane[1]));
+          targets.sort((a, b) => Math.abs(a - this.player.y) - Math.abs(b - this.player.y));
+          candidate.escapePlan = { axis: 'vertical', target: targets[0] ?? this.player.y,
+            planner: 'existing-time-expanded-safe-lanes', warningSeconds: candidate.warningRemaining };
+        }
+        return safe;
+      }
+      const hit = compactEnemy(candidate);
+      const bodyOffsetX = geometry.body.x - this.pose().x;
+      const bodyMin = geometry.bounds.minX + bodyOffsetX;
+      const bodyMax = geometry.bounds.maxX + bodyOffsetX;
+      const clearance = geometry.body.rx + hit.rx + SAFE_GAP;
+      const front = candidate.y + hit.oy + hit.ry + geometry.body.ry + SAFE_GAP;
+      const approach = Math.max(0, candidate.warningRemaining)
+        + Math.max(0, (geometry.body.y - front) / candidate.vy);
+      const choices = [geometry.body.x, bodyMin, bodyMax]
+        .filter(x => Math.abs(x - candidate.x - hit.ox) > clearance)
+        .sort((a, b) => Math.abs(a - geometry.body.x) - Math.abs(b - geometry.body.x));
+      for (const bodyX of choices) {
+        const travel = Math.abs(bodyX - geometry.body.x) / this.player.speed;
+        if (travel + REACTION_MARGIN > approach + EPSILON && travel > EPSILON) continue;
+        // A conservative straight lateral escape must be clear of all current
+        // enemies during the warning. Then the original timed vertical-lane
+        // graph must remain valid while holding that safe horizontal corridor.
+        let clear = true;
+        const samples = Math.max(1, Math.ceil(travel / 0.06));
+        for (let index = 0; index <= samples && clear; index += 1) {
+          const elapsed = REACTION_MARGIN + travel * index / samples;
+          const body = Object.assign({}, geometry.body, {
+            x: geometry.body.x + (bodyX - geometry.body.x) * index / samples });
+          for (const enemy of enemies) {
+            const future = Object.assign({}, enemy, { x: enemy.x + enemy.vx * elapsed,
+              y: enemy.baseY + Math.sin(enemy.phase + elapsed * enemy.frequency) * enemy.amplitude });
+            if (enemyOverlaps(body, future)) { clear = false; break; }
+          }
+        }
+        if (!clear) continue;
+        const shifted = Object.assign({}, geometry, { body: Object.assign({}, geometry.body, { x: bodyX }) });
+        const incoming = enemies.find(enemy => this._encounterWindow(enemy, shifted));
+        if (incoming && !this.canSpawnEnemy(incoming, { geometry: shifted,
+          extraEnemies: extraEnemies || [] })) continue;
+        candidate.escapePlan = { axis: 'horizontal', target: bodyX - bodyOffsetX,
+          bodyX: bodyX, travelSeconds: travel, availableSeconds: approach,
+          planner: 'reachable-lateral-corridor-plus-existing-safe-lanes' };
+        return true;
+      }
+      return false;
+    }
+
+    spawnWhale(approach) {
+      if (!this.whaleEnabled || this.state !== 'playing' || this.whale || this.time < 60 - EPSILON) return false;
+      this._whaleSpawnTimes = this._whaleSpawnTimes.filter(time => this.time - time <= WHALE_WINDOW + EPSILON);
+      if (this._whaleSpawnTimes.length >= WHALE_LIMIT) return false;
+      const approaches = WHALE_APPROACHES.filter(value => value !== this._lastWhaleApproach);
+      if (approach !== undefined && !approaches.includes(approach)) return false;
+      const selected = approach || approaches[Math.floor(this.whaleRandom() * approaches.length)];
+      const candidate = { kind: 'spermwhale', approach: selected,
+        orientation: selected === 'dive' ? 'dive' : 'horizontal', phase: 'warning',
+        warningRemaining: WHALE_WARNING_DURATION, age: 0, hasDamaged: false,
+        resizeContact: false, resizeSafe: true, routeCheckRemaining: 0, amplitude: 0, frequency: 0,
+        x: 0, y: 0, baseY: 0, vx: 0, vy: 0 };
+      this._sizeWhale(candidate);
+      const speed = 100 + this.whaleRandom() * 20;
+      candidate.vx = selected === 'dive' ? 0 : -speed;
+      candidate.vy = selected === 'dive' ? speed : 0;
+      const start = this.whaleRandom();
+      for (let attempt = 0; attempt < 7; attempt += 1) {
+        if (selected === 'dive') {
+          candidate.x = this.width * (0.2 + ((start + attempt * 0.173205) % 1) * 0.6);
+          candidate.y = -candidate.h / 2 - 12;
+        } else {
+          const edge = candidate.h / 2 + 12;
+          const spread = Math.max(0, this.height * 0.34 - edge);
+          const lane = edge + ((start + attempt * 0.173205) % 1) * spread;
+          candidate.x = this.width + candidate.w / 2 + 12;
+          candidate.y = selected === 'upper' ? lane : this.height - lane;
+        }
+        candidate.baseY = candidate.y;
+        if (!this.canSpawnWhale(candidate)) continue;
+        this.whale = candidate;
+        this._lastWhaleApproach = selected;
+        this._whaleSpawnTimes.push(this.time);
+        this._whaleTimer = 90 + this.whaleRandom() * 60;
+        this._emit('whale-warning', { kind: 'spermwhale', approach: selected,
+          warning: WHALE_WARNING_DURATION, x: candidate.x, y: candidate.y });
+        return candidate;
+      }
+      return false;
+    }
+
+    _whaleAllowsEnemy(candidate) {
+      const whale = this.whale;
+      if (!whale || whale.hasDamaged || whale.resizeSafe === false) return true;
+      // Check the complete lateral travel, not merely the saved destination,
+      // as well as the existing graph. No new RNG sample is consumed.
+      return this.canSpawnWhale(whale, [candidate]);
+    }
+
+    _advanceWhale(dt, geometry) {
+      const whale = this.whale;
+      if (!whale) return false;
+      whale.age += dt;
+      let travel = dt;
+      if (whale.phase === 'warning') {
+        const held = Math.min(dt, Math.max(0, whale.warningRemaining));
+        whale.warningRemaining = Math.max(0, whale.warningRemaining - held);
+        travel -= held;
+        if (whale.warningRemaining <= EPSILON) whale.phase = 'active';
+      }
+      if (whale.phase === 'active') {
+        whale.x += whale.vx * travel;
+        whale.y += whale.vy * travel;
+        whale.baseY = whale.y;
+        const contact = enemyOverlaps(geometry.body, whale);
+        if (whale.resizeContact && !contact) whale.resizeContact = false;
+        if (whale.resizeSafe === false) {
+          // A contraction-only loss of escape geometry suppresses this hazard,
+          // not the player's health/invulnerability. Recover after a fair clear
+          // route returns, without moving any actor or changing encounter time.
+          whale.routeCheckRemaining -= dt;
+          if (whale.routeCheckRemaining <= 0) {
+            whale.routeCheckRemaining = 0.25;
+            if (!contact && this.canSpawnWhale(whale)) whale.resizeSafe = true;
+          }
+        }
+        if (contact && !whale.hasDamaged && !whale.resizeContact && whale.resizeSafe !== false
+            && this.player.invulnerable <= 0) {
+          whale.hasDamaged = true; // Keep the impressive artwork, consume this hazard's contact once.
+          this.hearts = Math.max(0, this.hearts - 1);
+          this.player.invulnerable = 1.5;
+          this._emit('damage', { kind: 'spermwhale', hearts: this.hearts,
+            x: geometry.body.x, y: geometry.body.y });
+          if (this.hearts === 0) { this._beginDeath(geometry); return true; }
+        }
+        const outside = whale.approach === 'dive'
+          ? whale.y - whale.h / 2 > this.height + 40 : whale.x + whale.w / 2 < -40;
+        if (outside) this.whale = null;
+      }
+      return false;
     }
 
     ordinaryPreyCount() {
@@ -946,8 +1204,9 @@
       // Project against the CURRENT horizontal pose. Holding x and swimming
       // vertically at 285px/s remains a valid escape route, including at the
       // real right edge; retreat adds options. Charging into a hazard is optional.
-      const entry = (enemy.x + hitbox.ox - geometry.body.x - horizontalRadius) / speed;
-      const exit = (enemy.x + hitbox.ox - geometry.body.x + horizontalRadius) / speed;
+      const delay = enemy.kind === 'spermwhale' ? Math.max(0, enemy.warningRemaining || 0) : 0;
+      const entry = delay + (enemy.x + hitbox.ox - geometry.body.x - horizontalRadius) / speed;
+      const exit = delay + (enemy.x + hitbox.ox - geometry.body.x + horizontalRadius) / speed;
       if (exit + EXIT_MARGIN < 0) return null;
       const scale = this.player.width / SOURCE_WIDTH;
       const playerBodyOffset = ANATOMY.body.y * scale;
@@ -985,13 +1244,14 @@
       return safe;
     }
 
-    canSpawnEnemy(candidate) {
+    canSpawnEnemy(candidate, context) {
       if (!candidate || !Number.isFinite(candidate.y) || !Number.isFinite(candidate.x)
           || !Number.isFinite(candidate.vx) || candidate.vx >= 0 || !Number.isFinite(candidate.w)
           || !Number.isFinite(candidate.h) || candidate.w <= 0 || candidate.h <= 0) return false;
-      const geometry = this.geometry();
+      context = context || {};
+      const geometry = context.geometry || this.geometry();
       const windows = [];
-      for (const enemy of this.enemies.concat([candidate])) {
+      for (const enemy of this.enemies.concat([candidate], context.extraEnemies || [])) {
         const window = this._encounterWindow(enemy, geometry);
         if (window) windows.push(window);
       }
@@ -1098,6 +1358,13 @@
         candidate.x = Math.max(candidate.x,
           geometry.body.x + frontClearance - hitbox.ox - candidate.vx * MIN_APPROACH_TIME);
         if (this.canSpawnEnemy(candidate)) {
+          if (!this._whaleAllowsEnemy(candidate)) {
+            // Keep the original selection/RNG draws and scheduled slot. Only
+            // lengthen this new enemy's offscreen approach until the rare
+            // encounter clears; never combine it into an unavoidable wall.
+            candidate.x += -candidate.vx * (this.whaleRemainingTime() + MIN_APPROACH_TIME);
+            candidate.whaleDeferred = true;
+          }
           this._enemyCount += 1;
           this.enemies.push(candidate);
           return candidate;
@@ -1113,8 +1380,7 @@
       if (this.state === 'dying') {
         // Visibility suspension is owned by the caller: do not call update
         // while hidden, and reset its frame timestamp when returning.
-        this.death.elapsed = this.reducedMotion ? this.death.duration
-          : Math.min(this.death.duration, this.death.elapsed + dt);
+        this.death.elapsed = Math.min(this.death.duration, this.death.elapsed + dt);
         if (this.death.elapsed >= this.death.duration - EPSILON) this._completeDeath();
         return;
       }
@@ -1132,7 +1398,7 @@
     _beginDeath(geometry) {
       if (this.state !== 'playing') return;
       const feedingPose = this.feedingPose();
-      // Pending meals cannot score during the death float. Retain the chosen
+      // Pending meals cannot score during the death sink. Retain the chosen
       // artwork pose separately so the renderer need not snap the jaw closed.
       this.prey = this.prey.filter(prey => !prey.pending);
       this.feeding = null;
@@ -1145,9 +1411,10 @@
       this._enemyTimer = Infinity;
       this._maleTimer = Infinity;
       this._darterTimer = Infinity;
+      this._whaleTimer = Infinity;
       this.death = {
         elapsed: 0,
-        duration: DEATH_DURATION,
+        duration: this.reducedMotion ? REDUCED_DEATH_DURATION : DEATH_DURATION,
         originPose: this.pose(),
         pivot: { x: geometry.body.x, y: geometry.body.y },
         score: this.score,
@@ -1155,7 +1422,22 @@
       };
       this.death.feedingPose = feedingPose;
       this._emit('death', { score: this.death.score, time: this.death.time });
-      if (this.reducedMotion) this._completeDeath();
+    }
+
+    deathPose() {
+      if (!this.death) return null;
+      const death = this.death;
+      const ease = value => value * value * (3 - 2 * value);
+      const turn = this.reducedMotion ? 1 : ease(clamp(death.elapsed / 1.05, 0, 1));
+      const progress = this.reducedMotion ? 0
+        : ease(clamp((death.elapsed - 0.35) / (death.duration - 0.35), 0, 1));
+      // Reserve the farthest full-PNG corner AND a complete attached male,
+      // rather than clipping/cropping/deforming any approved artwork. The
+      // constant-duration ease drifts downward with no gravity acceleration.
+      const distance = this.height - death.pivot.y + this.player.width + MALE_WIDTH + 40;
+      return { rotation: turn * Math.PI, translateY: progress * distance,
+        pivot: { x: death.pivot.x, y: death.pivot.y },
+        elapsed: death.elapsed, duration: death.duration, static: Boolean(this.reducedMotion) };
     }
 
     _completeDeath() {
@@ -1213,6 +1495,16 @@
             this._darterTimer = this._darterSpawnTimes.length
               ? Math.max(1, this._darterSpawnTimes[0] + DARTER_WINDOW + 1 - this.time) : 1;
           }
+        }
+      }
+
+      if (this.whaleEnabled) {
+        this._whaleTimer -= dt;
+        if (this._whaleTimer <= 0 && !this.whale && !this.spawnWhale()) {
+          // The hard two-in-five-minute cap can intentionally defer an
+          // otherwise due 90–150s interval. Failed fair lanes retry gently.
+          this._whaleTimer = this._whaleSpawnTimes.length >= WHALE_LIMIT
+            ? Math.max(1, this._whaleSpawnTimes[0] + WHALE_WINDOW + 1 - this.time) : 1;
         }
       }
 
@@ -1350,6 +1642,7 @@
         }
       }
       this.enemies = remainingEnemies;
+      if (this._advanceWhale(dt, geometry)) return;
       // Damage resolves first: a final-heart collision cancels pending meals
       // rather than awarding a last meal after the frozen death snapshot.
       this._advanceFeeding(dt);
@@ -1369,6 +1662,12 @@
   ArcadeEngine.MALE_ANATOMY = MALE_ANATOMY;
   ArcadeEngine.ATTACHMENT_DURATION = ATTACHMENT_DURATION;
   ArcadeEngine.DEATH_DURATION = DEATH_DURATION;
+  ArcadeEngine.REDUCED_DEATH_DURATION = REDUCED_DEATH_DURATION;
+  ArcadeEngine.WHALE_WARNING_DURATION = WHALE_WARNING_DURATION;
+  ArcadeEngine.WHALE_WINDOW = WHALE_WINDOW;
+  ArcadeEngine.WHALE_LIMIT = WHALE_LIMIT;
+  ArcadeEngine.WHALE_SCHEDULE = WHALE_SCHEDULE;
+  ArcadeEngine.WHALE_APPROACHES = WHALE_APPROACHES;
   ArcadeEngine.FEEDING_DURATION = FEEDING_DURATION;
   ArcadeEngine.FEEDING_SEQUENCE = FEEDING_SEQUENCE;
   Object.defineProperty(ArcadeEngine, 'PREY_TYPES', { value: PREY_TYPES, enumerable: true });

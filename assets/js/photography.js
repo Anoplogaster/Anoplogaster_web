@@ -1,227 +1,229 @@
 (() => {
   const portfolio = document.querySelector('[data-photography-portfolio]');
   if (!portfolio) return;
-
   const stream = portfolio.querySelector('[data-photo-stream]');
-  const sourceTemplate = portfolio.querySelector('[data-photo-source]');
   const dialog = portfolio.querySelector('[data-lightbox]');
-  const lightboxImage = dialog.querySelector('[data-lightbox-image]');
+  // Unsupported/disabled JavaScript leaves all original-file anchors usable.
+  if (!stream || !dialog || typeof dialog.showModal !== 'function') return;
+  const photos = Array.from(stream.querySelectorAll('a[data-photo]'));
+  if (!photos.length) return;
+  photos.forEach(photo => {
+    photo.setAttribute('aria-haspopup', 'dialog');
+    photo.setAttribute('aria-controls', dialog.id);
+  });
+  const image = dialog.querySelector('[data-lightbox-image]');
   const caption = dialog.querySelector('[data-lightbox-caption]');
+  const counter = dialog.querySelector('[data-lightbox-counter]');
+  const original = dialog.querySelector('[data-lightbox-original]');
   const closeButton = dialog.querySelector('[data-lightbox-close]');
   const previousButton = dialog.querySelector('[data-lightbox-prev]');
   const nextButton = dialog.querySelector('[data-lightbox-next]');
-  let photos = [];
+  const playButton = dialog.querySelector('[data-lightbox-play]');
+  const stage = dialog.querySelector('[data-lightbox-stage]');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const adjacentImage = new Image(); // One adjacent image, never the full collection.
+  adjacentImage.decoding = 'async';
   let currentIndex = 0;
+  let revision = 0;
   let returnFocus = null;
-  let touchStartX = null;
+  let returnScroll = { x: 0, y: 0 };
+  let touch = null;
+  let slideshow = false;
+  let slideshowTimer = null;
+  const interval = 5500;
 
-  const random = () => {
-    if (globalThis.crypto?.getRandomValues) {
-      const value = new Uint32Array(1);
-      globalThis.crypto.getRandomValues(value);
-      return value[0] / 4294967296;
-    }
-    return Math.random();
-  };
-
-  const shuffle = (items) => {
-    for (let index = items.length - 1; index > 0; index -= 1) {
-      const swapIndex = Math.floor(random() * (index + 1));
-      [items[index], items[swapIndex]] = [items[swapIndex], items[index]];
-    }
-    return items;
-  };
-
-  const prepareCard = (card, groupType) => {
-    const image = card.querySelector('img');
-    const sizes = {
-      hero: '(max-width: 1200px) 94vw, 1120px',
-      wide: '(max-width: 1200px) 94vw, 1120px',
-      large: '(max-width: 1200px) 88vw, 960px',
-      pair: '(max-width: 720px) 94vw, (max-width: 1200px) 46vw, 520px',
-      trio: '(max-width: 720px) 94vw, (max-width: 1200px) 30vw, 350px',
-    };
-    image.sizes = sizes[groupType] || sizes.pair;
-    image.loading = groupType === 'hero' ? 'eager' : 'lazy';
-    if (groupType === 'hero') image.fetchPriority = 'high';
-  };
-
-  const createGroup = (type, cards, groupIndex) => {
-    const group = document.createElement('div');
-    group.className = `photography-group photography-group-${type}`;
-    group.dataset.sequence = String(groupIndex + 1).padStart(2, '0');
-    group.dataset.layout = type.toUpperCase();
-    if (type === 'large') {
-      group.classList.add(groupIndex % 8 === 4 ? 'photography-align-start' : 'photography-align-end');
-    }
-    if (type === 'pair' && cards.every((card) => card.dataset.orientation === 'portrait')) {
-      group.classList.add('photography-group-portraits');
-    }
-    cards.forEach((card) => {
-      prepareCard(card, type);
-      group.append(card);
-    });
-    stream.append(group);
-  };
-
-  const takePreferred = (pool, count, preferredOrientations = []) => {
-    const selected = [];
-    while (selected.length < count && pool.length) {
-      let index = preferredOrientations.length
-        ? pool.findIndex((card) => preferredOrientations.includes(card.dataset.orientation))
-        : 0;
-      if (index < 0) index = 0;
-      selected.push(pool.splice(index, 1)[0]);
-    }
-    return selected;
-  };
-
-  const buildStream = () => {
-    const cards = Array.from(sourceTemplate.content.querySelectorAll('[data-photo-card]'));
-    if (!cards.length) return;
-
-    const candidates = cards.filter((card) => (
-      card.dataset.featureCandidate === 'true' && card.dataset.orientation === 'landscape'
-    ));
-    let previousFeature = '';
-    try {
-      previousFeature = sessionStorage.getItem('photography-last-feature') || '';
-    } catch (_) {
-      previousFeature = '';
-    }
-    const freshCandidates = candidates.filter((card) => card.dataset.file !== previousFeature);
-    const featurePool = freshCandidates.length ? freshCandidates : candidates;
-    const feature = shuffle([...featurePool])[0] || cards[0];
-
-    try {
-      sessionStorage.setItem('photography-last-feature', feature.dataset.file);
-    } catch (_) {
-      // Randomization still works when session storage is unavailable.
-    }
-
-    stream.replaceChildren();
-    feature.classList.add('photography-card-feature');
-    createGroup('hero', [feature], 0);
-
-    const pool = shuffle(cards.filter((card) => card !== feature));
-    const pattern = ['pair', 'wide', 'trio', 'large'];
-    let groupIndex = 1;
-
-    while (pool.length) {
-      const type = pattern[(groupIndex - 1) % pattern.length];
-      let selected;
-      if (type === 'wide' || type === 'large') {
-        selected = takePreferred(pool, 1, ['landscape', 'square']);
-      } else if (type === 'pair') {
-        const portraitCount = pool.filter((card) => card.dataset.orientation === 'portrait').length;
-        const usePortraitPair = portraitCount >= 2 && random() < 0.35;
-        selected = takePreferred(
-          pool,
-          Math.min(2, pool.length),
-          usePortraitPair ? ['portrait'] : ['landscape', 'square'],
-        );
-      } else {
-        selected = takePreferred(pool, Math.min(3, pool.length));
-      }
-      createGroup(type, selected, groupIndex);
-      groupIndex += 1;
-    }
-
-    photos = Array.from(stream.querySelectorAll('[data-photo]'));
-    stream.setAttribute('data-ready', '');
-  };
-
-  try {
-    buildStream();
-  } catch (error) {
-    const fallbackCards = Array.from(sourceTemplate.content.querySelectorAll('[data-photo-card]'));
-    fallbackCards.forEach((card, index) => createGroup(index === 0 ? 'hero' : 'wide', [card], index));
-    photos = Array.from(stream.querySelectorAll('[data-photo]'));
-    stream.setAttribute('data-ready', '');
-    console.error('Photography layout fallback used:', error);
+  function cancelTimer() {
+    if (slideshowTimer !== null) window.clearTimeout(slideshowTimer);
+    slideshowTimer = null;
   }
 
-  const setCaption = (photo) => {
+  function synchronizePlay() {
+    playButton.textContent = slideshow ? 'Pause' : 'Play';
+    playButton.setAttribute('aria-pressed', String(slideshow));
+    playButton.disabled = reducedMotion.matches;
+    playButton.setAttribute('aria-label', reducedMotion.matches
+      ? 'Slideshow unavailable with reduced motion'
+      : slideshow ? 'Pause slideshow' : 'Play slideshow');
+    dialog.dataset.slideshow = slideshow ? 'playing' : 'paused';
+  }
+
+  function pauseSlideshow() {
+    slideshow = false;
+    cancelTimer();
+    synchronizePlay();
+  }
+
+  function scheduleAdvance() {
+    cancelTimer();
+    if (!slideshow || !dialog.open || document.hidden || reducedMotion.matches || dialog.dataset.loading === 'true') return;
+    slideshowTimer = window.setTimeout(() => {
+      slideshowTimer = null;
+      if (slideshow && dialog.open && !document.hidden && !reducedMotion.matches) showPhoto(currentIndex + 1);
+    }, interval);
+  }
+
+  function imageSize(photo) {
+    const viewport = window.visualViewport;
+    const width = viewport?.width || window.innerWidth;
+    const height = viewport?.height || window.innerHeight;
+    const ratio = Number(photo.dataset.fullWidth) / Number(photo.dataset.fullHeight);
+    // Match the contain-only stage rather than fetching a full-width portrait.
+    return `${Math.max(1, Math.floor(Math.min(width - 32, (height - 176) * ratio)))}px`;
+  }
+
+  function setCaption(photo) {
     caption.replaceChildren();
-    const common = photo.dataset.common;
-    const scientific = photo.dataset.scientific;
-    const detail = photo.dataset.detail;
-
-    if (common) caption.append(document.createTextNode(common));
-    if (common && scientific) caption.append(document.createTextNode(' · '));
-    if (scientific) {
-      const scientificName = document.createElement('em');
-      scientificName.textContent = scientific;
-      caption.append(scientificName);
+    if (photo.dataset.common) caption.append(document.createTextNode(photo.dataset.common));
+    if (photo.dataset.common && photo.dataset.scientific) caption.append(document.createTextNode(' · '));
+    if (photo.dataset.scientific) {
+      const name = document.createElement('em');
+      name.textContent = photo.dataset.scientific;
+      caption.append(name);
     }
-    if (detail) {
-      const specimen = document.createElement('small');
-      specimen.textContent = detail;
-      caption.append(specimen);
+    if (photo.dataset.detail) {
+      const detail = document.createElement('small');
+      detail.textContent = photo.dataset.detail;
+      caption.append(detail);
     }
-  };
+    caption.hidden = !caption.childNodes.length;
+  }
 
-  const showPhoto = (index) => {
+  function preloadAdjacent() {
+    if (!dialog.open || document.hidden || photos.length < 2) return;
+    const photo = photos[(currentIndex + 1) % photos.length];
+    adjacentImage.sizes = imageSize(photo);
+    adjacentImage.srcset = photo.dataset.viewerSet;
+    adjacentImage.src = photo.dataset.full;
+  }
+
+  async function showPhoto(index) {
+    cancelTimer();
     currentIndex = (index + photos.length) % photos.length;
     const photo = photos[currentIndex];
-    lightboxImage.src = photo.dataset.full;
-    lightboxImage.alt = photo.dataset.alt;
+    const request = ++revision;
+    dialog.dataset.currentIndex = String(currentIndex);
+    dialog.dataset.loading = 'true';
+    stage.setAttribute('aria-busy', 'true');
+    image.style.visibility = 'hidden';
+    counter.textContent = `${currentIndex + 1} / ${photos.length}`;
+    counter.setAttribute('aria-label', `Photograph ${currentIndex + 1} of ${photos.length}`);
+    original.href = photo.dataset.original;
+    image.alt = photo.dataset.alt;
+    image.width = Number(photo.dataset.fullWidth);
+    image.height = Number(photo.dataset.fullHeight);
+    image.sizes = imageSize(photo);
+    image.srcset = photo.dataset.viewerSet;
+    image.src = photo.dataset.full;
     setCaption(photo);
-  };
+    try {
+      if (image.decode) await image.decode();
+      else if (!image.complete) await new Promise((resolve, reject) => {
+        image.addEventListener('load', resolve, { once: true });
+        image.addEventListener('error', reject, { once: true });
+      });
+    } catch (_) {
+      // The original link remains available if a derivative cannot be loaded.
+    }
+    if (request !== revision || !dialog.open) return;
+    image.style.visibility = '';
+    dialog.dataset.loading = 'false';
+    stage.setAttribute('aria-busy', 'false');
+    preloadAdjacent();
+    scheduleAdvance();
+  }
 
-  const openLightbox = (index, trigger) => {
+  function openLightbox(index, trigger) {
+    pauseSlideshow();
     returnFocus = trigger;
+    returnScroll = { x: window.scrollX, y: window.scrollY };
+    dialog.showModal();
     showPhoto(index);
-    if (typeof dialog.showModal === 'function') dialog.showModal();
-    else dialog.setAttribute('open', '');
-    closeButton.focus();
-  };
+    closeButton.focus({ preventScroll: true });
+  }
 
-  const closeLightbox = () => {
-    if (dialog.open && typeof dialog.close === 'function') dialog.close();
-    else dialog.removeAttribute('open');
-  };
+  function closeLightbox() {
+    pauseSlideshow();
+    if (dialog.open) dialog.close();
+  }
 
-  stream.addEventListener('click', (event) => {
-    const trigger = event.target.closest('[data-photo]');
-    if (!trigger) return;
-    openLightbox(photos.indexOf(trigger), trigger);
+  function navigate(delta) {
+    pauseSlideshow();
+    showPhoto(currentIndex + delta);
+  }
+
+  stream.addEventListener('click', event => {
+    const trigger = event.target.closest('a[data-photo]');
+    if (!trigger || !stream.contains(trigger) || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const index = photos.indexOf(trigger);
+    if (index < 0) return;
+    event.preventDefault();
+    openLightbox(index, trigger);
   });
-
   closeButton.addEventListener('click', closeLightbox);
-  previousButton.addEventListener('click', () => showPhoto(currentIndex - 1));
-  nextButton.addEventListener('click', () => showPhoto(currentIndex + 1));
-
-  dialog.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowLeft') {
+  previousButton.addEventListener('click', () => navigate(-1));
+  nextButton.addEventListener('click', () => navigate(1));
+  playButton.addEventListener('click', () => {
+    if (reducedMotion.matches || document.hidden) return;
+    slideshow = !slideshow;
+    synchronizePlay();
+    scheduleAdvance();
+  });
+  dialog.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.preventDefault();
-      showPhoto(currentIndex - 1);
-    } else if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      showPhoto(currentIndex + 1);
-    } else if (event.key === 'Escape') {
-      event.preventDefault();
-      closeLightbox();
+      navigate(event.key === 'ArrowLeft' ? -1 : 1);
     }
   });
-
-  dialog.addEventListener('click', (event) => {
-    if (event.target === dialog) closeLightbox();
-  });
-
-  dialog.addEventListener('touchstart', (event) => {
-    touchStartX = event.changedTouches[0]?.screenX ?? null;
-  }, { passive: true });
-
-  dialog.addEventListener('touchend', (event) => {
-    if (touchStartX === null) return;
-    const distance = (event.changedTouches[0]?.screenX ?? touchStartX) - touchStartX;
-    if (Math.abs(distance) > 50) showPhoto(currentIndex + (distance < 0 ? 1 : -1));
-    touchStartX = null;
-  }, { passive: true });
-
+  dialog.addEventListener('cancel', pauseSlideshow); // Escape uses native dismissal.
   dialog.addEventListener('close', () => {
-    lightboxImage.removeAttribute('src');
-    returnFocus?.focus();
+    pauseSlideshow();
+    revision += 1;
+    touch = null;
+    image.removeAttribute('srcset');
+    image.removeAttribute('src');
+    adjacentImage.removeAttribute('srcset');
+    adjacentImage.removeAttribute('src');
+    dialog.dataset.loading = 'false';
+    stage.setAttribute('aria-busy', 'false');
+    returnFocus?.focus({ preventScroll: true });
+    window.scrollTo({ left: returnScroll.x, top: returnScroll.y, behavior: 'instant' });
+    returnFocus = null;
   });
+
+  // Passive gestures never cancel vertical scrolling or browser pinch zoom.
+  const isZoomed = () => Math.abs((window.visualViewport?.scale || 1) - 1) > 0.05;
+  stage.addEventListener('touchstart', event => {
+    if (event.touches.length !== 1 || isZoomed()) { touch = null; return; }
+    const point = event.touches[0];
+    touch = { id: point.identifier, x: point.clientX, y: point.clientY, time: performance.now() };
+  }, { passive: true });
+  stage.addEventListener('touchmove', event => {
+    if (event.touches.length !== 1 || isZoomed()) touch = null;
+  }, { passive: true });
+  stage.addEventListener('touchcancel', () => { touch = null; }, { passive: true });
+  stage.addEventListener('touchend', event => {
+    const start = touch;
+    touch = null;
+    if (!start || event.touches.length || isZoomed()) return;
+    const point = Array.from(event.changedTouches).find(value => value.identifier === start.id);
+    if (!point) return;
+    const x = point.clientX - start.x;
+    const y = point.clientY - start.y;
+    if (Math.abs(x) >= 60 && Math.abs(x) > Math.abs(y) * 1.8 && Math.abs(y) < 80 && performance.now() - start.time < 1000) navigate(x < 0 ? 1 : -1);
+  }, { passive: true });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      pauseSlideshow();
+      adjacentImage.removeAttribute('srcset');
+      adjacentImage.removeAttribute('src');
+    }
+  });
+  const onMotionChange = () => { if (reducedMotion.matches) pauseSlideshow(); else synchronizePlay(); };
+  if (reducedMotion.addEventListener) reducedMotion.addEventListener('change', onMotionChange);
+  else reducedMotion.addListener(onMotionChange);
+  window.addEventListener('resize', () => {
+    if (!dialog.open) return;
+    image.sizes = imageSize(photos[currentIndex]);
+  }, { passive: true });
+  synchronizePlay();
 })();
