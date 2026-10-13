@@ -39,7 +39,7 @@
   --accent: #39bde5;
   --accent-hover: #70d6f3;
   --accent-subtle: rgba(57, 189, 229, 0.13);
-  --focus-ring: rgba(112, 214, 243, 0.38);
+  --focus-ring: var(--accent-hover);
   --code-background: #0a0e13;
   --font-display: "Exo 2", "Trebuchet MS", Arial, sans-serif;
   --font-reading: "Inter var", Inter, "Helvetica Neue", Arial, sans-serif;
@@ -145,10 +145,47 @@ a:hover {
   text-decoration-color: currentColor;
 }
 
-:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+:where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
   outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
+}
+
+a:focus-visible { text-decoration: underline; }
+
+/* A keyboard bypass and a native mobile disclosure, not a new navigation UI. */
+.site-skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  min-height: 44px;
+  padding: 0.6rem 1rem;
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+}
+.site-skip-link:focus { transform: none; }
+#main-content { scroll-margin-top: calc(var(--navbar-height, 5rem) + 1rem); }
+.site-menu-toggle {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.5rem;
+  border: 0;
+  background: transparent;
+}
+.site-menu-toggle #hide-button { display: none; }
+.site-menu-toggle[aria-expanded="true"] #show-button { display: none; }
+.site-menu-toggle[aria-expanded="true"] #hide-button { display: block; }
+.photography-image-button:focus-visible { outline-offset: -4px; }
+@media (max-width: 1023px) {
+  .page-header[data-menu-open="true"] {
+    max-height: 100vh;
+    max-height: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
 }
 
 /* Site chrome */

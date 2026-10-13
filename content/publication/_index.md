@@ -28,6 +28,17 @@ sections:
             font-weight: 600;
             font-size: 1.2rem;
           }
+          .pub-record-title {
+            margin: 0;
+            padding: 0;
+            color: inherit;
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            line-height: inherit;
+            letter-spacing: inherit;
+            text-wrap: wrap;
+          }
           .pub-author {
             color: #00FFFF;
             font-weight: 600;
@@ -50,16 +61,17 @@ sections:
         </style>
 
         <div style="position: relative; width: 100vw; margin-left: calc(-50vw + 50%); overflow: hidden; display: flex; flex-direction: column;" class="bio-opaque">
+        <h1 class="visually-hidden">Publications</h1>
 
           <!-- Paper 4 -->
           <div class="pub-card" id="maile-davis-2026">
-            <img src="/images/Warty_Frogfish_Antennarius_maculatus_UW_020828_AJMaile.JPG">
+            <img src="/images/Warty_Frogfish_Antennarius_maculatus_UW_020828_AJMaile.JPG" alt="Skeletal visualization of a warty frogfish, with side and head views and selected structures highlighted in blue." decoding="async">
             <div>
-              <strong>
+              <h2 class="pub-record-title">
                 <a href="https://doi.org/10.1643/i2025018" target="_blank" class="pub-title">
                   The evolution of lures in anglerfishes (Acanthuriformes: Lophioidei): Investigating nature's tackle box
                 </a>
-              </strong><br>
+              </h2>
               <span class="pub-author">A.J. Maile</span>, M.P. Davis<br>
               Ichthyology & Herpetology 114, 103–118 · 2026<br>
               <em>Featured in:</em><br>
@@ -76,13 +88,13 @@ sections:
 
           <!-- Paper 3 -->
           <div class="pub-card">
-            <img src="/images/Research_right.jpg">
+            <img src="/images/Research_right.jpg" alt="Phylogenetic tree of anglerfishes and allies, with colored family groups and representative fish images." loading="lazy" decoding="async">
             <div>
-              <strong>
+              <h2 class="pub-record-title">
                 <a href="https://doi.org/10.1371/journal.pone.0322369" target="_blank" class="pub-title">
                   A total-evidence phylogenetic approach to understanding the evolution, depth transitions, and body-shape changes in the anglerfishes and allies (Acanthuriformes: Lophioidei)
                 </a>
-              </strong><br>
+              </h2>
               <span class="pub-author">A.J. Maile</span>, W.L. Smith, M.P. Davis<br>
               PLoS One 20 (5), e0322369 · 2025<br>
               <em>Featured in:</em><br>
@@ -94,13 +106,13 @@ sections:
 
           <!-- Paper 2 -->
           <div class="pub-card">
-            <img src="/images/Ghedotti2021.jpg">
+            <img src="/images/Ghedotti2021.jpg" alt="Anatomical diagram of a slimehead and stained tissue sections illustrating its bioluminescent organ." loading="lazy" decoding="async">
             <div>
-              <strong>
+              <h2 class="pub-record-title">
                 <a href="https://doi.org/10.1002/jmor.21349" target="_blank" class="pub-title">
                   Anatomy and evolution of bioluminescent organs in slimeheads (Trachichthyidae)
                 </a>
-              </strong><br>
+              </h2>
               M.J. Ghedotti, H.M. DeKay, <span class="pub-author">A.J. Maile</span>, W.L. Smith, M.P. Davis<br>
               Journal of Morphology 282 (6), 820-832 · 2021<br>
               <strong>PDF:</strong>
@@ -112,13 +124,13 @@ sections:
 
           <!-- Paper 1 -->
           <div class="pub-card">
-            <img src="/images/Research_left.jpg">
+            <img src="/images/Research_left.jpg" alt="Body-shape plots for lizardfishes and allies, with colored family groups, fish silhouettes, and landmark diagrams." loading="lazy" decoding="async">
             <div>
-              <strong>
+              <h2 class="pub-record-title">
                 <a href="https://doi.org/10.1643/CG-19-300" target="_blank" class="pub-title">
                   Marine habitat transitions and body-shape evolution in lizardfishes and their allies (Aulopiformes)
                 </a>
-              </strong><br>
+              </h2>
               <span class="pub-author">A.J. Maile</span>, Z.A. May, E.S. DeArmon, R.P. Martin, M.P. Davis<br>
               Copeia 108 (4), 820-832 · 2020<br>
               <strong>Supplemental Data:</strong>
