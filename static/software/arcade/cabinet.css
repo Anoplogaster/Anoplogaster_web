@@ -65,16 +65,16 @@ body {
 .control-deck { background: linear-gradient(120deg, #ffffff05 1px, transparent 1px) right 12px top 6px / 22px 22px, repeating-linear-gradient(2deg, #ffffff03 0 1px, transparent 1px 5px), linear-gradient(104deg, #291720, var(--cab-charcoal) 28% 74%, #291720); }
 .cabinet-button, .overlay-action { background: linear-gradient(#301823, #120b12); }
 
-/* Keep the complete start instructions and heart explanation readable in the
- * short mobile screen. Only ready-state spacing changes; gameplay stays 2:1.
- * Smaller phones may scroll the introduction instead of shrinking its text. */
+/* Legacy width-only cabinet fallback, for non-touch / non-immersive viewing.
+ * Immersive touch screens use the measured-height system in cabinet-system.css
+ * and a matching logical canvas viewport managed by game.js. */
 @media (max-width: 680px) {
-  body[data-state="ready"] .game-overlay { padding:4px 12px;justify-content:flex-start;overflow-y:auto; }
-  body[data-state="ready"] .game-overlay>* { flex-shrink:0; }
-  body[data-state="ready"] .overlay-kicker { display:none; }
-  body[data-state="ready"] .game-overlay h2 { font-size:18px;margin:2px 0 4px; }
-  body[data-state="ready"] .survival-copy { display:block;margin-top:4px;font-size:8px;line-height:1.35; }
-  body[data-state="ready"] .overlay-action { margin-top:4px; }
+  html:not([data-mobile-arcade]) body[data-state="ready"] .game-overlay { padding:4px 12px;justify-content:flex-start;overflow-y:auto; }
+  html:not([data-mobile-arcade]) body[data-state="ready"] .game-overlay>* { flex-shrink:0; }
+  html:not([data-mobile-arcade]) body[data-state="ready"] .overlay-kicker { display:none; }
+  html:not([data-mobile-arcade]) body[data-state="ready"] .game-overlay h2 { font-size:18px;margin:2px 0 4px; }
+  html:not([data-mobile-arcade]) body[data-state="ready"] .survival-copy { display:block;margin-top:4px;font-size:8px;line-height:1.35; }
+  html:not([data-mobile-arcade]) body[data-state="ready"] .overlay-action { margin-top:4px; }
 }
 .sound-indicator { border-color: #85566b; background: #20131d; }
 .sound-button[aria-pressed="true"] .sound-indicator { border-color: var(--cab-accent); box-shadow: 0 0 5px var(--cab-glow); }

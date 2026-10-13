@@ -3,6 +3,10 @@
 
   const WIDTH = 1200;
   const HEIGHT = 600;
+  // These are logical geometry limits, not CSS/canvas dimensions. Anatomy,
+  // speed and encounter clocks remain in their existing unscaled game units.
+  const MIN_WIDTH = 480;
+  const MIN_HEIGHT = 360;
   const SOURCE_WIDTH = 1536;
   const SOURCE_HEIGHT = 1024;
   const STEP = 1 / 120;
@@ -262,6 +266,8 @@
         return ((value ^ value >>> 14) >>> 0) / 4294967296;
       };
       this.onEvent = typeof options.onEvent === 'function' ? options.onEvent : function () {};
+      this.width = WIDTH;
+      this.height = HEIGHT;
       this._preyDimensions = {};
       for (const kind of Object.keys(PREY_TYPES)) {
         const type = PREY_TYPES[kind];
@@ -270,17 +276,23 @@
       }
       this._reset();
       this.state = 'ready';
+      if (Number.isFinite(options.width) && Number.isFinite(options.height)) {
+        this.setViewport(options.width, options.height);
+      }
     }
 
     _reset() {
       this.player = {
-        x: 60,
-        y: 206,
+        x: 60 * this.width / WIDTH,
+        y: 206 * this.height / HEIGHT,
         speed: 285,
         width: 280,
         height: 280 * SOURCE_HEIGHT / SOURCE_WIDTH,
         invulnerable: 0
       };
+      const bounds = this.movementBounds();
+      this.player.x = clamp(this.player.x, bounds.minX, bounds.maxX);
+      this.player.y = clamp(this.player.y, bounds.minY, bounds.maxY);
       this.input = { up: false, down: false, left: false, right: false, lure: false };
       this.lure = false;
       this.prey = [];
@@ -313,6 +325,189 @@
       this.onEvent(Object.assign({ type: type }, detail || {}));
     }
 
+    setViewport(width, height) {
+      if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return false;
+      width = Math.max(MIN_WIDTH, Math.round(width));
+      height = Math.max(MIN_HEIGHT, Math.round(height));
+      if (width === this.width && height === this.height) return false;
+      const ratioX = width / this.width;
+      const ratioY = height / this.height;
+      const previousBody = this.geometry().body;
+      const existingContact = new Set(this.enemies.filter(enemy => enemyOverlaps(previousBody, enemy)));
+      const hadSafeRoute = this._hasSafeEnemyRoute();
+      this.width = width;
+      this.height = height;
+      // Only world coordinates change with the viewport. Native actor sizes,
+      // velocities, phases, timers, feeding state, scores and random streams
+      // must not change on orientation/toolbar resize. No new encounter is
+      // created, no game event emitted, and the run is never restarted.
+      const mapPoint = point => {
+        point.x *= ratioX;
+        point.y *= ratioY;
+      };
+      mapPoint(this.player);
+      const bounds = this.movementBounds();
+      this.player.x = clamp(this.player.x, bounds.minX, bounds.maxX);
+      this.player.y = clamp(this.player.y, bounds.minY, bounds.maxY);
+      const seen = new Set();
+      for (const actor of this.prey.concat(this.males, this.enemies)) {
+        if (seen.has(actor)) continue;
+        seen.add(actor);
+        mapPoint(actor);
+        if (Number.isFinite(actor.baseY)) actor.baseY *= ratioY;
+        if (actor.pending) continue;
+        // Sprite dimensions are not scaled. Re-establish only their vertical
+        // edge clearance after a contraction, preserving the enemy sine-wave
+        // offset instead of snapping its phase or deforming the artwork.
+        const enemy = this.enemies.includes(actor);
+        const edge = Math.min(height / 2, actor.h / 2 + (enemy ? Math.abs(actor.amplitude || 0) + 12 : 8));
+        if (enemy) {
+          const previousBase = Number.isFinite(actor.baseY) ? actor.baseY : actor.y;
+          actor.baseY = clamp(previousBase, edge, height - edge);
+          // The lane maps with the viewport; the native wave stays in game
+          // units. Re-register it at the identical phase immediately rather
+          // than introducing a one-frame scaled-wave jump on the next step.
+          actor.y = actor.baseY + Math.sin(actor.phase || 0) * (actor.amplitude || 0);
+        } else {
+          actor.y = clamp(actor.y, edge, height - edge);
+          if (Number.isFinite(actor.baseY)) actor.baseY = clamp(actor.baseY, edge, height - edge);
+        }
+      }
+      for (const member of this._krillQueue) member.y *= ratioY;
+      for (const attachment of this.attachments) {
+        attachment.fromX *= ratioX;
+        attachment.fromY *= ratioY;
+      }
+      for (const popup of this.popups) mapPoint(popup);
+      if (this.death) {
+        mapPoint(this.death.originPose);
+        const scale = this.player.width / SOURCE_WIDTH;
+        this.death.pivot.x = this.death.originPose.x + ANATOMY.body.x * scale;
+        this.death.pivot.y = this.death.originPose.y + ANATOMY.body.y * scale;
+      }
+      // Mouth offsets are anatomy-relative, not world coordinates. Keep a
+      // captured meal in the same approved cavity throughout a resize.
+      this._positionPendingPrey(this.geometry());
+      const geometry = this.geometry();
+      this.viewportAdjustments = [];
+      for (const enemy of this.enemies) {
+        // A contraction must not award damage solely because unscaled anatomy
+        // now occupies a greater fraction of the field. Preserve a contact
+        // that already existed before resize; protect only newly introduced
+        // overlaps without consuming RNG, changing clocks or granting immunity.
+        if (existingContact.has(enemy) || !enemyOverlaps(geometry.body, enemy)) continue;
+        const original = { x: enemy.x, y: enemy.y, baseY: enemy.baseY };
+        const hitbox = compactEnemy(enemy);
+        const amplitude = Math.abs(enemy.amplitude || 0);
+        const edge = Math.min(height / 2, enemy.h / 2 + amplitude + 12);
+        const clearance = geometry.body.ry + hitbox.ry + amplitude + SAFE_GAP;
+        const options = [
+          geometry.body.y - hitbox.oy - clearance,
+          geometry.body.y - hitbox.oy + clearance
+        ].filter(base => base >= edge && base <= height - edge)
+          .sort((left, right) => Math.abs(left - original.baseY) - Math.abs(right - original.baseY));
+        let placed = false;
+        for (const base of options) {
+          enemy.baseY = base;
+          enemy.y = base + Math.sin(enemy.phase) * (enemy.amplitude || 0);
+          if (!enemyOverlaps(geometry.body, enemy) && this.canSpawnEnemy(enemy)) {
+            placed = true;
+            break;
+          }
+        }
+        if (!placed) {
+          enemy.baseY = original.baseY;
+          enemy.y = original.y;
+          const clearanceX = geometry.body.rx + hitbox.rx + SAFE_GAP;
+          enemy.x = Math.max(width + enemy.w / 2 + 12,
+            geometry.body.x + clearanceX - hitbox.ox - enemy.vx * MIN_APPROACH_TIME);
+        }
+        this.viewportAdjustments.push({ id: enemy.id, kind: enemy.kind,
+          reason: 'new-contact-after-resize', axis: placed ? 'vertical' : 'right-approach',
+          from: original, to: { x: enemy.x, y: enemy.y, baseY: enemy.baseY } });
+      }
+      // Preserving immediate separation alone is insufficient: a contraction
+      // can combine previously separate future crossing bands into a wall.
+      // Repair only a route that was valid BEFORE this resize, never ordinary
+      // gameplay contacts or an already-invalid route chosen by the player.
+      this.viewportSafetyUnresolved = false;
+      if (hadSafeRoute && !this._hasSafeEnemyRoute()) this._repairViewportRoute(geometry);
+      return true;
+    }
+
+    _hasSafeEnemyRoute() {
+      const geometry = this.geometry();
+      const incoming = this.enemies.find(enemy => this._encounterWindow(enemy, geometry));
+      // Once every hazard has passed, there is no future crossing to reserve.
+      return !incoming || this.canSpawnEnemy(incoming);
+    }
+
+    _repairViewportRoute(geometry) {
+      const deferred = new Set();
+      for (let iteration = 0; iteration < this.enemies.length && !this._hasSafeEnemyRoute(); iteration += 1) {
+        let nearest = null;
+        for (const enemy of this.enemies) {
+          if (!this._encounterWindow(enemy, geometry)) continue;
+          const original = { x: enemy.x, y: enemy.y, baseY: enemy.baseY };
+          const edge = Math.min(this.height / 2, enemy.h / 2 + Math.abs(enemy.amplitude || 0) + 12);
+          const lanes = [edge, this.height - edge];
+          // Bounded one-unit search gives sub-CSS-pixel placement precision in
+          // the supported fields. No sampling consumes a gameplay RNG draw.
+          for (let lane = Math.ceil(edge); lane <= Math.floor(this.height - edge); lane += 1) lanes.push(lane);
+          lanes.sort((left, right) => Math.abs(left - original.baseY) - Math.abs(right - original.baseY));
+          for (const lane of lanes) {
+            const distance = Math.abs(lane - original.baseY);
+            if (nearest && distance >= nearest.distance) break;
+            enemy.baseY = lane;
+            enemy.y = lane + Math.sin(enemy.phase) * (enemy.amplitude || 0);
+            if (!enemyOverlaps(geometry.body, enemy) && this._hasSafeEnemyRoute()) {
+              nearest = { enemy: enemy, distance: distance, lane: lane, from: original };
+              break;
+            }
+          }
+          Object.assign(enemy, original);
+        }
+        if (nearest) {
+          const enemy = nearest.enemy;
+          enemy.baseY = nearest.lane;
+          enemy.y = enemy.baseY + Math.sin(enemy.phase) * (enemy.amplitude || 0);
+          this.viewportAdjustments.push({ id: enemy.id, kind: enemy.kind,
+            reason: 'safe-route-after-resize', axis: 'vertical', from: nearest.from,
+            to: { x: enemy.x, y: enemy.y, baseY: enemy.baseY } });
+          break;
+        }
+        const candidates = this.enemies.filter(enemy => !deferred.has(enemy)
+          && this._encounterWindow(enemy, geometry));
+        candidates.sort((left, right) => this._encounterWindow(left, geometry).entry
+          - this._encounterWindow(right, geometry).entry);
+        if (!candidates.length) break;
+        let chosen = null;
+        for (const enemy of candidates) {
+          const original = { x: enemy.x, y: enemy.y, baseY: enemy.baseY };
+          const hitbox = compactEnemy(enemy);
+          const otherExit = this.enemies.filter(other => other !== enemy)
+            .map(other => this._encounterWindow(other, geometry)).filter(Boolean)
+            .reduce((latest, window) => Math.max(latest, window.exit), 0);
+          const approach = otherExit + MIN_APPROACH_TIME + REACTION_MARGIN;
+          const x = Math.max(this.width + enemy.w / 2 + 12, original.x,
+            geometry.body.x + geometry.body.rx + hitbox.rx + SAFE_GAP - hitbox.ox - enemy.vx * approach);
+          enemy.x = x;
+          const safe = this._hasSafeEnemyRoute();
+          Object.assign(enemy, original);
+          if (!chosen || (safe && !chosen.safe) || (safe === chosen.safe && x - original.x < chosen.distance)) {
+            chosen = { enemy: enemy, x: x, from: original, safe: safe, distance: x - original.x };
+          }
+        }
+        if (!chosen) break;
+        chosen.enemy.x = chosen.x;
+        deferred.add(chosen.enemy);
+        this.viewportAdjustments.push({ id: chosen.enemy.id, kind: chosen.enemy.kind,
+          reason: 'safe-route-after-resize', axis: 'right-approach', from: chosen.from,
+          to: { x: chosen.enemy.x, y: chosen.enemy.y, baseY: chosen.enemy.baseY } });
+      }
+      this.viewportSafetyUnresolved = !this._hasSafeEnemyRoute();
+    }
+
     pose() {
       const hover = this.reducedMotion ? 0 : Math.round(Math.sin(this.time * 2) * 1.5);
       const bounds = this.movementBounds();
@@ -325,10 +520,10 @@
     movementBounds() {
       const visible = this._visibleBounds(this.player.width / SOURCE_WIDTH);
       // Integer origin limits keep the actual pixel-cell envelope inside
-      // 0..1200/0..600 even after the renderer rounds position and adds hover.
+      // the current field even after the renderer rounds position and hover.
       return {
-        minX: Math.ceil(-visible.minX), maxX: Math.floor(WIDTH - visible.maxX),
-        minY: Math.ceil(-visible.minY), maxY: Math.floor(HEIGHT - visible.maxY)
+        minX: Math.ceil(-visible.minX), maxX: Math.floor(this.width - visible.maxX),
+        minY: Math.ceil(-visible.minY), maxY: Math.floor(this.height - visible.maxY)
       };
     }
 
@@ -442,9 +637,11 @@
       return this;
     }
 
-    pause() {
+    pause({ preserveLure = false } = {}) {
       if (this.state !== 'playing') return false;
-      this.setLure(false);
+      // A discovery freezes the resolved lure state while reading; ordinary
+      // pause/settings behavior still releases it. Held controls never stick.
+      if (!preserveLure) this.setLure(false);
       this.input = { up: false, down: false, left: false, right: false, lure: false };
       this.state = 'paused';
       this._emit('pause');
@@ -502,8 +699,8 @@
         if (prey.kind !== kind) continue;
         prey.w = dimensions.w;
         prey.h = dimensions.h;
-        const edge = Math.min(HEIGHT / 2, prey.h / 2 + 8);
-        if (!prey.pending) prey.y = clamp(prey.y, edge, HEIGHT - edge);
+        const edge = Math.min(this.height / 2, prey.h / 2 + 8);
+        if (!prey.pending) prey.y = clamp(prey.y, edge, this.height - edge);
       }
       return true;
     }
@@ -520,7 +717,7 @@
       for (const prey of this.prey) {
         if (prey.kind === 'darter' || prey.consumed || visited.has(prey)) continue;
         visited.add(prey);
-        if (prey.x - prey.w / 2 < WIDTH && prey.x + prey.w / 2 > 0) count += 1;
+        if (prey.x - prey.w / 2 < this.width && prey.x + prey.w / 2 > 0) count += 1;
       }
       return count;
     }
@@ -554,15 +751,15 @@
       // like the prior prey implementation, even when a cohort fills it. No
       // behavior below draws per-frame randomness or alters hazard schedules.
       const phase = this.random() * Math.PI * 2;
-      const lane = 36 + this.random() * (HEIGHT - 72);
+      const lane = 36 + this.random() * (this.height - 72);
       const speed = definition.speedMin + this.random() * (definition.speedMax - definition.speedMin);
       const drift = (this.random() - 0.5) * definition.vertical;
-      const edge = Math.min(HEIGHT / 2, h / 2 + 8);
-      const baseY = clamp(queued ? queued.y : lane, edge, HEIGHT - edge);
+      const edge = Math.min(this.height / 2, h / 2 + 8);
+      const baseY = clamp(queued ? queued.y : lane, edge, this.height - edge);
       const vx = queued ? queued.vx : -speed;
       const vy = drift;
       const prey = {
-        x: WIDTH + w / 2 + 8,
+        x: this.width + w / 2 + 8,
         y: baseY,
         w: w,
         h: h,
@@ -639,9 +836,9 @@
       const h = DARTER_HEIGHT;
       const vx = -(195 + this.darterRandom() * 55);
       const vy = (this.darterRandom() - 0.5) * 55;
-      const baseY = 70 + this.darterRandom() * (HEIGHT - 140);
+      const baseY = 70 + this.darterRandom() * (this.height - 140);
       const prey = {
-        x: WIDTH + w / 2 + 8, y: baseY, w: w, h: h,
+        x: this.width + w / 2 + 8, y: baseY, w: w, h: h,
         vx: vx, vy: vy, baseY: baseY,
         phase: this.darterRandom() * Math.PI * 2,
         kind: 'darter', _cruiseVx: vx, _cruiseVy: vy,
@@ -721,11 +918,11 @@
       const phase = this.maleRandom() * Math.PI * 2;
       // Every cruising lane is reachable by vertical swimming before the male
       // crosses the head. Full sprites retain clearance from the field edges.
-      const baseY = 100 + this.maleRandom() * (HEIGHT - 200);
+      const baseY = 100 + this.maleRandom() * (this.height - 200);
       const vx = -(100 + this.maleRandom() * 25);
       const vy = (this.maleRandom() - 0.5) * 6;
       const male = {
-        x: WIDTH + MALE_WIDTH / 2 + 8,
+        x: this.width + MALE_WIDTH / 2 + 8,
         y: baseY,
         w: MALE_WIDTH,
         h: MALE_HEIGHT,
@@ -869,9 +1066,9 @@
       const edge = h / 2 + amplitude + 12;
       const geometry = this.geometry();
       for (let attempt = 0; attempt < 12; attempt += 1) {
-        const baseY = edge + this.random() * (HEIGHT - edge * 2);
+        const baseY = edge + this.random() * (this.height - edge * 2);
         const candidate = {
-          x: WIDTH + w / 2 + 12,
+          x: this.width + w / 2 + 12,
           y: baseY + Math.sin(phase) * amplitude,
           w: w,
           h: h,
@@ -1036,7 +1233,7 @@
           }
           const edge = prey.h / 2 + 8;
           if (prey.y <= edge && prey._cruiseVy < 0) prey._cruiseVy = Math.abs(prey._cruiseVy);
-          if (prey.y >= HEIGHT - edge && prey._cruiseVy > 0) prey._cruiseVy = -Math.abs(prey._cruiseVy);
+          if (prey.y >= this.height - edge && prey._cruiseVy > 0) prey._cruiseVy = -Math.abs(prey._cruiseVy);
         }
         prey.phase += dt * 1.8;
         const cruiseVx = burst ? -prey._burstSpeed
@@ -1064,8 +1261,8 @@
         prey.vx += (targetVx - prey.vx) * steering;
         prey.vy += (targetVy - prey.vy) * steering;
         prey.x += prey.vx * dt;
-        const edge = Math.min(HEIGHT / 2, prey.h / 2 + 8);
-        prey.y = clamp(prey.y + prey.vy * dt, edge, HEIGHT - edge);
+        const edge = Math.min(this.height / 2, prey.h / 2 + 8);
+        prey.y = clamp(prey.y + prey.vy * dt, edge, this.height - edge);
         // Broad anterior-head contact is intentionally forgiving. Retain the
         // original oral ellipse as well, including the maximum-gape cavity;
         // the tail/posterior body and separate esca still cannot eat prey.
@@ -1105,7 +1302,7 @@
         male.vx += (targetVx - male.vx) * steering;
         male.vy += (targetVy - male.vy) * steering;
         male.x += male.vx * dt;
-        male.y = clamp(male.y + male.vy * dt, male.h / 2 + 8, HEIGHT - male.h / 2 - 8);
+        male.y = clamp(male.y + male.vy * dt, male.h / 2 + 8, this.height - male.h / 2 - 8);
         // The lure steers toward its unchanged attachment target, but actual
         // head/anterior-body contact can collect a male with the light OFF.
         if (this.attachedMaleCount < MAX_MALES && ellipsesOverlap(geometry.maleCollection, {
@@ -1139,7 +1336,7 @@
         if (collides && this.player.invulnerable <= 0) {
           this.hearts = Math.max(0, this.hearts - 1);
           this.player.invulnerable = 1.5;
-          this._emit('damage', { hearts: this.hearts, x: geometry.body.x, y: geometry.body.y });
+          this._emit('damage', { kind: enemy.kind, hearts: this.hearts, x: geometry.body.x, y: geometry.body.y });
           // Remove the enemy that did damage, preventing a lingering second
           // hit when the invulnerability period ends.
           if (this.hearts === 0) {
@@ -1163,6 +1360,8 @@
 
   ArcadeEngine.WIDTH = WIDTH;
   ArcadeEngine.HEIGHT = HEIGHT;
+  ArcadeEngine.MIN_WIDTH = MIN_WIDTH;
+  ArcadeEngine.MIN_HEIGHT = MIN_HEIGHT;
   ArcadeEngine.ANATOMY = ANATOMY;
   ArcadeEngine.MAX_MALES = MAX_MALES;
   ArcadeEngine.MALE_WIDTH = MALE_WIDTH;

@@ -5,11 +5,16 @@
   const $ = id => document.getElementById(id);
   const canvas = $('game-canvas');
   const ctx = canvas.getContext('2d', { alpha: false });
-  const W = 1200, H = 600;
+  let W = 1200, H = 600;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let ready = false, exited = false, frameId = null, newPersonalBest = false;
   let previous = 0, accumulator = 0, ambientTime = 0, lastState = '';
   let backingScale = 1;
+  let mobileMode = '', layoutFrame = null, settingsResume = false;
+  const settingsDialog = $('mobile-settings-dialog');
+  const relocated = [];
+  const embedded = window.top !== window;
+  document.documentElement.dataset.embeddedArcade = String(embedded);
   const images = {};
   const sounds = new ArcadeAudio();
   const scores = new ArcadeScores();
@@ -33,8 +38,8 @@
       releaseInputs();
       $('live-status').textContent = `Game over. Score ${engine.score}.${newPersonalBest ? ' New local personal best.' : ''}`;
     }
-    // Record discoveries now; open a panel only after the simulation step has
-    // finished, so pausing cannot leave half of a damage/spawn update running.
+    // Record in actual event order. Present the first new discovery at this
+    // same atomic step's boundary: damage/feeding finish before clocks freeze.
     learning?.handleEvent(event);
   }});
   engine.reducedMotion = reducedMotion;
@@ -43,6 +48,7 @@
     onLesson: lesson => {
       lessonResume = engine.state === 'playing';
       pause(true);
+      renderHud(); // Suppress normal pause/game-over results behind the lesson.
       learningUi.showLesson(lesson);
       $('live-status').textContent = `Discovery: ${lesson.title}. Dive and music paused. No reading time limit.`;
     },
@@ -54,11 +60,14 @@
     }
   });
   function openDiscoveryReview() {
+    if (engine.state === 'dying') return; // Never interrupt the death animation.
+    const wasPlaying = engine.state === 'playing' || Boolean(settingsDialog?.open && settingsResume);
+    if (settingsDialog?.open) closeSettings(false);
     if (!learning.openReview()) return;
-    reviewResume = engine.state === 'playing';
-    if (reviewResume) pause(true);
-    learningUi.showReview({ ids: [...learning.collectionIds], gameIds: [...learning.gameDiscoveries],
-      queuedIds: [...learning.queuedIds], state: engine.state });
+    reviewResume = wasPlaying;
+    if (engine.state === 'playing') pause(true);
+    learningUi.showReview({ ids: [...learning.collectionIds], gameIds: [...learning.gameDiscoveries], state: engine.state });
+    publishHostLayout();
   }
   learningUi = new ArcadeLearningUI({ curriculum: ArcadeCurriculum,
     onToggle: enabled => learning.setEnabled(enabled),
@@ -75,6 +84,8 @@
   learningUi.sync(learning, engine.state);
   // Development access for repeatable local acceptance checks, not a second game.
   window.anglerfishArcade = { engine, assets: images, sounds, scores, vessels, learning, learningUi, exit: exitGame,
+    refreshViewport, openSettings,
+    get mobileMode() { return mobileMode; },
     get ready() { return ready; }, get exited() { return exited; }, get frameId() { return frameId; } };
 
   const keyMap = { w:'up', W:'up', ArrowUp:'up', s:'down', S:'down', ArrowDown:'down',
@@ -99,14 +110,16 @@
     joystick.style.setProperty('--joystick-x','0px'); joystick.style.setProperty('--joystick-y','0px');
     if (id !== null && joystick.hasPointerCapture(id)) joystick.releasePointerCapture(id);
   }
-  function releaseInputs() {
+  function releaseInputs(preserveLure = Boolean(learning?.activeLesson)) {
     keys.clear(); neutralJoystick();
     for (const id of pointers.keys()) document.querySelectorAll('[data-control]').forEach(button => {
       if (button.hasPointerCapture(id)) button.releasePointerCapture(id);
     });
     pointers.clear(); syncInput();
-    if (engine.setLure) engine.setLure(false);
-    else engine.lure = false;
+    if (!preserveLure) {
+      if (engine.setLure) engine.setLure(false);
+      else engine.lure = false;
+    }
   }
   function start() {
     if (!ready || exited || engine.state === 'dying' || learning.blocked) return;
@@ -117,7 +130,8 @@
   }
   function pause(educational = false) {
     if (engine.state !== 'playing' || (learning.blocked && !educational)) return;
-    engine.pause(); releaseInputs(); accumulator = 0; renderHud();
+    const preserveLure = Boolean(learning.activeLesson);
+    engine.pause({ preserveLure }); releaseInputs(preserveLure); accumulator = 0; renderHud();
   }
   function resume() {
     if (engine.state !== 'paused' || exited || learning.blocked) return;
@@ -132,6 +146,30 @@
     else start();
   });
   listen($('pause-button'), 'click', () => engine.state === 'paused' ? resume() : pause());
+  listen($('mobile-pause-button'), 'click', () => engine.state === 'paused' ? resume() : pause());
+  listen($('mobile-settings-button'), 'click', openSettings);
+  listen($('mobile-settings-close'), 'click', () => closeSettings());
+  listen($('mobile-exit-button'), 'click', exitGame);
+  listen(settingsDialog, 'cancel', event => { event.preventDefault(); closeSettings(); });
+  // Native Settings owns keys exactly as the existing lesson/review dialogs do.
+  listen(settingsDialog, 'keydown', event => event.stopPropagation());
+  listen(settingsDialog, 'keyup', event => event.stopPropagation());
+  function openSettings() {
+    if (!mobileMode || exited || learning.blocked || settingsDialog.open || engine.state === 'dying') return;
+    settingsResume = engine.state === 'playing';
+    if (settingsResume) pause(true);
+    releaseInputs(); settingsDialog.showModal();
+    $('mobile-settings-close').focus({ preventScroll: true });
+    publishHostLayout();
+  }
+  function closeSettings(resumePrevious = true) {
+    if (!settingsDialog.open) return;
+    settingsDialog.close();
+    const shouldResume = settingsResume && resumePrevious; settingsResume = false;
+    $('mobile-settings-button').focus({ preventScroll: true });
+    if (shouldResume && !exited && !document.hidden && !learning.blocked) resume();
+    publishHostLayout();
+  }
   function renderAudioControls() {
     $('sound-button').querySelector('.audio-label').textContent = sounds.enabled ? 'SFX ON' : 'SFX OFF';
     $('sound-button').setAttribute('aria-pressed', String(sounds.enabled));
@@ -150,7 +188,7 @@
   });
   listen($('exit-button'), 'click', exitGame);
   listen(window, 'keydown', event => {
-    if (learning.blocked) return; // Native educational dialogs own keyboard input.
+    if (learning.blocked || settingsDialog.open) return; // Native dialogs own keyboard input.
     // Do not swallow normal keyboard activation on buttons or other controls.
     if (event.key === 'Escape') { event.preventDefault(); if (!event.repeat) engine.state === 'paused' ? resume() : pause(); return; }
     const control = keyMap[event.key];
@@ -201,7 +239,7 @@
   for (const type of ['pointerup','pointercancel','lostpointercapture']) listen(joystick,type,releaseJoystick);
   listen(joystick, 'contextmenu', event => event.preventDefault());
   listen(window, 'blur', () => { pause(); releaseInputs(); if (engine.state === 'dying') sounds.stopAll(); previous = 0; });
-  listen(document, 'visibilitychange', () => { if (document.hidden) { pause(); releaseInputs(); if (engine.state === 'dying') sounds.stopAll(); previous = 0; } });
+  listen(document, 'visibilitychange', () => { if (document.hidden) { settingsResume = false; pause(); releaseInputs(); if (engine.state === 'dying') sounds.stopAll(); previous = 0; } });
   listen(window, 'pagehide', () => cleanExit());
   // A future same-document Software-page host cancels this event, closes the
   // cabinet, and restores its own page without reloading. Standalone is local.
@@ -210,8 +248,11 @@
     scores.record(engine.score);
     exited = true; releaseInputs(); engine.exit(); ready = false;
     if (frameId !== null) cancelAnimationFrame(frameId);
+    if (layoutFrame !== null) cancelAnimationFrame(layoutFrame);
     frameId = null; accumulator = 0; previous = 0;
     sounds.destroy(); vessels.clear(); resizeObserver.disconnect(); listeners.abort();
+    dialogObserver.disconnect();
+    if (settingsDialog.open) settingsDialog.close();
     learning.destroy(); learningUi.destroy();
     document.body.dataset.state = 'exited';
     $('live-status').textContent = 'Game closed. Gameplay and audio stopped.';
@@ -224,19 +265,88 @@
     if (document.querySelector('.arcade').dispatchEvent(event)) location.assign(new URL('landing.html', document.baseURI).href);
   }
 
+  function relocate(node, destination) {
+    if (!node || !destination) return;
+    const anchor = document.createComment('desktop arcade position');
+    node.before(anchor); relocated.push({ node, anchor }); destination.append(node);
+  }
+  function mobileStructure(active) {
+    if (active && !relocated.length) {
+      relocate(document.querySelector('.learning-control-row'), $('mobile-settings-controls'));
+      const audio = document.createElement('div'); audio.className = 'mobile-audio-controls';
+      $('mobile-settings-controls').append(audio);
+      relocate($('sound-button'), audio); relocate($('music-button'), audio);
+      for (const selector of ['.instrument-males','.instrument-multiplier','.instrument-best','#discovery-counter']) {
+        relocate(document.querySelector(selector), $('mobile-settings-telemetry'));
+      }
+      relocate($('learning-summary'), $('mobile-postgame-slot'));
+      relocate($('learning-prompt'), $('mobile-postgame-slot'));
+    } else if (!active && relocated.length) {
+      if (settingsDialog.open) closeSettings();
+      for (const {node,anchor} of relocated.splice(0)) { anchor.replaceWith(node); }
+      $('mobile-settings-controls').querySelector('.mobile-audio-controls')?.remove();
+    }
+  }
+  function publishHostLayout() {
+    if (!embedded) return;
+    const rect = $('mobile-exit-button').getBoundingClientRect();
+    window.dispatchEvent(new CustomEvent('anglerfish-arcade:layout', { detail: {
+      mode: mobileMode, exit: { x:rect.x, y:rect.y, width:rect.width, height:rect.height },
+      modal: settingsDialog.open || Boolean(document.querySelector('.learning-dialog[open]'))
+    }}));
+  }
+  function refreshViewport(safeArea) {
+    if (safeArea) for (const edge of ['top','right','bottom','left']) {
+      document.documentElement.style.setProperty(`--arcade-safe-${edge}`, `${Math.max(0,Number(safeArea[edge])||0)}px`);
+    }
+    if (layoutFrame !== null || exited) return;
+    layoutFrame = requestAnimationFrame(() => { layoutFrame = null; resize(); });
+  }
   function resize() {
-    const width = canvas.getBoundingClientRect().width;
+    if (exited) return;
+    const touch = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+    const nextMode = innerWidth <= 740 || (touch && innerWidth <= 1200)
+      ? (innerWidth > innerHeight ? 'landscape' : 'portrait') : '';
+    const modeChanged = nextMode !== mobileMode;
+    mobileMode = nextMode;
+    if (mobileMode) {
+      document.documentElement.dataset.mobileArcade = mobileMode;
+      const visual = window.visualViewport;
+      const normalScale = !visual || Math.abs(visual.scale - 1) < .02;
+      document.documentElement.style.setProperty('--arcade-height', `${normalScale && visual ? visual.height : innerHeight}px`);
+    } else delete document.documentElement.dataset.mobileArcade;
+    mobileStructure(Boolean(mobileMode));
+    const rect = canvas.getBoundingClientRect();
+    const width = rect.width;
+    if (width <= 0 || rect.height <= 0) return;
+    let worldWidth = 1200, worldHeight = 600;
+    if (mobileMode === 'portrait') { worldWidth = 720; worldHeight = 720 * rect.height / width; }
+    else if (mobileMode === 'landscape') { worldHeight = 600; worldWidth = 600 * width / rect.height; }
+    const geometryChanged = engine.setViewport(worldWidth, worldHeight);
+    W = engine.width; H = engine.height; vessels.setViewport(W,H);
+    if (geometryChanged || modeChanged) releaseInputs();
     const ratio = Math.min(devicePixelRatio || 1, 3);
     canvas.width = Math.max(1, Math.round(width * ratio));
-    canvas.height = Math.round(canvas.width / 2);
+    canvas.height = Math.max(1, Math.round(canvas.width * H / W));
     backingScale = canvas.width / W;
     ctx.setTransform(backingScale, 0, 0, backingScale, 0, 0);
     // Resample the original full-resolution image directly at screen resolution.
     // No intermediary sprites, filter, source crop, or artwork mutation.
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    publishHostLayout();
   }
-  const resizeObserver = new ResizeObserver(resize);
+  const resizeObserver = new ResizeObserver(() => refreshViewport());
   resizeObserver.observe(canvas);
+  listen(window, 'resize', () => refreshViewport());
+  if (window.visualViewport) {
+    listen(window.visualViewport, 'resize', () => refreshViewport());
+    listen(window.visualViewport, 'scroll', () => refreshViewport());
+  }
+  const dialogObserver = new MutationObserver(publishHostLayout);
+  for (const dialog of [settingsDialog,$('learning-lesson-dialog'),$('learning-review-dialog')]) {
+    dialogObserver.observe(dialog,{attributes:true,attributeFilter:['open']});
+  }
+  refreshViewport();
 
   const snow = Array.from({ length: 72 }, (_, i) => ({ x:(i*179.37)%W, y:(i*97.83)%H, r:i%5 === 0 ? 1.5 : .7, layer:i%3 }));
   function environment() {
@@ -257,13 +367,13 @@
     }
     for (const p of snow) {
       const speed = [.25,.58,1.05][p.layer];
-      const x = ((p.x - travel*speed)%W + W)%W;
-      const y = p.y + (reducedMotion ? 0 : Math.sin(ambientTime*.23 + p.x)*5);
+      const x = ((p.x / 1200 * W - travel*speed)%W + W)%W;
+      const y = p.y / 600 * H + (reducedMotion ? 0 : Math.sin(ambientTime*.23 + p.x)*5);
       ctx.fillStyle = p.layer === 2 ? 'rgba(99,190,195,.24)' : 'rgba(148,188,194,.16)';
       ctx.beginPath(); ctx.arc(x,y,p.r,0,Math.PI*2); ctx.fill();
     }
     for (let i=0; i<9; i++) {
-      const x=((i*317-travel*.4)%W+W)%W, y=100+(i*113)%390;
+      const x=((i*317-travel*.4)%W+W)%W, y=(100+(i*113)%390)/600*H;
       ctx.fillStyle = i%3 === 0 ? 'rgba(225,159,75,.25)' : 'rgba(77,190,189,.3)';
       ctx.fillRect(Math.round(x),y,2,2);
     }
@@ -378,20 +488,24 @@
     document.querySelectorAll('[data-heart]').forEach((heart,i)=>heart.classList.toggle('lost',i>=engine.hearts));
     $('hearts').setAttribute('aria-label',`${engine.hearts} of 3 hearts remaining`);
     learningUi.sync(learning, engine.state);
-    if(lastState===engine.state)return;
-    lastState=engine.state;document.body.dataset.state=ready?engine.state:'loading';
+    $('mobile-pause-button').disabled=!ready||!['playing','paused'].includes(engine.state);
+    $('mobile-pause-button').textContent=engine.state==='paused'?'RESUME':'PAUSE';
+    $('mobile-settings-button').disabled=!ready||engine.state==='dying';
+    const presentationState=engine.state+':'+learning.blocked+':'+learning.resultsReady;
+    if(lastState===presentationState)return;
+    lastState=presentationState;document.body.dataset.state=ready?engine.state:'loading';
     const dying=engine.state==='dying';
-    $('game-overlay').hidden=engine.state==='playing'||dying;
-    $('start-button').disabled=!ready||dying;
-    document.querySelectorAll('[data-control]').forEach(button=>button.disabled=!ready||dying);
-    joystick.disabled=!ready||dying;
-    $('pause-button').disabled=!ready||!['playing','paused'].includes(engine.state);
+    $('game-overlay').hidden=engine.state==='playing'||dying||learning.blocked||(engine.state==='over'&&!learning.resultsReady);
+    $('start-button').disabled=!ready||dying||learning.blocked;
+    document.querySelectorAll('[data-control]').forEach(button=>button.disabled=!ready||dying||learning.blocked);
+    joystick.disabled=!ready||dying||learning.blocked;
+    $('pause-button').disabled=!ready||learning.blocked||!['playing','paused'].includes(engine.state);
     $('pause-button').textContent=engine.state==='paused'?'RESUME':'PAUSE';
     $('start-button').textContent=dying?'DIVE ENDING…':engine.state==='playing'?'PAUSE GAME':engine.state==='paused'?'RESUME GAME':engine.state==='over'?'PLAY AGAIN':'START GAME';
     const states={
       ready:['DIVE WHEN READY','ANGRY ANGLERFISH','Avoid the lancetfish and crown jellyfish while eating as much prey as possible. Use your bioluminescent lure to attract prey toward your mouth!','','START GAME'],
       paused:['INSTRUMENTS ON HOLD','PAUSED','Your dive is safe. Resume when you’re ready.','WASD / arrows swim · hold SPACE for the lure','RESUME DIVE'],
-      over:['ANGRY ANGLERFISH / SIGNAL LOST','GAME OVER',newPersonalBest ? (scores.available ? 'NEW LOCAL PERSONAL BEST' : 'NEW TAB BEST · browser storage unavailable') : 'Three hearts. One life. Another dive?',`FINAL SCORE ${String(engine.score).padStart(6,'0')} · SURVIVED ${timeText(engine.time)}`,'PLAY AGAIN']
+      over:['ANGRY ANGLERFISH / SIGNAL LOST','GAME OVER',newPersonalBest ? (scores.available ? 'NEW LOCAL PERSONAL BEST' : 'NEW TAB BEST · browser storage unavailable') : 'Three hearts. One life. Another dive?',`FINAL SCORE ${String(engine.score).padStart(6,'0')} · ${scores.available?'LOCAL BEST':'TAB BEST'} ${String(scores.best).padStart(6,'0')} · SURVIVED ${timeText(engine.time)}`,'PLAY AGAIN']
     };
     const state=states[engine.state];
     if(state) { [$('overlay-kicker').textContent,$('overlay-title').textContent,$('overlay-copy').textContent,$('overlay-result').textContent,$('overlay-action').textContent]=state; }

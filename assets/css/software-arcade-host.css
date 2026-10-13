@@ -66,3 +66,59 @@
   .software-arcade-host, .software-arcade-host__bar { border: 1px solid CanvasText; }
   .software-arcade-host__exit { border-color: ButtonText; }
 }
+
+/* One mobile viewport: no parent title bar above the child's compact HUD.
+ * The independent host Exit occupies the child's reserved Exit rectangle. */
+.software-arcade-host__safe-probe {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  width: 0; height: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.software-arcade-host[data-mobile-mode] {
+  position: fixed;
+  inset: var(--host-offset-top, 0px) 0 auto;
+  width: 100%;
+  height: var(--host-height, 100dvh);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.software-arcade-host[data-mobile-mode] .software-arcade-host__bar {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  height: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+}
+.software-arcade-host[data-mobile-mode] .software-arcade-host__bar h2 {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+.software-arcade-host[data-mobile-mode] .software-arcade-host__exit {
+  position: absolute;
+  left: var(--host-exit-left, calc(100% - 52px));
+  top: var(--host-exit-top, 6px);
+  width: var(--host-exit-width, 44px);
+  height: var(--host-exit-height, 44px);
+  min-height: 44px;
+  padding: 4px;
+  border: 1px solid #ff274899;
+  border-radius: 4px;
+  background: #21141ccc;
+  font-size: 11px;
+  pointer-events: auto;
+}
+.software-arcade-host[data-mobile-mode="landscape"] .software-arcade-host__exit {
+  border-color: #b9edf288;
+  background: #10242dcc;
+}
+.software-arcade-host[data-mobile-mode] .software-arcade-host__status { top: 64px; }
+.software-arcade-host[data-child-modal="true"] .software-arcade-host__exit { visibility: hidden; }

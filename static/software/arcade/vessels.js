@@ -13,6 +13,7 @@
     static SCHEDULE = SCHEDULE;
     constructor(options = {}) {
       this.reducedMotion = Boolean(options.reducedMotion);
+      this.width=1200;this.height=600;
       let seed = (Number.isFinite(options.seed) ? options.seed : Date.now() ^ 0xa72e1859) >>> 0;
       this.random = options.random || (() => {
         seed += 0x6d2b79f5;
@@ -21,6 +22,15 @@
         return ((v^v>>>14)>>>0)/4294967296;
       });
       this.reset();
+      if(Number.isFinite(options.width)&&Number.isFinite(options.height))this.setViewport(options.width,options.height);
+    }
+    setViewport(width,height) {
+      if(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0)return false;
+      width=Math.max(480,Math.round(width));height=Math.max(360,Math.round(height));
+      if(width===this.width&&height===this.height)return false;
+      // Presentation coordinates adapt only. Private schedule/RNG, art size,
+      // active age and appearance history never change on orientation.
+      this.width=width;this.height=height;return true;
     }
     reset() {
       this.order=KINDS.slice();
@@ -78,6 +88,9 @@
         x=865-arrival*38+departure*155;
         y=225-arrival*10-departure*45;
       }
+      // Keep the existing desktop path byte-for-byte numerically identical;
+      // map its anchor into tall/wide fields, never stretch the vessel artwork.
+      x=x*this.width/1200;y=y*this.height/600;
       ctx.save();ctx.globalAlpha=visible;
       if(kind==='trieste'||kind==='challenger') {
         const swing=this.reducedMotion?0:Math.sin(t*.32)*.22;

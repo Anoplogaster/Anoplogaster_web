@@ -71,11 +71,11 @@
       hidden(this._get('learning-storage-note'), !unavailable);
       hidden(this._get('learning-review-storage-note'), !unavailable);
       const gameCount = new Set(ids(model.gameDiscoveries)).size;
-      const queuedCount = new Set(ids(model.queuedIds)).size;
       const over = ['over', 'gameover'].includes(engineState);
-      hidden(this.summary, !over);
-      text(this._get('learning-summary-copy'), 'This dive: ' + gameCount + (gameCount === 1 ? ' discovery' : ' discoveries') + '. Your collection: ' + count + '/' + total + '.' + (queuedCount ? ' ' + queuedCount + (queuedCount === 1 ? ' queued lesson is' : ' queued lessons are') + ' available in the review.' : ''));
-      hidden(this.prompt, !(over && model.promptVisible));
+      const resultsVisible = over && model.resultsReady === true && !model.blocked;
+      hidden(this.summary, !resultsVisible);
+      text(this._get('learning-summary-copy'), 'This dive: ' + gameCount + (gameCount === 1 ? ' discovery' : ' discoveries') + '. Your collection: ' + count + '/' + total + '.');
+      hidden(this.prompt, !(resultsVisible && model.promptVisible));
       if (count !== this._announcedCount) {
         if (this._announcedCount !== null) text(this._get('learning-live-status'), 'Discovery Collection: ' + count + ' of ' + total + ' discoveries.');
         this._announcedCount = count;
@@ -169,12 +169,11 @@
       options = options || {};
       const collection = new Set(ids(options.ids));
       const game = new Set(ids(options.gameIds));
-      const queued = new Set(ids(options.queuedIds));
-      const selected = new Set([...collection, ...game, ...queued]);
+      const selected = new Set([...collection, ...game]);
       const lessons = this.curriculum.lessons.filter(lesson => selected.has(lesson.id)).slice().sort((a, b) => a.order - b.order);
       const body = this._get('learning-review-body');
       const fragment = document.createDocumentFragment();
-      text(this._get('learning-review-summary'), collection.size + '/' + (this.curriculum.lessons.length || 16) + ' collected · ' + game.size + ' discovered this dive' + (queued.size ? ' · ' + queued.size + ' queued for review' : ''));
+      text(this._get('learning-review-summary'), collection.size + '/' + (this.curriculum.lessons.length || 16) + ' collected · ' + game.size + ' discovered this dive');
       if (!lessons.length) {
         const paragraph = document.createElement('p');
         paragraph.className = 'learning-prose';
@@ -191,7 +190,6 @@
         const tags = document.createElement('p');
         tags.className = 'learning-review-tags';
         if (game.has(lesson.id)) { const tag = document.createElement('span'); tag.textContent = 'Discovered this dive'; tags.append(tag); }
-        if (queued.has(lesson.id)) { const tag = document.createElement('span'); tag.textContent = 'Queued lesson — available here'; tags.append(tag); }
         if (tags.childElementCount) article.append(tags);
         const explanation = document.createElement('div');
         explanation.className = 'learning-prose';

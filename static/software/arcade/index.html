@@ -109,6 +109,7 @@
         <span class="instrument-label">DISCOVERIES</span>
         <span id="discovery-count-value" class="instrument-value">00/16</span>
       </button>
+      <button id="mobile-exit-button" class="mobile-cabinet-button mobile-exit-button" type="button" aria-label="Exit game and return to Software">EXIT <span aria-hidden="true">↗</span></button>
     </section>
 
     <section class="screen-housing" aria-label="Game display">
@@ -130,6 +131,7 @@
             <p class="survival-copy">THREE HEARTS. ONE LIFE.<br>HOW LONG CAN YOU SURVIVE?</p>
             <p id="overlay-result" class="overlay-result"></p>
             <button id="overlay-action" class="overlay-action" type="button" disabled>Loading the abyss…</button>
+            <div id="mobile-postgame-slot" class="mobile-postgame-slot"></div>
           </div>
           <div class="crt-surface" aria-hidden="true"></div>
         </div>
@@ -162,6 +164,10 @@
           <span class="joystick-direction joystick-left" aria-hidden="true">←</span><span class="joystick-direction joystick-right" aria-hidden="true">→</span>
           <span class="joystick-knob" aria-hidden="true"></span><span class="visually-hidden">SWIM</span>
         </button>
+        <div class="mobile-utility-controls">
+          <button id="mobile-pause-button" class="mobile-cabinet-button" type="button" disabled>PAUSE</button>
+          <button id="mobile-settings-button" class="mobile-cabinet-button" type="button" aria-haspopup="dialog" aria-controls="mobile-settings-dialog">SETTINGS</button>
+        </div>
         <button class="touch-button touch-lure" data-control="lure" type="button" aria-label="Hold to activate lure" disabled><span class="lure-symbol" aria-hidden="true">✦</span><small>HOLD LURE</small></button>
       </div>
       <div class="deck-bottomline" aria-hidden="true"><span class="warning-plate">KEEP YOUR LIGHT ALIVE</span><div class="deck-vent"></div><span class="deck-badge">A.I. / 07</span></div>
@@ -183,6 +189,20 @@
     <p id="arcade-note" class="arcade-note">Arcade exaggeration: five attached males is not a documented condition for <i>Diceratias pileatus</i>.</p>
     <footer class="cabinet-footer"><span class="footer-status"><i aria-hidden="true"></i> RESEARCH & RECREATION DIVISION</span><span>One dive. Make it count.</span></footer>
   </main>
+  <!-- Mobile reuses the existing preference controls and telemetry here. The
+       desktop cabinet retains their original positions and appearance. -->
+  <dialog id="mobile-settings-dialog" class="mobile-settings-dialog" aria-labelledby="mobile-settings-title">
+    <header class="mobile-settings-header">
+      <div><p class="mobile-settings-kicker">DIVE CONFIGURATION</p><h2 id="mobile-settings-title">Settings</h2></div>
+      <button id="mobile-settings-close" class="mobile-cabinet-button" type="button" aria-label="Close settings and return to game">CLOSE</button>
+    </header>
+    <div class="mobile-settings-scroll">
+      <div id="mobile-settings-telemetry" class="mobile-settings-telemetry" aria-label="Additional dive telemetry"></div>
+      <div id="mobile-settings-controls" class="mobile-settings-controls"></div>
+      <p class="mobile-settings-note">Your dive pauses while Settings is open.</p>
+      <p class="mobile-settings-note">Arcade exaggeration: five attached males is not a documented condition for <i>Diceratias pileatus</i>.</p>
+    </div>
+  </dialog>
   <dialog id="learning-lesson-dialog" class="learning-dialog" aria-labelledby="learning-lesson-title" aria-describedby="learning-lesson-body">
     <header class="learning-dialog-header">
       <p class="learning-kicker">SCIENTIFIC DISCOVERY <span id="learning-lesson-number"></span></p>
