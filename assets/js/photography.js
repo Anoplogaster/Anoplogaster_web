@@ -14,13 +14,10 @@
   const image = dialog.querySelector('[data-lightbox-image]');
   const caption = dialog.querySelector('[data-lightbox-caption]');
   const counter = dialog.querySelector('[data-lightbox-counter]');
-  const original = dialog.querySelector('[data-lightbox-original]');
   const closeButton = dialog.querySelector('[data-lightbox-close]');
   const previousButton = dialog.querySelector('[data-lightbox-prev]');
   const nextButton = dialog.querySelector('[data-lightbox-next]');
-  const playButton = dialog.querySelector('[data-lightbox-play]');
   const stage = dialog.querySelector('[data-lightbox-stage]');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const adjacentImage = new Image(); // One adjacent image, never the full collection.
   adjacentImage.decoding = 'async';
   let currentIndex = 0;
@@ -28,39 +25,6 @@
   let returnFocus = null;
   let returnScroll = { x: 0, y: 0 };
   let touch = null;
-  let slideshow = false;
-  let slideshowTimer = null;
-  const interval = 5500;
-
-  function cancelTimer() {
-    if (slideshowTimer !== null) window.clearTimeout(slideshowTimer);
-    slideshowTimer = null;
-  }
-
-  function synchronizePlay() {
-    playButton.textContent = slideshow ? 'Pause' : 'Play';
-    playButton.setAttribute('aria-pressed', String(slideshow));
-    playButton.disabled = reducedMotion.matches;
-    playButton.setAttribute('aria-label', reducedMotion.matches
-      ? 'Slideshow unavailable with reduced motion'
-      : slideshow ? 'Pause slideshow' : 'Play slideshow');
-    dialog.dataset.slideshow = slideshow ? 'playing' : 'paused';
-  }
-
-  function pauseSlideshow() {
-    slideshow = false;
-    cancelTimer();
-    synchronizePlay();
-  }
-
-  function scheduleAdvance() {
-    cancelTimer();
-    if (!slideshow || !dialog.open || document.hidden || reducedMotion.matches || dialog.dataset.loading === 'true') return;
-    slideshowTimer = window.setTimeout(() => {
-      slideshowTimer = null;
-      if (slideshow && dialog.open && !document.hidden && !reducedMotion.matches) showPhoto(currentIndex + 1);
-    }, interval);
-  }
 
   function imageSize(photo) {
     const viewport = window.visualViewport;
@@ -97,7 +61,6 @@
   }
 
   async function showPhoto(index) {
-    cancelTimer();
     currentIndex = (index + photos.length) % photos.length;
     const photo = photos[currentIndex];
     const request = ++revision;
@@ -107,7 +70,6 @@
     image.style.visibility = 'hidden';
     counter.textContent = `${currentIndex + 1} / ${photos.length}`;
     counter.setAttribute('aria-label', `Photograph ${currentIndex + 1} of ${photos.length}`);
-    original.href = photo.dataset.original;
     image.alt = photo.dataset.alt;
     image.width = Number(photo.dataset.fullWidth);
     image.height = Number(photo.dataset.fullHeight);
@@ -122,18 +84,16 @@
         image.addEventListener('error', reject, { once: true });
       });
     } catch (_) {
-      // The original link remains available if a derivative cannot be loaded.
+      // Native gallery links remain available if a derivative cannot be loaded.
     }
     if (request !== revision || !dialog.open) return;
     image.style.visibility = '';
     dialog.dataset.loading = 'false';
     stage.setAttribute('aria-busy', 'false');
     preloadAdjacent();
-    scheduleAdvance();
   }
 
   function openLightbox(index, trigger) {
-    pauseSlideshow();
     returnFocus = trigger;
     returnScroll = { x: window.scrollX, y: window.scrollY };
     dialog.showModal();
@@ -142,12 +102,10 @@
   }
 
   function closeLightbox() {
-    pauseSlideshow();
     if (dialog.open) dialog.close();
   }
 
   function navigate(delta) {
-    pauseSlideshow();
     showPhoto(currentIndex + delta);
   }
 
@@ -162,21 +120,14 @@
   closeButton.addEventListener('click', closeLightbox);
   previousButton.addEventListener('click', () => navigate(-1));
   nextButton.addEventListener('click', () => navigate(1));
-  playButton.addEventListener('click', () => {
-    if (reducedMotion.matches || document.hidden) return;
-    slideshow = !slideshow;
-    synchronizePlay();
-    scheduleAdvance();
-  });
   dialog.addEventListener('keydown', event => {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.preventDefault();
       navigate(event.key === 'ArrowLeft' ? -1 : 1);
     }
   });
-  dialog.addEventListener('cancel', pauseSlideshow); // Escape uses native dismissal.
+  // Escape uses native dialog dismissal and the same restoration below.
   dialog.addEventListener('close', () => {
-    pauseSlideshow();
     revision += 1;
     touch = null;
     image.removeAttribute('srcset');
@@ -213,17 +164,12 @@
   }, { passive: true });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-      pauseSlideshow();
       adjacentImage.removeAttribute('srcset');
       adjacentImage.removeAttribute('src');
     }
   });
-  const onMotionChange = () => { if (reducedMotion.matches) pauseSlideshow(); else synchronizePlay(); };
-  if (reducedMotion.addEventListener) reducedMotion.addEventListener('change', onMotionChange);
-  else reducedMotion.addListener(onMotionChange);
   window.addEventListener('resize', () => {
     if (!dialog.open) return;
     image.sizes = imageSize(photos[currentIndex]);
   }, { passive: true });
-  synchronizePlay();
 })();

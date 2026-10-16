@@ -822,19 +822,19 @@ html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [d
   font-size: clamp(1.8rem, 3.5vw, 2.5rem);
 }
 html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [data-site-page="/publication/"])
-.tron-figure-link {
+.tron-figure {
   position: relative;
   display: block;
   min-width: 0;
   padding: 0;
+  margin: 0;
   border: 1px solid var(--tron-line, #2a3542);
   border-radius: 0.25rem;
   color: inherit;
   text-decoration: none;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [data-site-page="/publication/"])
-.tron-figure-link > img {
+.tron-figure > img {
   display: block;
   width: 100%;
   height: auto;
@@ -847,36 +847,16 @@ html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [d
   transform: none !important;
   transition: none;
 }
-html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [data-site-page="/publication/"])
-.tron-figure-action {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--tron-space-xs, 0.5rem);
-  min-height: 2.4rem;
-  padding: 0.35rem 0.65rem;
+html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-figure-attribution {
+  margin: 0;
+  padding: 0.65rem 0.7rem;
   border-top: 1px solid var(--tron-line, #2a3542);
-  color: var(--accent, #39bde5);
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: 0.025em;
-}
-html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [data-site-page="/publication/"])
-.tron-figure-link:is(:hover, :focus-visible) {
-  border-color: var(--tron-line-strong, #70d6f3);
-  box-shadow: var(--tron-glow, 0 0 12px rgba(57, 189, 229, 0.055));
-  text-decoration: none;
-}
-html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [data-site-page="/publication/"])
-.tron-figure-link:focus-visible {
-  outline: 3px solid var(--focus-ring, #70d6f3);
-  outline-offset: 3px;
-}
-html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [data-site-page="/publication/"])
-.tron-figure-link:is(:hover, :focus-visible) .tron-figure-action {
-  color: var(--accent-hover, #70d6f3);
+  color: var(--text-secondary);
+  font-family: var(--font-reading);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
 }
 html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-columns {
   gap: var(--tron-space-lg, 2rem);
@@ -884,7 +864,7 @@ html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .resear
 html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-col {
   min-width: 0;
 }
-html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-col .tron-figure-link {
+html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-col .tron-figure {
   margin-bottom: var(--tron-space, 1.5rem);
 }
 html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-col img:hover {
@@ -898,7 +878,7 @@ html[data-design="scientific-tron-minimal"][data-site-page="/publication/"] .pub
   align-items: flex-start;
   gap: var(--tron-space-lg, 2rem);
 }
-html[data-design="scientific-tron-minimal"][data-site-page="/publication/"] .pub-card > .tron-figure-link {
+html[data-design="scientific-tron-minimal"][data-site-page="/publication/"] .pub-card > .tron-figure {
   flex: 0 0 clamp(11rem, 18vw, 14rem);
   width: clamp(11rem, 18vw, 14rem);
 }
@@ -909,14 +889,10 @@ html[data-design="scientific-tron-minimal"][data-site-page="/publication/"] .pub
   margin-bottom: var(--tron-space-xs, 0.5rem);
 }
 @media (max-width: 600px) {
-html[data-design="scientific-tron-minimal"][data-site-page="/publication/"] .pub-card > .tron-figure-link {
+html[data-design="scientific-tron-minimal"][data-site-page="/publication/"] .pub-card > .tron-figure {
     flex-basis: auto;
     width: 100%;
   }
-}
-@media (prefers-reduced-motion: reduce) {
-html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [data-site-page="/publication/"])
-  .tron-figure-link { transition: none; }
 }
 
 /* The former preview stagger was caused by natural-aspect images inside
@@ -933,7 +909,7 @@ html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [d
     grid-row: span 3;
     align-content: start;
   }
-  html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-col > .tron-figure-link {
+  html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-col > .tron-figure {
     align-self: start;
   }
   html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-col > h2 {
@@ -1070,7 +1046,7 @@ html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [d
 .photography-lightbox-toolbar {
   display: grid;
   grid-template-columns: 44px auto 44px minmax(0, 1fr) 44px;
-  grid-template-areas: "previous counter next utilities close";
+  grid-template-areas: "previous counter next . close";
   align-items: center;
   gap: 0.5rem;
   min-width: 0;
@@ -1086,13 +1062,6 @@ html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [d
   font-size: 0.86rem;
   font-variant-numeric: tabular-nums;
   text-align: center;
-}
-.photography-lightbox-utilities {
-  grid-area: utilities;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 0.5rem;
 }
 .photography-lightbox-toolbar :is(button, a) {
   display: inline-flex;
@@ -1136,11 +1105,6 @@ html[data-design="scientific-tron-minimal"]:is([data-site-page="/research/"], [d
   height: 44px;
   padding: 0;
   font-size: 1.8rem;
-}
-.photography-lightbox-toolbar button:disabled {
-  color: var(--text-muted);
-  cursor: default;
-  opacity: 0.65;
 }
 .photography-portfolio .photography-lightbox figure {
   display: grid;
@@ -1202,9 +1166,8 @@ body:has(.photography-portfolio .photography-lightbox[open]) { overflow: hidden;
   .photography-portfolio .photography-stream.photography-masonry { column-count: 1; }
   .photography-lightbox-toolbar {
     grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
-    grid-template-areas: "previous counter next close" "utilities utilities utilities utilities";
+    grid-template-areas: "previous counter next close";
   }
-  .photography-lightbox-utilities { justify-content: space-between; }
   .photography-portfolio .photography-lightbox img {
     max-height: min(100%, calc(100dvh - 11.25rem - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
   }
