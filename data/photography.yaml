@@ -1,150 +1,259 @@
 images:
   - file: Double_anglerfish_Diceratias_pileatus_UW_150017_AJMaile.jpg
     feature_candidate: true
+    image_type: "Photography"
     common: Double anglerfish
     scientific: Diceratias pileatus
-    detail: UW 150017
+    institution: "UW"
+    museum_id: "150017"
     alt: Double anglerfish specimen photographed against a black background
 
   - file: Pacific_footballfish_Himantolophus_sagamius_LACM_60082-1_MT-GGGG1_AJMaile.jpg
     feature_candidate: true
+    image_type: "Photography"
     common: Pacific footballfish
     scientific: Himantolophus sagamius
-    detail: LACM 60082-1
+    institution: "LACM"
+    museum_id: "60082-1"
     alt: Pacific footballfish specimen photographed against a black background
 
   - file: Ghostly_seadevil_Haplophryne_mollis_UW_157518_AJMaile.jpg
     feature_candidate: true
+    image_type: "Photography"
     common: Ghostly seadevil
     scientific: Haplophryne mollis
-    detail: UW 157518
+    institution: "UW"
+    museum_id: "157518"
     alt: Ghostly seadevil specimen photographed against a black background
 
   - file: Frogfish_Antennarius_commerson_Personal_AJMaile.jpg
     feature_candidate: true
-    common: Frogfish
+    image_type: "Photography"
+    common: "Frogfish"
     scientific: Antennarius commerson
     alt: Orange frogfish photographed against a black background
 
   - file: Warty_Frogfish_Antennarius_maculatus_UW_020828_AJMaile.jpg
     feature_candidate: true
+    image_type: "Photography"
     common: Warty frogfish
     scientific: Antennarius maculatus
-    detail: UW 020828
+    institution: "UW"
+    museum_id: "020828"
     alt: Warty frogfish skeleton photographed against a black background
 
   - file: Ancylopsetta_ommata_KUI_22951_Blue.jpg
     feature_candidate: true
+    image_type: "Photography"
+    common: "Gulf of Mexico ocellated flounder"
     scientific: Ancylopsetta ommata
-    detail: KUI 22951
+    institution: "KUI"
+    museum_id: "22951"
     alt: Blue-lit flatfish skeleton photographed against a black background
 
   - file: Lure_Pacific_footballfish_Himantolophus_sagamius_LACM_60082-1_MT-GGGG1_AJMaile.jpg
     feature_candidate: true
+    image_type: "Photography"
     common: Pacific footballfish lure
     scientific: Himantolophus sagamius
-    detail: LACM 60082-1
+    institution: "LACM"
+    museum_id: "60082-1"
     alt: Bioluminescent Pacific footballfish lure against a black background
 
   - file: Anomalops_katoptron_YMP_ICH_020676.jpg
     feature_candidate: true
+    image_type: "Photography"
+    common: "Splitfin flashlight fish"
     scientific: Anomalops katoptron
-    detail: YMP ICH 020676
+    institution: "YMP"
+    museum_id: "ICH 020676"
     alt: Fish skeleton and anatomical views against a black background
 
   - file: Ancylopsetta_ommata_KUI_22951_White.jpg
+    image_type: "Photography"
+    common: "Gulf of Mexico ocellated flounder"
     scientific: Ancylopsetta ommata
-    detail: KUI 22951
+    institution: "KUI"
+    museum_id: "22951"
     alt: Flatfish skeleton photographed against a black background
 
   - file: Bellator_militaris_TCWC_6818.17.jpg
     feature_candidate: true
+    image_type: "Photography"
+    common: "Horned searobin"
     scientific: Bellator militaris
-    detail: TCWC 6818.17
+    institution: "TCWC"
+    museum_id: "6818.17"
     alt: Fish skeleton shown from several anatomical views
 
   - file: Circular_seabat_Halieutaea_fitzsimonsi_LACM_44745-6_AJMaile.jpg
+    image_type: "Photography"
     common: Circular seabat
     scientific: Halieutaea fitzsimonsi
-    detail: LACM 44745-6
+    institution: "LACM"
+    museum_id: "44745-6"
     alt: Circular seabat specimen photographed against a black background
 
   - file: Frogfish_Antennarius_commerson_Personal_AJMaile_2.jpg
+    image_type: "Photography"
     common: Frogfish
     scientific: Antennarius commerson
     alt: Orange frogfish photographed against a black background
 
   - file: IMG_0003.jpg
+    image_type: "Photography"
+    common: "Blackchin"
+    scientific: "Neoscopelus sp."
     alt: Two fluorescent fish photographed against a black background
 
   - file: IMG_0009_touchup.jpg
+    image_type: "Photography"
+    common: "Lovely hatchetfish"
+    scientific: "Argyropelecus aculeatus"
+    institution: "FMNH"
+    museum_id: "64352"
     alt: Fish specimen photographed against a black background
 
   - file: IMG_0015.jpg
     feature_candidate: true
+    image_type: "Photography"
+    common: "Garmon's lanternfish"
+    scientific: "Diaphus garmani"
+    institution: "FMNH"
+    museum_id: "64632"
     alt: Three fluorescent fish specimens photographed against a black background
 
   - file: IMG_0017_touchup1.jpg
+    image_type: "Photography"
+    common: "Pacific footballfish lure"
+    scientific: "Himantolophus sagamius"
+    institution: "LACM"
+    museum_id: "60082-1"
     alt: Preserved fish specimen photographed against a black background
 
   - file: IMG_0017background.jpg
+    image_type: "Photography"
+    common: "Viperfish"
+    scientific: "Chauliodus sloani"
+    institution: "FMNH"
+    museum_id: "85128"
     alt: Cleared and stained fish specimen on a white background
 
   - file: IMG_0030.jpg
+    image_type: "Photography"
+    common: "Bombay duck"
+    scientific: "Harpadon sp."
+    institution: "SCSU"
     alt: Fluorescent fish skeleton photographed against a black background
 
   - file: IMG_0035.jpg
+    image_type: "Photography"
+    common: "Black dragonfish"
+    scientific: "Idiacanthus sp."
+    institution: "SCSU"
     alt: Fish lure photographed in profile against a black background
 
   - file: IMG_2053.jpg
+    image_type: "Photography"
+    common: "Midas blenny"
+    scientific: "Ecsenius midas"
     alt: Small fish photographed underwater on a reef
 
   - file: IMG_2073.jpg
+    image_type: "Photography"
+    common: "Snowflake eel"
+    scientific: "Echidna nebulosa"
     alt: Eel photographed underwater among reef growth
 
   - file: IMG_2166.jpg
+    image_type: "Photography"
+    common: "Scorpionfish"
+    scientific: "Sebastapistes sp."
     alt: Small fish photographed against a black background
 
   - file: IMG_3979.jpg
+    image_type: "Photography"
+    common: "Barred spinefoot"
+    scientific: "Siganus doliatus"
     alt: Fish specimen photographed against a black background
 
   - file: IMG_5141.jpg
+    image_type: "Photography"
+    common: "Dragonfish"
+    scientific: "Photostomias"
+    institution: "SCSU"
     alt: Close view of a fish head and teeth against a black background
 
   - file: IMG_7224.jpg
+    image_type: "Photography"
+    common: "Tassled filefish"
+    scientific: "Chaetodermis penicilligerus"
+    institution: "Shedd Aquarium"
     alt: Fish specimen viewed from above against a black background
 
   - file: IMG_8363.jpg
+    image_type: "Photography"
+    common: "Whipnose anglerfish"
+    scientific: "Gigantactis vanhoeffeni"
+    institution: "UW"
+    museum_id: "157508"
     alt: Anatomical fish drawings on a white background
 
   - file: IMG_8364.jpg
+    image_type: "Photography"
+    common: "Warty frogfish"
+    scientific: "Antennarius maculatus"
+    institution: "UW"
+    museum_id: "020828"
     alt: Fish skeleton and anatomical drawing on a white background
 
   - file: IMG_8391.jpg
+    image_type: "Photography"
+    common: "Reed's pineconefish"
+    scientific: "Monocentris reedi"
+    institution: "KU"
+    museum_id: "42808"
     alt: Red fish specimen photographed against a black background
 
   - file: IMG_8867.jpg
+    image_type: "Photography"
+    caption: "Some sort of bat, just looks cool"
     alt: Fluorescent fish specimen photographed against a black background
 
   - file: IMG_8872.jpg
+    image_type: "Photography"
+    caption: "Some sort of bat, just looks cool"
     alt: Fluorescent fish specimen photographed against a black background
 
   - file: Netdevil_Borophryne_apogon_LACM_30053-10_AJMaile.jpg
+    image_type: "Photography"
     common: Netdevil
     scientific: Borophryne apogon
-    detail: LACM 30053-10
+    institution: "LACM"
+    museum_id: "30053-10"
     alt: Netdevil specimen photographed against a black background
 
   - file: Southern_seadevil_Ceratias_tentaculatus_LACM_11025-7_AJMaile.jpg
     feature_candidate: true
+    image_type: "Photography"
     common: Southern seadevil
     scientific: Ceratias tentaculatus
-    detail: LACM 11025-7
+    institution: "LACM"
+    museum_id: "11025-7"
     alt: Southern seadevil specimen photographed against a black background
 
   - file: TotalBody.jpg
+    image_type: "Photography"
+    common: "Diogenes lanternfish"
+    scientific: "Diogenichthys laternatus"
+    institution: "FMNH"
+    museum_id: "71937"
     alt: Cleared and stained fish specimen on a white background
 
   - file: TouchedupBioluminescent.jpg
     feature_candidate: true
+    image_type: "Photography"
+    common: "Black dragonfish"
+    scientific: "Idiacanthus sp."
+    institution: "SCSU"
     alt: Bioluminescent fish photographed in dark water

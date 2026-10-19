@@ -1157,6 +1157,23 @@ html[data-design="scientific-tron-minimal"][data-site-page="/publication/"] .pub
   margin-left: 0;
   color: var(--text-muted);
 }
+.photography-portfolio .photography-lightbox figcaption :is(.photography-caption-common, .photography-caption-scientific, .photography-caption-description) {
+  flex-basis: 100%;
+  overflow-wrap: anywhere;
+}
+.photography-portfolio .photography-caption-common {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.photography-portfolio :is(.photography-caption-scientific, .photography-caption-description) {
+  font-style: normal;
+}
+.photography-portfolio .photography-caption-specimen {
+  overflow-wrap: anywhere;
+}
+.photography-portfolio .photography-caption-source {
+  font-size: 0.82rem;
+}
 body:has(.photography-portfolio .photography-lightbox[open]) { overflow: hidden; }
 @media (max-width: 999px) {
   .photography-portfolio .photography-stream.photography-masonry { column-count: 2; }

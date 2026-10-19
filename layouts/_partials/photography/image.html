@@ -51,7 +51,11 @@
     data-alt="{{ $image.alt }}"
     {{ with $image.common }}data-common="{{ . }}"{{ end }}
     {{ with $image.scientific }}data-scientific="{{ . }}"{{ end }}
-    {{ with $image.detail }}data-detail="{{ . }}"{{ end }}
+    {{ with $image.caption }}data-caption="{{ . }}"{{ end }}
+    {{ with $image.institution }}data-institution="{{ . }}"{{ end }}
+    {{ with $image.museum_id }}data-museum-id="{{ . }}"{{ end }}
+    {{ with $image.image_type }}data-image-type="{{ . }}"{{ end }}
+    {{ with $image.source_url }}data-source-url="{{ . }}"{{ end }}
     aria-label="View {{ $label }} fullscreen">
     <img src="{{ $thumbnail.RelPermalink }}" srcset="{{ delimit $thumbnailSet ", " }}"
       sizes="(max-width: 599px) calc(100vw - 1rem), (max-width: 999px) calc((100vw - 2.75rem) / 2), (max-width: 1152px) calc((100vw - 3.5rem) / 3), 366px"

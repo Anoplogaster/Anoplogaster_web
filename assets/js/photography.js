@@ -35,19 +35,90 @@
     return `${Math.max(1, Math.floor(Math.min(width - 32, (height - 176) * ratio)))}px`;
   }
 
+  function scientificNameParts(value) {
+    const parts = value.split(/(\s+)/).filter(Boolean);
+    const words = parts.filter(part => !/^\s+$/.test(part));
+    const genus = /^[A-Z][a-z]+$/;
+    const epithet = /^[a-z]+(?:-[a-z]+)*$/;
+    const qualifiers = new Set(['sp.', 'spp.', 'cf.', 'aff.', 'subsp.', 'var.']);
+    // Recognize a conservative name grammar, not taxonomy. Uncertain prose,
+    // authorships, ranks, or annotations remain exactly as supplied, upright.
+    let index = 1;
+    let confident = words.length > 0 && genus.test(words[0]);
+    if (confident && index < words.length) {
+      if (words[index] === 'sp.' || words[index] === 'spp.') {
+        index += 1;
+      } else {
+        if (words[index] === 'cf.' || words[index] === 'aff.') index += 1;
+        if (index >= words.length || !epithet.test(words[index])) confident = false;
+        else {
+          index += 1;
+          if (index < words.length) {
+            if (words[index] === 'subsp.' || words[index] === 'var.') index += 1;
+            if (index >= words.length || !epithet.test(words[index])) confident = false;
+            else index += 1;
+          }
+        }
+      }
+    }
+    if (!confident || index !== words.length) return [{ text: value, italic: false }];
+    return parts.map(text => ({ text, italic: !/^\s+$/.test(text) && !qualifiers.has(text) }));
+  }
+
+  function sourceUrl(value) {
+    // Absolute HTTP(S) only; do not repair or rewrite spreadsheet destinations.
+    if (typeof value !== 'string' || !/^https?:\/\/[^/?#]/i.test(value) || /[\s\\\u0000-\u001f\u007f-\u009f]/.test(value)) return null;
+    try {
+      const url = new URL(value);
+      if (!['http:', 'https:'].includes(url.protocol) || !url.hostname || url.username || url.password) return null;
+      return value;
+    } catch (_) {
+      return null;
+    }
+  }
+
   function setCaption(photo) {
     caption.replaceChildren();
-    if (photo.dataset.common) caption.append(document.createTextNode(photo.dataset.common));
-    if (photo.dataset.common && photo.dataset.scientific) caption.append(document.createTextNode(' · '));
-    if (photo.dataset.scientific) {
-      const name = document.createElement('em');
-      name.textContent = photo.dataset.scientific;
-      caption.append(name);
+    if (photo.dataset.common) {
+      const common = document.createElement('span');
+      common.className = 'photography-caption-common';
+      common.textContent = photo.dataset.common;
+      caption.append(common);
     }
-    if (photo.dataset.detail) {
+    if (photo.dataset.scientific) {
+      const scientific = document.createElement('span');
+      scientific.className = 'photography-caption-scientific';
+      scientificNameParts(photo.dataset.scientific).forEach(part => {
+        if (part.italic) {
+          const name = document.createElement('em');
+          name.textContent = part.text;
+          scientific.append(name);
+        } else scientific.append(document.createTextNode(part.text));
+      });
+      caption.append(scientific);
+    }
+    if (photo.dataset.caption) {
+      const description = document.createElement('span');
+      description.className = 'photography-caption-description';
+      description.textContent = photo.dataset.caption;
+      caption.append(description);
+    }
+    const specimen = [photo.dataset.institution, photo.dataset.museumId].filter(Boolean);
+    if (specimen.length) {
       const detail = document.createElement('small');
-      detail.textContent = photo.dataset.detail;
+      detail.className = 'photography-caption-specimen';
+      detail.textContent = specimen.join(' · ');
       caption.append(detail);
+    }
+    const href = sourceUrl(photo.dataset.sourceUrl);
+    if (href) {
+      const source = document.createElement('a');
+      source.className = 'photography-caption-source';
+      source.textContent = 'View Source';
+      source.setAttribute('href', href);
+      source.target = '_blank';
+      source.rel = 'noopener noreferrer';
+      caption.append(source);
     }
     caption.hidden = !caption.childNodes.length;
   }
