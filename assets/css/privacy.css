@@ -1,0 +1,73 @@
+/* Scoped privacy controls; existing Scientific TRON layout/tokens stay intact. */
+.site-privacy {
+  width: min(100%, 58rem);
+  margin: 1rem auto 0;
+  padding: 0 .75rem;
+  box-sizing: border-box;
+  font-family: var(--font-reading, sans-serif);
+  text-align: left;
+  color: var(--text-secondary, #a5b1bd);
+}
+.site-privacy [hidden] { display: none !important; }
+.privacy-links, .privacy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .65rem;
+}
+.privacy-links { justify-content: center; }
+.privacy-choice, .privacy-dialog {
+  padding: 1.25rem;
+  border: 1px solid var(--border-strong, #3b4857);
+  border-radius: var(--radius-md, .75rem);
+  background: var(--surface-translucent, rgba(15,21,29,.84));
+  color: var(--text-primary, #eef3f7);
+  box-shadow: var(--shadow-surface, 0 12px 32px rgba(0,0,0,.22));
+}
+.privacy-choice { margin-top: .75rem; }
+.privacy-dialog {
+  box-sizing: border-box;
+  margin: auto;
+  width: min(calc(100% - 2rem), 35rem);
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  background: var(--surface, #141a22);
+  font-family: var(--font-reading, sans-serif);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+.privacy-dialog::backdrop { background: rgba(0,0,0,.45); }
+.privacy-choice h2, .privacy-dialog h2 {
+  margin: 0 0 .65rem;
+  font-family: var(--font-display, sans-serif);
+  font-weight: 600;
+  font-size: 1.1rem;
+  line-height: 1.35;
+}
+.privacy-choice p, .privacy-dialog p { margin: .65rem 0; }
+.privacy-actions { margin: .8rem 0; }
+.site-privacy button {
+  min-height: 44px;
+  padding: .5rem .85rem;
+  border: 1px solid var(--border-strong, #3b4857);
+  border-radius: var(--radius-sm, .45rem);
+  background: var(--surface-interactive, #202a36);
+  color: var(--text-primary, #eef3f7);
+  font: 500 .95rem/1.4 var(--font-display, sans-serif);
+  cursor: pointer;
+  white-space: normal;
+}
+.site-privacy button:hover { border-color: var(--accent, #39bde5); }
+.site-privacy a { color: var(--accent-hover, #70d6f3); }
+.site-privacy :is(a,button):focus-visible {
+  outline: 2px solid var(--focus-ring, #70d6f3);
+  outline-offset: 3px;
+}
+.privacy-status { margin: .5rem 0 0; font-size: .9rem; text-align: center; }
+.privacy-status:empty { display: none; }
+.privacy-dialog .privacy-status { text-align: left; }
+.privacy-close { margin-top: .5rem; }
+@media (max-width: 480px) {
+  .privacy-actions > button { flex: 1 1 10rem; }
+  .privacy-choice, .privacy-dialog { padding: 1rem; }
+}

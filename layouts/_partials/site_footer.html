@@ -8,4 +8,5 @@
     {{- errorf "Cannot find footer block at layouts/_partials/%s" $footerPath -}}
   {{- end -}}
   {{ partial $footerPath . }}
+  {{ partial "privacy/controls" . }}
 </footer>

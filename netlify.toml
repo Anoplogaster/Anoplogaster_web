@@ -4,26 +4,30 @@
     echo "=== Starting Blog build process ==="
     echo "Node version: $(node --version)"
     echo "pnpm version: $(pnpm --version)"
-    echo "Hugo version: $(hugo version)"
     echo "Go version: $(go version || echo 'Go not available')"
     
     echo "=== Installing dependencies ==="
-    pnpm install --verbose
+    pnpm install --frozen-lockfile --prod=false
+
+    echo "=== Building verified Hugo with patched embedded Go ==="
+    HUGO_BIN="$(bash scripts/prepare-hugo.sh)"
     
     echo "=== Running Hugo build ==="
-    hugo --gc --minify -b $URL --logLevel debug --printI18nWarnings --printPathWarnings
+    "$HUGO_BIN" --gc --minify -b "$URL" --logLevel debug --printI18nWarnings --printPathWarnings
+    node scripts/finalize-public.mjs public
     
     echo "=== Running Pagefind indexing ==="
-    pnpm dlx pagefind --source 'public' --verbose
+    pnpm exec pagefind --site 'public'
     
     echo "=== Build completed successfully ==="
   """
   publish = "public"
 
 [build.environment]
-  HUGO_VERSION = "0.152.2"
-  GO_VERSION = "1.21.5"
-  NODE_VERSION = "22"
+  # Release identity only: every context executes the verified source-built binary.
+  HUGO_VERSION = "0.168.0"
+  GO_VERSION = "1.27.3"
+  NODE_VERSION = "22.23.4"
   HUGO_ENABLEGITINFO = "true"
   HUGO_LOG_I18N_WARNINGS = "true"
   HUGO_LOG_WARNINGS = "true"
@@ -38,9 +42,11 @@
     set -e
     echo "=== Deploy Preview Build ==="
     echo "Deploy URL: $DEPLOY_PRIME_URL"
-    pnpm install --verbose
-    hugo --gc --minify --buildFuture -b $DEPLOY_PRIME_URL --logLevel debug --printI18nWarnings --printPathWarnings
-    pnpm dlx pagefind --source 'public' --verbose
+    pnpm install --frozen-lockfile --prod=false
+    HUGO_BIN="$(bash scripts/prepare-hugo.sh)"
+    "$HUGO_BIN" --gc --minify --buildFuture -b "$DEPLOY_PRIME_URL" --logLevel debug --printI18nWarnings --printPathWarnings
+    node scripts/finalize-public.mjs public
+    pnpm exec pagefind --site 'public'
   """
 
 [context.branch-deploy]
@@ -48,9 +54,11 @@
     set -e
     echo "=== Branch Deploy Build ==="
     echo "Deploy URL: $DEPLOY_PRIME_URL"
-    pnpm install --verbose
-    hugo --gc --minify -b $DEPLOY_PRIME_URL --logLevel debug --printI18nWarnings --printPathWarnings
-    pnpm dlx pagefind --source 'public' --verbose
+    pnpm install --frozen-lockfile --prod=false
+    HUGO_BIN="$(bash scripts/prepare-hugo.sh)"
+    "$HUGO_BIN" --gc --minify -b "$DEPLOY_PRIME_URL" --logLevel debug --printI18nWarnings --printPathWarnings
+    node scripts/finalize-public.mjs public
+    pnpm exec pagefind --site 'public'
   """
 
 [[plugins]]

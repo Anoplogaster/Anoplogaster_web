@@ -1,0 +1,27 @@
+<div class="site-privacy" data-site-privacy>
+  <div class="privacy-links">
+    <button type="button" data-privacy-open hidden>Privacy preferences</button>
+  </div>
+  <section class="privacy-choice" data-privacy-prompt aria-labelledby="privacy-choice-title" hidden>
+    <h2 id="privacy-choice-title">Optional Google Analytics</h2>
+    <p>Analytics stays off unless you allow it. It helps me understand visits to this website. Your choice does not affect the gallery or game. <a href="{{ "privacy/" | relURL }}">Privacy details</a>.</p>
+    <div class="privacy-actions">
+      <button type="button" data-privacy-choice="denied">Decline analytics</button>
+      <button type="button" data-privacy-choice="granted">Allow analytics</button>
+    </div>
+  </section>
+  <p class="privacy-status" data-privacy-status role="status" aria-live="polite"></p>
+  <dialog class="privacy-dialog" id="privacy-preferences" aria-labelledby="privacy-preferences-title" aria-describedby="privacy-preferences-description">
+    <h2 id="privacy-preferences-title">Privacy preferences</h2>
+    <p id="privacy-preferences-description">Google Analytics is optional. Declining does not affect the website, Photography, or Angry Anglerfish.</p>
+    <p data-privacy-status></p>
+    <div class="privacy-actions">
+      <button type="button" data-privacy-choice="denied">Decline analytics</button>
+      <button type="button" data-privacy-choice="granted">Allow analytics</button>
+    </div>
+    <p>Withdrawing permission disables Analytics and normally reloads this page to unload the tag. A warning appears if your browser cannot replace an earlier saved permission. This does not delete information Google has already received.</p>
+    <p><a href="{{ "privacy/" | relURL }}">Read the privacy explanation</a></p>
+    <button class="privacy-close" type="button" data-privacy-close>Close preferences</button>
+  </dialog>
+  <noscript><p>Optional Analytics is off without JavaScript. Read the <a href="{{ "privacy/" | relURL }}">privacy explanation</a> for information about hosting and local game storage.</p></noscript>
+</div>

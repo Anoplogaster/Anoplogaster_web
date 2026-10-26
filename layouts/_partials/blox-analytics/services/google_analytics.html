@@ -1,0 +1,8 @@
+{{/* Replace automatic theme tracking with a first-party, opt-in-only loader. */}}
+{{- $ga := site.Params.marketing.analytics.google_analytics | default "" -}}
+{{- if $ga -}}
+  {{- $privacyCSS := resources.Get "css/privacy.css" | minify | fingerprint -}}
+  {{- $privacyJS := resources.Get "js/privacy.js" | minify | fingerprint -}}
+  <link rel="stylesheet" href="{{ $privacyCSS.RelPermalink }}" integrity="{{ $privacyCSS.Data.Integrity }}">
+  <script id="site-privacy-script" src="{{ $privacyJS.RelPermalink }}" integrity="{{ $privacyJS.Data.Integrity }}" data-analytics-id="{{ $ga }}" defer></script>
+{{- end -}}

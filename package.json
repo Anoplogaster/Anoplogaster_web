@@ -2,16 +2,32 @@
   "name": "anoplogaster-website",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "pnpm@10.34.7",
+  "engines": {
+    "node": "^22.23.4"
+  },
   "description": "Source for the anoplogaster.com academic website",
   "scripts": {
     "dev": "hugo server --disableFastRender",
-    "build": "hugo --minify"
+    "build": "hugo --minify",
+    "index": "pagefind --site public"
   },
   "dependencies": {
-    "@tailwindcss/cli": "^4.1.12",
-    "@tailwindcss/typography": "^0.5.10",
-    "preact": "^10.27.2",
-    "tailwindcss": "^4.1.12"
+    "@tailwindcss/cli": "4.1.12",
+    "@tailwindcss/typography": "0.5.16",
+    "preact": "10.27.3",
+    "tailwindcss": "4.1.12"
+  },
+  "devDependencies": {
+    "netlify-plugin-hugo-cache-resources": "0.2.1",
+    "pagefind": "1.5.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "@tailwindcss/cli>@parcel/watcher": "2.6.0",
+      "@tailwindcss/node>source-map-js": "1.2.2",
+      "@tailwindcss/oxide>tar": "7.5.22",
+      "@tailwindcss/typography>postcss-selector-parser": "7.1.7"
+    }
   }
 }

@@ -4,21 +4,65 @@
 ## Docs: https://gohugo.io/hugo-modules/
 ############################
 
+# Configuration-only bridge for the unchanged blox-tailwind v0.10.0 assets.
+# Source: modules/blox-tailwind/v0.10.0, commit c8cae88f17ee0c26e980d0c45c039d0561625c80.
+# No module-cache patch or fork: replace obsolete filters through supported imports.
+hugoVersion:
+  min: '0.168.0'
+
 imports:
   - path: github.com/HugoBlox/hugo-blox-builder/modules/blox-plugin-netlify
   - path: github.com/HugoBlox/hugo-blox-builder/modules/blox-tailwind
+    # Keep v0.10.0 templates/assets; replace only its obsolete configuration.
+    ignoreConfig: true
+    mounts:
+      - source: content
+        target: content
+      - source: static
+        target: static
+      - source: layouts
+        target: layouts
+      - source: data
+        target: data
+      - source: assets
+        target: assets
+      - source: i18n
+        target: i18n
+      - source: archetypes
+        target: archetypes
+      - disableWatch: true
+        source: hugo_stats.json
+        target: assets/hugo_stats.json
+      - source: blox
+        target: layouts/partials/hbx/blocks
+        files: ['**/block.html']
+      - source: blox
+        target: assets/js/hbx/blocks
+        files: ['**/*.js', '**/*.ts', '**/*.jsx', '**/*.tsx']
+      - source: blox
+        target: assets/css/hbx/blocks
+        files: ['**/*.css']
+      - source: blox/shared/js
+        target: assets/js/hbx/shared
+      - source: blox/shared/css
+        target: assets/css/hbx/shared
+      - source: blox
+        target: assets/img/hbx/blocks
+        files: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.svg', '**/*.webp']
+  # ignoreConfig suppresses the theme's import; keep its same analytics module.
+  - path: github.com/HugoBlox/hugo-blox-builder/modules/blox-analytics
 
 # Install any Hugo Blox within the `hugo-blox/blox/` folder
 mounts:
   - source: hugo-blox/blox/community
     target: layouts/_partials/blox/community/
-    includeFiles: '**.html'
+    files: ['**.html']
   - source: hugo-blox/blox/all-access
     target: layouts/_partials/blox/
-    includeFiles: '**.html'
+    files: ['**.html']
   - source: hugo-blox/blox
     target: assets/dist/community/blox/
-    includeFiles: '**.css'
+    files: ['**.css']
   - source: layouts
     target: layouts
   - source: assets

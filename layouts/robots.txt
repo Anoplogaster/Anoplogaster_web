@@ -1,0 +1,14 @@
+# Training preferences for cooperative crawlers; not an access-control boundary.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://www.anoplogaster.com/sitemap.xml

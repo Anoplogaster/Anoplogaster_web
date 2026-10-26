@@ -21,8 +21,18 @@ removePathAccents: true
 ## ADVANCED
 ############################
 
+# Preserve the pinned Blox v0.10.0 defaults needed when its config is ignored.
+# Upstream hugo.yaml SHA-256: 69a44f97ce31375f6f29e43fda969c52a6c53977f142547842337c1a2e700da6.
+# Project-specific values and the existing production minification behavior prevail.
 build:
   writeStats: true
+  buildStats:
+    enable: true
+  cachebusters:
+    - source: assets/hugo_stats\.json
+      target: css
+    - source: (postcss|tailwind)\.config\.js
+      target: css
 enableGitInfo: false
 summaryLength: 30
 pagination:
@@ -39,9 +49,15 @@ outputs:
   section: [HTML, RSS]
 imaging:
   resampleFilter: lanczos
-  quality: 90
   anchor: smart
-  hint: picture
+  jpeg:
+    quality: 90
+  webp:
+    quality: 90
+    hint: picture
+  avif:
+    quality: 90
+    hint: picture
 timeout: 600000
 taxonomies:
   author: authors
@@ -49,9 +65,59 @@ taxonomies:
   publication_type: publication_types
 markup:
   _merge: deep
+  defaultMarkdownHandler: goldmark
+  goldmark:
+    renderHooks:
+      link:
+        useEmbedded: fallback
+    renderer:
+      unsafe: true
+    parser:
+      attribute:
+        block: true
+        title: true
+    extensions:
+      passthrough:
+        enable: true
+        delimiters:
+          block: [['\[', '\]'], ['$$', '$$']]
+          inline: [['\(', '\)'], ['$', '$']]
+      extras:
+        insert:
+          enable: false
+        mark:
+          enable: true
+        subscript:
+          enable: true
+        superscript:
+          enable: true
   highlight:
     lineNos: false
+    codeFences: true
+    noHl: false
+    lineNumbersInTable: false
+    noClasses: false
+    guessSyntax: true
+  tableOfContents:
+    startLevel: 2
+    endLevel: 3
+outputFormats:
+  backlinks:
+    mediaType: application/json
+    baseName: backlinks
+    isPlainText: true
+    notAlternative: true
+params:
+  locale:
+    date_format: 'Jan 2, 2006'
+    time_format: '3:04 PM'
+    address_format: en-us
 security:
   _merge: deep
+  exec:
+    # Existing bounded defaults plus the site's locked Tailwind CLI only.
+    # Node permissions and module confinement remain enabled.
+    allow: ['^(dart-)?sass$', '^go$', '^git$', '^node$', '^postcss$', '^tailwindcss$']
 sitemap:
   _merge: deep
+  changefreq: weekly
