@@ -895,11 +895,10 @@ html[data-design="scientific-tron-minimal"][data-site-page="/publication/"] .pub
   }
 }
 
-/* The former preview stagger was caused by natural-aspect images inside
-   independent flex columns, not by a text-align or container-width change.
-   Share figure/title/prose rows only where the existing three-column layout
-   is active. Keep the complete figures at their natural dimensions. */
-@media (min-width: 769px) {
+/* Fit complete images and the Figure 5 attribution into square groups.
+   Wide screens share figure, heading and description rows. Below 1200px,
+   stack the sections so the labelled phylogeny is not reduced excessively. */
+@media (min-width: 1200px) {
   html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-columns {
     row-gap: 0;
   }
@@ -910,10 +909,29 @@ html[data-design="scientific-tron-minimal"][data-site-page="/publication/"] .pub
     align-content: start;
   }
   html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-col > .tron-figure {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    aspect-ratio: 1 / 1;
+    min-height: 0;
     align-self: start;
+  }
+  html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-col > .tron-figure > img {
+    height: 100%;
+    min-height: 0;
+    object-fit: contain;
+    object-position: center bottom;
+  }
+  html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-figure-attribution {
+    padding-block: 0.5rem;
   }
   html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-col > h2 {
     align-self: start;
+  }
+}
+@media (min-width: 769px) and (max-width: 1199px) {
+  html[data-design="scientific-tron-minimal"][data-site-page="/research/"] .research-columns {
+    grid-template-columns: 1fr;
+    max-width: 44rem;
   }
 }
 
