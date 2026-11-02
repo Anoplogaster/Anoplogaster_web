@@ -60,8 +60,3 @@
     node scripts/finalize-public.mjs public
     pnpm exec pagefind --site 'public'
   """
-
-[[plugins]]
-  package = "netlify-plugin-hugo-cache-resources"
-  [plugins.inputs]
-    debug = true
